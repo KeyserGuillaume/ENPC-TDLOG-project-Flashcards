@@ -1,3 +1,4 @@
+######### definition de la class falsh card
 
 class FalshCards:
     ''' definition des flashcards'''

@@ -1,5 +1,11 @@
 ############# definition de l'interface de creation de flasch cards
 
+## reste a gerer les boutons choisir
+## comment imporeter graphiquement une adresse de fichier ?
+## inserer un appel a la fonction permettant de sauvegarder les cartes crees  --> ecriture dans un fichier ?
+
+import flashcard
+
 import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
 
@@ -48,13 +54,13 @@ class CardCreation(object):
         self.editthema.setObjectName("editthema")
         self.answergrid.addWidget(self.editthema, 3, 1, 1, 1)
         # ligne 5 : entrer un exemple
-        self.myexemple = QLabel(self.answergridWidget)
-        self.myexemple.setObjectName("myexemple")
-        self.answergrid.addWidget(self.myexemple, 5, 0, 1, 1)
-        self.myexemple.setText(" Entrez une phrase d\'exemple : ")
-        self.editexemple = QLineEdit(self.answergridWidget)
-        self.editexemple.setObjectName("editexemple")
-        self.answergrid.addWidget(self.editexemple, 5, 1, 1, 1)
+        self.myexample = QLabel(self.answergridWidget)
+        self.myexample.setObjectName("myexample")
+        self.answergrid.addWidget(self.myexample, 5, 0, 1, 1)
+        self.myexample.setText(" Entrez une phrase d\'exemple : ")
+        self.editexample = QLineEdit(self.answergridWidget)
+        self.editexample.setObjectName("editexample")
+        self.answergrid.addWidget(self.editexample, 5, 1, 1, 1)
         # ligne 6 : entrer la difficulte
         self.dificult = QLabel(self.answergridWidget)
         self.dificult.setObjectName("dificult")
@@ -95,8 +101,8 @@ class CardCreation(object):
         self.togivename = QtWidgets.QHBoxLayout(self.nameWidget)
         self.togivename.setContentsMargins(0, 0, 0, 0)
         self.togivename.setObjectName("togivename")
-        self.mycardname = QLabel(self.nameWidget)
         # label et linedit pour entrer le nom de la carte
+        self.mycardname = QLabel(self.nameWidget)
         self.mycardname.setObjectName("mycardname")
         self.mycardname.setText(" Entrez le nom de votre carte :")
         self.togivename.addWidget(self.mycardname)
@@ -112,8 +118,9 @@ class CardCreation(object):
         self.tocreate.setContentsMargins(0, 0, 0, 0)
         self.tocreate.setObjectName("tocreate")
         # barre de progression indiquant a quel point la carte est complete
+        self.progress=0 #niveau de progres de le remplissage de la carte
         self.progressBar = QtWidgets.QProgressBar(self.bottomWidget)
-        self.progressBar.setProperty("value", 0)
+        self.progressBar.setProperty("value", self.progress)
         self.progressBar.setObjectName("progressBar")
         self.tocreate.addWidget(self.progressBar)
         # bouton de creation
@@ -122,11 +129,38 @@ class CardCreation(object):
         self.tocreate.addWidget(self.createButton)
 
         ## gestion des slots et signaux
-        # encore a gerer
+        # creation d'une carte
+        self.createButton.clicked.connect(self.create)
+        # mise a jour du progres
+        self.setname.textEdited.connect(self.progression)
+        self.editword.textEdited.connect(self.progression)
+        self.edittrad.textEdited.connect(self.progression)
+        self.editexample.textEdited.connect(self.progression)
+        self.editthema.textEdited.connect(self.progression)
+        self.editdifficult.textEdited.connect(self.progression)
+        self.editproficiency.textEdited.connect(self.progression)
         
     def show(self):
         # ouvreture de la fenetre
         self.Dialog.show()
+    def progression(self):
+        self.progress+=15
+        self.progress=min(self.progress,100)
+        self.progressBar.setProperty("value", self.progress)
+    def create(self):
+        name=str(self.setname.text())
+        mot=str(self.editword.text())
+        traduction=str(self.edittrad.text())
+        phrase=str(self.editexample.text())
+        theme=str(self.editthema.text())
+        difficulte=str(self.editdifficult.text())
+        maitrise=str(self.editproficiency.text())
+        illustrationpath=" "
+        soundpath=" "
+        mycard=flashcard.FalshCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath)
+        print(mycard)
+        ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
+        #return mycard
     def quit(self):
         exit(0)
 

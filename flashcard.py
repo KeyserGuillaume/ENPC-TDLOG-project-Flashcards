@@ -38,7 +38,7 @@ class FalshCards:
         return self._image
     def prononciation(self):
         return self._pronounciation
-    def __str__(self):
+    def register(self):
         print("name : ", self.name)
         print("mot : ", self.word)
         print("traduction : ", self.trad)

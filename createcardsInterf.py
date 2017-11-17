@@ -158,7 +158,7 @@ class CardCreation(object):
         illustrationpath=" "
         soundpath=" "
         mycard=flashcard.FalshCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath)
-        print(mycard)
+        mycard.register()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         #return mycard
     def quit(self):

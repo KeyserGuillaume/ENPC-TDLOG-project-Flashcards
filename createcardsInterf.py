@@ -158,7 +158,7 @@ class CardCreation(object):
         maitrise=str(self.editproficiency.text())
         illustrationpath=" "
         soundpath=" "
-        mycard=flashcard.FalshCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath)
+        mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
         mycard.register()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         #return mycard

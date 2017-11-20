@@ -175,5 +175,6 @@ if __name__ == "__main__":
     resultat = a.exec_()
     #a.exec_()
     a.lastWindowClosed.connect(a.quit)
-    mf.quit()
+    #mf.quit()
+    #sys.exit(resultat)
 

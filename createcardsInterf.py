@@ -1,6 +1,7 @@
 ############# definition de l'interface de creation de flasch cards
 
 ## reste a gerer les boutons choisir
+## il faut aussi ameliorer la gestion de la progression
 ## comment imporeter graphiquement une adresse de fichier ?
 ## inserer un appel a la fonction permettant de sauvegarder les cartes crees  --> ecriture dans un fichier ?
 
@@ -9,7 +10,7 @@ import flashcard
 import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
 
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar
 
 class CardCreation(object):
     def __init__(self):
@@ -98,7 +99,7 @@ class CardCreation(object):
         self.nameWidget = QWidget(self.Dialog)
         self.nameWidget.setGeometry(QtCore.QRect(10, 10, 451, 31))
         self.nameWidget.setObjectName("nameWidget")
-        self.togivename = QtWidgets.QHBoxLayout(self.nameWidget)
+        self.togivename = QHBoxLayout(self.nameWidget)
         self.togivename.setContentsMargins(0, 0, 0, 0)
         self.togivename.setObjectName("togivename")
         # label et linedit pour entrer le nom de la carte
@@ -114,12 +115,12 @@ class CardCreation(object):
         self.bottomWidget = QWidget(self.Dialog)
         self.bottomWidget.setGeometry(QtCore.QRect(10, 320, 451, 32))
         self.bottomWidget.setObjectName("bottomWidget")
-        self.tocreate = QtWidgets.QHBoxLayout(self.bottomWidget)
+        self.tocreate = QHBoxLayout(self.bottomWidget)
         self.tocreate.setContentsMargins(0, 0, 0, 0)
         self.tocreate.setObjectName("tocreate")
         # barre de progression indiquant a quel point la carte est complete
         self.progress=0 #niveau de progres de le remplissage de la carte
-        self.progressBar = QtWidgets.QProgressBar(self.bottomWidget)
+        self.progressBar = QProgressBar(self.bottomWidget)
         self.progressBar.setProperty("value", self.progress)
         self.progressBar.setObjectName("progressBar")
         self.tocreate.addWidget(self.progressBar)
@@ -144,7 +145,7 @@ class CardCreation(object):
         # ouvreture de la fenetre
         self.Dialog.show()
     def progression(self):
-        self.progress+=15
+        self.progress+=5
         self.progress=min(self.progress,100)
         self.progressBar.setProperty("value", self.progress)
     def create(self):

@@ -1,5 +1,7 @@
 ######### definition de la class falsh card
 
+## il faut encore gerer quand les objects sont multiples (liste de traduction par exemple)
+
 class FalshCards:
     ''' definition des flashcards'''
     def __init__(self, name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath):

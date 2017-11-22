@@ -10,19 +10,17 @@ import flashcard
 import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
 
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox
 
 class CardCreation(object):
     def __init__(self):
         ## la fenetre
         self.Dialog=QWidget()
         self.Dialog.setObjectName("Card Creation")
-        self.Dialog.setFixedSize(497, 387)
-        #self.Dialog.setFrameShape(QFrame.StyledPanel)
-        #self.Dialog.setFrameShadow(QFrame.Raised)
+        self.Dialog.setFixedSize(497, 492)
         ## le layout de la grille centrale
         self.answergridWidget = QWidget(self.Dialog)
-        self.answergridWidget.setGeometry(QtCore.QRect(10, 50, 451, 261))
+        self.answergridWidget.setGeometry(QtCore.QRect(10, 50, 451, 341))
         self.answergridWidget.setObjectName("answergridWidget")
         self.answergrid = QGridLayout(self.answergridWidget)
         self.answergrid.setContentsMargins(0, 0, 0, 0)
@@ -30,6 +28,7 @@ class CardCreation(object):
         # remplissage avec infos et lignes de réponse
         # sous la forme un QLabel et un QLineEdit par ligne
         # sauf pour les images/sons a importer ou on met un QPushButton
+        # et pour la maitrise / difficulte avec un curseur
         # ligne 1 : entrer le mot
         self.myword = QLabel(self.answergridWidget)
         self.myword.setObjectName("myword")
@@ -66,8 +65,10 @@ class CardCreation(object):
         self.dificult = QLabel(self.answergridWidget)
         self.dificult.setObjectName("dificult")
         self.answergrid.addWidget(self.dificult, 6, 0, 1, 1)
-        self.dificult.setText("Entrez la difficulté : ")
-        self.editdifficult = QLineEdit(self.answergridWidget)
+        self.dificult.setText(" Entrez la difficulté : ")
+        #self.editdifficult = QLineEdit(self.answergridWidget)
+        self.editdifficult = QSlider(self.answergridWidget)
+        self.editdifficult.setOrientation(QtCore.Qt.Horizontal)
         self.editdifficult.setObjectName("editdifficult")
         self.answergrid.addWidget(self.editdifficult, 6, 1, 1, 1)
         # ligne 7 : entrer votre maitrise du mot
@@ -75,25 +76,43 @@ class CardCreation(object):
         self.myproficiency.setObjectName("myproficiency")
         self.answergrid.addWidget(self.myproficiency, 7, 0, 1, 1)
         self.myproficiency.setText(" Entrez votre niveau de maitrise :")
-        self.editproficiency = QLineEdit(self.answergridWidget)
+        #self.editproficiency = QLineEdit(self.answergridWidget)
+        self.editproficiency = QSlider(self.answergridWidget)
+        self.editproficiency.setOrientation(QtCore.Qt.Horizontal)
         self.editproficiency.setObjectName("editproficiency")
         self.answergrid.addWidget(self.editproficiency, 7, 1, 1, 1)
-        # ligne 8 : charger une image
+        # ligne 8 : indiquer la nature grammaticale du mot
+        self.mynature = QLabel(self.answergridWidget)
+        self.mynature.setObjectName("mynature")
+        self.answergrid.addWidget(self.mynature, 8, 0, 1, 1)
+        self.mynature.setText(" Selectionez la nature du mot :")
+        self.editnature = QComboBox(self.answergridWidget)
+        self.editnature.setObjectName("editnature")
+        self.answergrid.addWidget(self.editnature, 8, 1, 1, 1)
+        # ligne 9 : indiquer la langue
+        self.mylanguage = QLabel(self.answergridWidget)
+        self.mylanguage.setObjectName("mylanguage")
+        self.answergrid.addWidget(self.mylanguage, 9, 0, 1, 1)
+        self.mylanguage.setText(" Selectionez la langue :")
+        self.editlanguage = QComboBox(self.answergridWidget)
+        self.editlanguage.setObjectName("editlanguage")
+        self.answergrid.addWidget(self.editlanguage, 9, 1, 1, 1)
+        # ligne 10 : charge une image
         self.myillustration = QLabel(self.answergridWidget)
         self.myillustration.setObjectName("myillustration")
-        self.answergrid.addWidget(self.myillustration, 8, 0, 1, 1)
+        self.answergrid.addWidget(self.myillustration, 10, 0, 1, 1)
         self.myillustration.setText(" Selectionez une image :")
         self.chooseButton1 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton1.setObjectName("chooseButton1")
-        self.answergrid.addWidget(self.chooseButton1, 8, 1, 1, 1)
-        # ligne 9 : charger un fichier son de prononciation
+        self.answergrid.addWidget(self.chooseButton1, 10, 1, 1, 1)
+        # ligne 11 : charger un fichier son de prononciation
         self.mysound = QLabel(self.answergridWidget)
         self.mysound.setObjectName("mysound")
-        self.answergrid.addWidget(self.mysound, 9, 0, 1, 1)
-        self.mysound.setText("Selectionez une prononciation :")
+        self.answergrid.addWidget(self.mysound, 11, 0, 1, 1)
+        self.mysound.setText(" Selectionez une prononciation :")
         self.chooseButton2 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton2.setObjectName("chooseButton2")
-        self.answergrid.addWidget(self.chooseButton2, 9, 1, 1, 1)
+        self.answergrid.addWidget(self.chooseButton2, 11, 1, 1, 1)
 
         ## le layout du haut
         self.nameWidget = QWidget(self.Dialog)
@@ -113,7 +132,7 @@ class CardCreation(object):
 
         ## le layout du bas
         self.bottomWidget = QWidget(self.Dialog)
-        self.bottomWidget.setGeometry(QtCore.QRect(10, 320, 451, 32))
+        self.bottomWidget.setGeometry(QtCore.QRect(10, 400, 451, 32))
         self.bottomWidget.setObjectName("bottomWidget")
         self.tocreate = QHBoxLayout(self.bottomWidget)
         self.tocreate.setContentsMargins(0, 0, 0, 0)
@@ -138,8 +157,8 @@ class CardCreation(object):
         self.edittrad.textEdited.connect(self.progression)
         self.editexample.textEdited.connect(self.progression)
         self.editthema.textEdited.connect(self.progression)
-        self.editdifficult.textEdited.connect(self.progression)
-        self.editproficiency.textEdited.connect(self.progression)
+        #self.editdifficult.textEdited.connect(self.progression)
+        #self.editproficiency.textEdited.connect(self.progression)
         
     def show(self):
         # ouvreture de la fenetre
@@ -154,10 +173,12 @@ class CardCreation(object):
         traduction=str(self.edittrad.text())
         phrase=str(self.editexample.text())
         theme=str(self.editthema.text())
-        difficulte=str(self.editdifficult.text())
-        maitrise=str(self.editproficiency.text())
+        difficulte= " "  #str(self.editdifficult.text())
+        maitrise= " "  #str(self.editproficiency.text())
         illustrationpath=" "
         soundpath=" "
+        nature=" "
+        langue=" "
         mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
         mycard.register()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici

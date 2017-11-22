@@ -15,6 +15,20 @@ import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
 
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox
+from PyQt5.QtWidgets import QFileDialog
+
+class SearchDirectory(QWidget):
+    def __init__(self):
+        super().__init__()
+        self._myname=""  
+        options = QFileDialog.Options()
+        #options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self,"Select your file", "","Image Files (*.png *.jpg *.jp2 *.bmp *.tiff *.xpm *.gif *.webp *.eps);;Sound Files (*.mp3 *.wav *.m4a *.aac *.aiff *.gsm *.m4p *.wma);;All Files (*)", options=options)
+        if fileName:
+            self._myname=fileName
+    @property
+    def name(self):
+        return self._myname
 
 class CardCreation(object):
     def __init__(self):
@@ -113,6 +127,7 @@ class CardCreation(object):
         self.chooseButton1 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton1.setObjectName("chooseButton1")
         self.answergrid.addWidget(self.chooseButton1, 10, 1, 1, 1)
+        self.image=""
         # ligne 11 : charger un fichier son de prononciation
         self.mysound = QLabel(self.answergridWidget)
         self.mysound.setObjectName("mysound")
@@ -121,6 +136,7 @@ class CardCreation(object):
         self.chooseButton2 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton2.setObjectName("chooseButton2")
         self.answergrid.addWidget(self.chooseButton2, 11, 1, 1, 1)
+        self.sound=""
 
         ## le layout du haut
         self.nameWidget = QWidget(self.Dialog)
@@ -157,14 +173,13 @@ class CardCreation(object):
         self.tocreate.addWidget(self.createButton)
 
         ## gestion des slots et signaux
+        # fenetre de dialogue pour la selection d'un fichier
+        self.chooseButton1.clicked.connect(self.browse1)
+        self.chooseButton2.clicked.connect(self.browse2)
         # creation d'une carte
         self.createButton.clicked.connect(self.create)
         # mise a jour du progres
         self.setname.textEdited.connect(self.progression)
-        #self.editword.textEdited.connect(self.progression)
-        #self.edittrad.textEdited.connect(self.progression)
-        #self.editexample.textEdited.connect(self.progression)
-        #self.editthema.textEdited.connect(self.progression)
         self.editword.editingFinished.connect(self.progression)
         self.edittrad.editingFinished.connect(self.progression)
         self.editexample.editingFinished.connect(self.progression)
@@ -179,6 +194,12 @@ class CardCreation(object):
         self.progress+=15
         self.progress=min(self.progress,100)
         self.progressBar.setProperty("value", self.progress)
+    def browse1(self):
+        ex=SearchDirectory()
+        self.image=ex.name
+    def browse2(self):
+        ex=SearchDirectory()
+        self.sound=ex.name
     def create(self):
         name=str(self.setname.text())
         mot=str(self.editword.text())
@@ -187,14 +208,14 @@ class CardCreation(object):
         theme=str(self.editthema.text())
         difficulte=str(round(self.editdifficult.value()/10))
         maitrise=str(round(self.editproficiency.value()/10))
-        illustrationpath=" "
-        soundpath=" "
+        illustrationpath=self.image
+        soundpath=self.sound
         nature=str(self.editnature.currentText())
         langue=str(self.editlanguage.currentText())
         mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
         mycard.register()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
-        #return mycard
+        # return mycard
     def quit(self):
         exit(0)
 

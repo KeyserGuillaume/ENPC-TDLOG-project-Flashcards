@@ -60,5 +60,7 @@ class FlashCards:
         print("niveau de maitrise : ", self.level)
         print("nature : ", self.nature)
         print("langue : ", self.tablename)
+        print("image : ", self.image)
+        print("son : ", self.prononciation)
         # reste a afficher l'image et le son
         

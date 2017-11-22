@@ -185,8 +185,8 @@ class CardCreation(object):
         traduction=str(self.edittrad.text())
         phrase=str(self.editexample.text())
         theme=str(self.editthema.text())
-        difficulte= " "  #str(self.editdifficult.text())
-        maitrise= " "  #str(self.editproficiency.text())
+        difficulte=str(round(self.editdifficult.value()/10))
+        maitrise=str(round(self.editproficiency.value()/10))
         illustrationpath=" "
         soundpath=" "
         nature=str(self.editnature.currentText())

@@ -7,6 +7,10 @@
 
 import flashcard
 
+## a aller récupérer dans une base de donnée plus tard
+langues=["anglais", "other"]
+natureGram=["noun", "adjective", "verbe", "adverbe", "preposition", "exclamation",  "other"]
+
 import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
 
@@ -89,6 +93,8 @@ class CardCreation(object):
         self.editnature = QComboBox(self.answergridWidget)
         self.editnature.setObjectName("editnature")
         self.answergrid.addWidget(self.editnature, 8, 1, 1, 1)
+        for naturespossibles in natureGram:
+            self.editnature.addItem(naturespossibles)
         # ligne 9 : indiquer la langue
         self.mylanguage = QLabel(self.answergridWidget)
         self.mylanguage.setObjectName("mylanguage")
@@ -97,6 +103,8 @@ class CardCreation(object):
         self.editlanguage = QComboBox(self.answergridWidget)
         self.editlanguage.setObjectName("editlanguage")
         self.answergrid.addWidget(self.editlanguage, 9, 1, 1, 1)
+        for languespossibles in langues:
+            self.editlanguage.addItem(languespossibles)
         # ligne 10 : charge une image
         self.myillustration = QLabel(self.answergridWidget)
         self.myillustration.setObjectName("myillustration")
@@ -177,8 +185,8 @@ class CardCreation(object):
         maitrise= " "  #str(self.editproficiency.text())
         illustrationpath=" "
         soundpath=" "
-        nature=" "
-        langue=" "
+        nature=str(self.editnature.currentText())
+        langue=str(self.editlanguage.currentText())
         mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
         mycard.register()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici

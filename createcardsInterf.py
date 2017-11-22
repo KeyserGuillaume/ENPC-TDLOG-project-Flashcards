@@ -5,11 +5,13 @@
 ## comment imporeter graphiquement une adresse de fichier ?
 ## inserer un appel a la fonction permettant de sauvegarder les cartes crees  --> ecriture dans un fichier ?
 
-import flashcard
+import flashcard, database
 
 ## a aller récupérer dans une base de donnée plus tard
-langues=["anglais", "other"]
-natureGram=["noun", "adjective", "verbe", "adverbe", "preposition", "exclamation",  "other"]
+## toutes les langues prises en charges
+langues=database.giveAllLanguages()    #["anglais", "other"]
+# les classes grammaticales dispo (definitif)
+natureGram=["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",  "determiner", "other"]
 
 import sys
 from PyQt5 import QtCore, QtWidgets  #, QtGui
@@ -148,11 +150,13 @@ class CardCreation(object):
         # label et linedit pour entrer le nom de la carte
         self.mycardname = QLabel(self.nameWidget)
         self.mycardname.setObjectName("mycardname")
-        self.mycardname.setText(" Entrez le nom de votre carte :")
+        self.mycardname.setText(" Le nom de votre carte :")
         self.togivename.addWidget(self.mycardname)
         self.setname = QLineEdit(self.nameWidget)
         self.setname.setObjectName("setname")
         self.togivename.addWidget(self.setname)
+        self.setname.setText(database.giveNewCardName())
+        self.setname.setEnabled(False)
 
         ## le layout du bas
         self.bottomWidget = QWidget(self.Dialog)

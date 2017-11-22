@@ -161,10 +161,14 @@ class CardCreation(object):
         self.createButton.clicked.connect(self.create)
         # mise a jour du progres
         self.setname.textEdited.connect(self.progression)
-        self.editword.textEdited.connect(self.progression)
-        self.edittrad.textEdited.connect(self.progression)
-        self.editexample.textEdited.connect(self.progression)
-        self.editthema.textEdited.connect(self.progression)
+        #self.editword.textEdited.connect(self.progression)
+        #self.edittrad.textEdited.connect(self.progression)
+        #self.editexample.textEdited.connect(self.progression)
+        #self.editthema.textEdited.connect(self.progression)
+        self.editword.editingFinished.connect(self.progression)
+        self.edittrad.editingFinished.connect(self.progression)
+        self.editexample.editingFinished.connect(self.progression)
+        self.editthema.editingFinished.connect(self.progression)
         #self.editdifficult.textEdited.connect(self.progression)
         #self.editproficiency.textEdited.connect(self.progression)
         
@@ -172,7 +176,7 @@ class CardCreation(object):
         # ouvreture de la fenetre
         self.Dialog.show()
     def progression(self):
-        self.progress+=5
+        self.progress+=15
         self.progress=min(self.progress,100)
         self.progressBar.setProperty("value", self.progress)
     def create(self):

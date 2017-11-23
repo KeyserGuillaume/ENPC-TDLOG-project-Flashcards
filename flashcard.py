@@ -41,26 +41,19 @@ class FlashCards:
     def image(self):
         return self._image
     @property
-    def nature(self):
-        return self._nature
-    @property
     def prononciation(self):
         return self._pronounciation
+    @property
+    def nature(self):
+        return self._nature
     @property
     def tablename(self):
         return self._tablename
     
     def register(self):
-        print("name : ", self.name)
-        print("mot : ", self.word)
-        print("traduction : ", self.trad)
-        print("exemple :", self.exemple)
-        print("theme : ", self.thema)
-        print("difficulte : ", self.howhard)
-        print("niveau de maitrise : ", self.level)
-        print("nature : ", self.nature)
-        print("langue : ", self.tablename)
-        print("image : ", self.image)
-        print("son : ", self.prononciation)
-        # reste a afficher l'image et le son
+        return 0  #ne pas register les mots d'une nouvelle langue sans avoir
+                  # fait l'ajout de cette langue avec addLanguage de database.py (interface a ajouter)
+        addFlashCard(self.name, self.word, self.trad, self.exemple, self.thema, self.howhard, self.level, self.nature, self.tablename, self.image, self.prononciation, self.nature, self.langue)
         
+    def __str__(self):
+        return "name : "+self.name+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "+ self.exemple+"\n theme : "+self.thema+"\n difficulte : "+self.howhard+"\n niveau de maitrise : "+self.level+"\n nature : "+self.nature+"\n langue : "+self.tablename+"\n image "+self.image+"\n son : "+self.prononciation+"\ nature : "+self.nature+"\n langue : "+self.langue

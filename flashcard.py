@@ -51,8 +51,6 @@ class FlashCards:
         return self._tablename
     
     def register(self):
-        return 0  #ne pas register les mots d'une nouvelle langue sans avoir
-                  # fait l'ajout de cette langue avec addLanguage de database.py (interface a ajouter)
         addFlashCard(self.name, self.word, self.trad, self.exemple, self.thema, self.howhard, self.level, self.nature, self.tablename, self.image, self.prononciation, self.nature, self.langue)
         
     def __str__(self):

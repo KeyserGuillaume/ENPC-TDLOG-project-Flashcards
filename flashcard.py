@@ -50,8 +50,7 @@ class FlashCards:
     def tablename(self):
         return self._tablename
     
-    def register(self):
-        addFlashCard(self.name, self.word, self.trad, self.exemple, self.thema, self.howhard, self.level, self.nature, self.tablename, self.image, self.prononciation, self.nature, self.langue)
+    
         
     def __str__(self):
-        return "name : "+self.name+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "+ self.exemple+"\n theme : "+self.thema+"\n difficulte : "+self.howhard+"\n niveau de maitrise : "+self.level+"\n nature : "+self.nature+"\n langue : "+self.tablename+"\n image "+self.image+"\n son : "+self.prononciation+"\ nature : "+self.nature+"\n langue : "+self.langue
+        return "name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "+ self.exemple+"\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)+"\n image : "+self.image+"\n son : "+self.prononciation+"\n nature : "+self.nature+"\n langue : "+self.tablename

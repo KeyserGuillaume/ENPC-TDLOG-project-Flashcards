@@ -2,6 +2,10 @@
  #Table existante : LANGUAGES 
 
 import sqlite3
+import flashcard
+from random import randint
+from scipy.stats import expon
+from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
@@ -33,7 +37,7 @@ def addLanguage(language):
            TRADUCTION TEXT NOT NULL,
            EXEMPLE TEXT,
            THEME TEXT,
-           DIFFICULTE INT, 
+           DIFFICULTE INT,                 
            MAITRISE INT,
            ILLUSTRATIONPATH TEXT,
            SOUNDPATH TEXT,
@@ -49,18 +53,27 @@ def removeLanguage(language):
     conn.commit()
     conn.close()
     
-    
-def addFlashCard(mot, trad, ex, theme, diff, level, image, sound, nature, langue):
+def addCard(mot, trad, ex, theme, diff, level, image, sound, nature, langue):
     conn=sqlite3.connect('FlashCards.db')
     nextId=getNextId(langue)
     conn.execute("INSERT INTO {} (ID, MOT, TRADUCTION, EXEMPLE, THEME, DIFFICULTE, MAITRISE, ILLUSTRATIONPATH, SOUNDPATH, NATURE, LANGUE) \
-         VALUES({}, '{}', '{}', '{}', '{}', {}, {}, '{}', '{}', '{}', '{}')".format(langue.upper(), nextId, mot, trad, ex, theme, diff, level, image, sound, nature, langue.upper()))
+         VALUES({}, '{}', '{}', '{}', '{}', {}, {}, '{}', '{}', '{}', '{}')".format(langue.upper(), nextId, mot, trad, ex, theme, int(diff), int(level), image, sound, nature, langue.upper()))
     conn.commit()
     conn.close()
     
-#addFlashCard("1", "hello", "bonjour", "bonjour toi","salutations",0,10,"vide","vide","jsp","anglais")    
+#addFlashCard("1", "hello", "bonjour", "bonjour toi","salutations",0,10,"vide","vide","jsp","anglais") 
+
+def register(flashcard):
+    addCard(flashcard.word, flashcard.trad, flashcard.exemple, flashcard.thema, flashcard.howhard, flashcard.level, flashcard.image, flashcard.prononciation, flashcard.nature, flashcard.tablename)
+   
+def getCardById(language, name):
+    conn=sqlite3.connect('FlashCards.db')
+    cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
+    for row in cursor:                 #il ne devrait y avoir qu'une seule row dans cursor
+        print(flashcard.FlashCards(*row ))       #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
+    conn.close()
     
-def removeFlashCard(language, name):
+def removeCard(language, name):
     conn=sqlite3.connect('FlashCards.db')
     conn.execute("DELETE from {} where id = {};".format(language.upper(), name))
     conn.commit()
@@ -69,12 +82,26 @@ def removeFlashCard(language, name):
 def giveNewCardName(language):
     return getNextId(language)
     
-def getRandomFlashCard(language):
-    return 0 #a coder
+def getRandomCard(language):
+    n=giveNewCardName(language)
+    print(n)
+    a=randint(1,n-1)
+    return a
     
-def motExiste(language, mot):
-    return 0#a coder. renvoie false si le mot n'existe pas dans les flashcards, la liste des
-            #traductions existantes sinon (car il peut deja y avoir plusieurs flashcards pour ce mot)
+#returns ids of all cards according to some attribute
+def getCardsWithAttribute(language, attributeName, attribute):
+    conn = sqlite3.connect('FlashCards.db')
+    cursor=conn.execute("SELECT id from {} where {} = '{}'".format(language.upper(), attributeName, attribute))
+    result=[row[0] for row in cursor]
+    conn.close()
+    return result
+    
+#returns ids of all cards for mot (there may be several, with different translations)
+def getCardsWithMot(language, mot):
+    return getCardsWithAttribute(language, "mot", mot)
 
+def getCardsWithTraduction(language, traduction):
+    return getCardsWithAttribute(language, "traduction", traduction)
+    
 
 

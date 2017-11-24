@@ -13,11 +13,13 @@ langues=database.giveAllLanguages()    #["anglais", "other"]
 # les classes grammaticales dispo (definitif)
 natureGram=["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",  "determiner", "other"]
 
-import sys
-from PyQt5 import QtCore, QtWidgets  #, QtGui
+from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+from PyQt4 import QtCore
 
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox
-from PyQt5.QtWidgets import QFileDialog
+#from PyQt5 import QtCore, QtWidgets  #, QtGui
+#from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+
+import sys
 
 class SearchDirectory(QWidget):
     def __init__(self):
@@ -155,7 +157,7 @@ class CardCreation(object):
         self.setname = QLineEdit(self.nameWidget)
         self.setname.setObjectName("setname")
         self.togivename.addWidget(self.setname)
-        self.setname.setText(database.giveNewCardName())
+        self.setname.setText(str(database.giveNewCardName('anglais')))
         self.setname.setEnabled(False)
 
         ## le layout du bas
@@ -217,7 +219,7 @@ class CardCreation(object):
         nature=str(self.editnature.currentText())
         langue=str(self.editlanguage.currentText())
         mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
-        mycard.register()
+        database.register(mycard)
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
     def quit(self):

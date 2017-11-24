@@ -69,8 +69,8 @@ def register(flashcard):
 def getCardById(language, name):
     conn=sqlite3.connect('FlashCards.db')
     cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
-    for row in cursor:                 #il ne devrait y avoir qu'une seule row dans cursor
-        print(flashcard.FlashCards(*row ))       #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
+    for row in cursor:                        #il ne devrait y avoir qu'une seule row dans cursor
+        return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
     conn.close()
     
 def removeCard(language, name):
@@ -84,7 +84,6 @@ def giveNewCardName(language):
     
 def getRandomCard(language):
     n=giveNewCardName(language)
-    print(n)
     a=randint(1,n-1)
     return a
     

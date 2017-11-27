@@ -9,14 +9,48 @@ from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
+<<<<<<< HEAD
 #   (NAME TEXT PRIMARY KEY      NOT NULL);''')
+=======
+#      (NAME TEXT PRIMARY KEY      NOT NULL);''')
+>>>>>>> 2d8f75519b722c2dcfbdbfd7d37be39fc69956d1
 #conn.close()
-       
-def getNextId(tableName):
+
+def getALLtables():
     conn=sqlite3.connect('FlashCards.db')
-    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0] #je sais pas pourquoi ça marche, mais ça marche(je pense que le résultat que SQLite va renvoyer est toujours un tableau, c'est pourquoi il faut indiquer les index)
+    cursor=conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    result = [row[0] for row in cursor]
     conn.close()
     return result
+#return a list of tables' names
+
+def getAllcards(tableName):
+    conn=sqlite3.connect('FlashCards.db')
+    cursor=conn.execute("SELECT * FROM {}".format(tableName.upper()))
+    result = [row[0:10] for row in cursor]
+    conn.close()
+    return result
+#return a list of tuples
+    
+
+# ne peut pas modifier le mot et la langue
+def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature):
+    conn=sqlite3.connect('FlashCards.db')
+    cursor=conn.execute("UPDATE {} SET TRADUCTION = '{}', EXEMPLE = '{}', THEME = '{}', DIFFICULTE = {}, MAITRISE = {}, ILLUSTRATIONPATH = '{}', SOUNDPATH = '{}', NATURE = '{}' \
+                        WHERE ID = {}".format(tableName.upper(), trad, ex, theme, diff, level, image, sound, nature, Id))
+    conn.commit()
+    conn.close()
+#modifyCard('ANGLAIS', 7, 'salut', 'Hello World', 'communication', 0, 10, '', '', 'jsp')
+
+
+
+    
+def getNextId(tableName):
+    conn=sqlite3.connect('FlashCards.db')
+    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0] #je sais pas pourquoi ça marche, mais ça marche
+    conn.close()
+    return result
+        
     
 # appelee dans createcardsInterf.py
 def giveAllLanguages():
@@ -71,7 +105,6 @@ def getCardById(language, name):
     cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
     for row in cursor:                        #il ne devrait y avoir qu'une seule row dans cursor
         return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
-    #return flashcard.FlashCards(*cursor.fetchone())  #Si on veut pas faire la boucle on peut ecrire comme ca 
     conn.close()
     
 def removeCard(language, name):

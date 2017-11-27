@@ -13,11 +13,11 @@ langues=database.giveAllLanguages()    #["anglais", "other"]
 # les classes grammaticales dispo (definitif)
 natureGram=["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",  "determiner", "other"]
 
-from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
-from PyQt4 import QtCore
+#from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+#from PyQt4 import QtCore
 
-#from PyQt5 import QtCore, QtWidgets  #, QtGui
-#from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+from PyQt5 import QtCore, QtWidgets 
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
 
 import sys
 
@@ -218,7 +218,7 @@ class CardCreation(object):
         soundpath=self.sound
         nature=str(self.editnature.currentText())
         langue=str(self.editlanguage.currentText())
-        mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, "noun", "anglais")
+        mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, nature, langue)
         database.register(mycard)
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard

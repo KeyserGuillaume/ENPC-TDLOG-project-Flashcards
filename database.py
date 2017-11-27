@@ -9,11 +9,8 @@ from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
-<<<<<<< HEAD
 #   (NAME TEXT PRIMARY KEY      NOT NULL);''')
-=======
 #      (NAME TEXT PRIMARY KEY      NOT NULL);''')
->>>>>>> 2d8f75519b722c2dcfbdbfd7d37be39fc69956d1
 #conn.close()
 
 def getALLtables():

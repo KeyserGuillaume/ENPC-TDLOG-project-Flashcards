@@ -9,7 +9,7 @@ from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
-#     (NAME TEXT PRIMARY KEY      NOT NULL);''')
+#   (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #conn.close()
        
 def getNextId(tableName):
@@ -103,5 +103,15 @@ def getCardsWithMot(language, mot):
 def getCardsWithTraduction(language, traduction):
     return getCardsWithAttribute(language, "traduction", traduction)
     
+def existeSameCard(language,mot,traduction):
+    conn = sqlite3.connect('FlashCards.db')
+    #sql = "select count(*) from {} where mot = '{}' and traduction = '{}';".format(language.upper(),mot,traduction)
+    cursor = conn.execute("select count(*) from {} where mot = '{}' and traduction = '{}'".format(language.upper(),mot,traduction))
+    result = cursor.fetchone()[0]
+    conn.close()
+    if result:
+        return True #existe une carte meme
+    else:
+        return False #existe pas une carte meme
 
 

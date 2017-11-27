@@ -9,12 +9,12 @@ from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
-#      (NAME TEXT PRIMARY KEY      NOT NULL);''')
+#     (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #conn.close()
        
 def getNextId(tableName):
     conn=sqlite3.connect('FlashCards.db')
-    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0] #je sais pas pourquoi ça marche, mais ça marche
+    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0] #je sais pas pourquoi ça marche, mais ça marche(je pense que le résultat que SQLite va renvoyer est toujours un tableau, c'est pourquoi il faut indiquer les index)
     conn.close()
     return result
     
@@ -71,6 +71,7 @@ def getCardById(language, name):
     cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
     for row in cursor:                        #il ne devrait y avoir qu'une seule row dans cursor
         return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
+    #return flashcard.FlashCards(*cursor.fetchone())  #Si on veut pas faire la boucle on peut ecrire comme ca 
     conn.close()
     
 def removeCard(language, name):

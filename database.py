@@ -9,7 +9,6 @@ from math import log, exp
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
-#   (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #      (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #conn.close()
 
@@ -21,7 +20,7 @@ def getALLtables():
     return result
 #return a list of tables' names
 
-def getAllcards(tableName):
+def getAllCards(tableName):
     conn=sqlite3.connect('FlashCards.db')
     cursor=conn.execute("SELECT * FROM {}".format(tableName.upper()))
     result = [row[0:10] for row in cursor]
@@ -57,6 +56,16 @@ def giveAllLanguages():
     result=[row[0] for row in cursor]
     conn.close()
     return result
+    
+def existsLanguage(language):
+    conn = sqlite3.connect('FlashCards.db')
+    cursor = conn.execute("select count(*) from LANGUAGES where name = '{}'".format(language.upper()))
+    result = cursor.fetchone()[0]
+    conn.close()
+    if result:
+        return True 
+    else:
+        return False 
     
 def addLanguage(language):
     conn=sqlite3.connect('FlashCards.db')

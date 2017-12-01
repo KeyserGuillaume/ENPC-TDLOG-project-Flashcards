@@ -162,7 +162,6 @@ def create_picturetable(db_name):
     conn.close()
 
 #insert into the table one picture with its name
-#the picture should already be in the documents 'PICTURES'    
 def insert_picture(picture_file):
     with open(picture_file,'rb') as input_file:
         ablob = input_file.read()
@@ -182,6 +181,37 @@ def extract_picture(p_id):
     pic = conn.execute(sql,p_id)
     ablob, ext, afile = pic.fetchone()
     filename = './PICTURES/' + afile + ext
+    with open(filename,'wb') as output_file:
+        output_file.write(ablob)
+    return filename
+
+#create a db of audio
+def create_audiotable(db_name):
+    conn = sqlite3.connect(db_name)
+    sql = "create table IF NOT EXISTS AUDIOS(a_id INTEGER PRIMARY KEY AUTOINCREMENT,audio BLOB,type TEXT,file_name TEXT);"
+    conn.execute(sql)
+    conn.close()
+
+#insert into the table one audio with its name  
+def insert_audio(audio_file):
+    with open(audio_file,'rb') as input_file:
+        ablob = input_file.read()
+        base = os.path.basename(audio_file)
+        afile,ext  = os.path.splitext(base)
+        sql = "INSERT INTO AUDIOS(audio, type, file_name) VALUES(?, ?, ?);"
+        conn = sqlite3.connect('FlashCards.db')
+        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
+        conn.commit()
+        conn.close()
+
+#extract a picture with its id, returns the name of the picture
+def extract_audio(a_id):
+    sql = "SELECT audio,type,file_name FROM AUDIOS where a_id = :id;"
+    a_id = {'id':a_id}
+    conn = sqlite3.connect('FlashCards.db')
+    aud = conn.execute(sql,a_id)
+    ablob, ext, afile = aud.fetchone()
+    filename = './AUDIOS/' + afile + ext
     with open(filename,'wb') as output_file:
         output_file.write(ablob)
     return filename

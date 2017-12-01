@@ -2,6 +2,7 @@
  #Table existante : LANGUAGES 
 
 import sqlite3
+import os
 import flashcard
 from random import randint
 from scipy.stats import expon
@@ -144,4 +145,34 @@ def existeSameCard(language,mot,traduction):
     else:
         return False #existe pas une carte meme
 
+#create a table of picture
+def create_picturetable(db_name):
+    conn = sqlite3.connect(db_name)
+    sql = "create table IF NOT EXISTS PICTURES(p_id INTEGER PRIMARY KEY AUTOINCREMENT,picture BLOB,type TEXT,file_name TEXT);"
+    conn.execute(sql)
+    conn.close()
 
+#insert into the table one picture with its name
+#the picture should already be in the documents 'PICTURES'    
+def insert_picture(picture_file):
+    with open(picture_file,'rb') as input_file:
+        ablob = input_file.read()
+        base = os.path.basename(picture_file)
+        afile,ext  = os.path.splitext(base)
+        sql = "INSERT INTO PICTURES(picture, type, file_name) VALUES(?, ?, ?);"
+        conn = sqlite3.connect('FlashCards.db')
+        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
+        conn.commit()
+        conn.close()
+
+#extract a picture with its id, returns the name of the picture
+def extract_picture(p_id):
+    sql = "SELECT picture,type,file_name FROM PICTURES where p_id = :id;"
+    p_id = {'id':p_id}
+    conn = sqlite3.connect('FlashCards.db')
+    pic = conn.execute(sql,p_id)
+    ablob, ext, afile = pic.fetchone()
+    filename = './PICTURES/' + afile + ext
+    with open(filename,'wb') as output_file:
+        output_file.write(ablob)
+    return filename

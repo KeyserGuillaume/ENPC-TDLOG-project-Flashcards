@@ -26,7 +26,7 @@ class SearchDirectory(QWidget):
         super().__init__()
         self._myname=""  
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"Select your file", "","Image Files (*.png *.jpg *.jp2 *.bmp *.tiff *.xpm *.gif *.webp *.eps);;Sound Files (*.mp3 *.wav *.m4a *.aac *.aiff *.gsm *.m4p *.wma);;All Files (*)", options=options)
         if fileName:
             self._myname=fileName

@@ -13,11 +13,11 @@ langues=database.giveAllLanguages()    #["anglais", "other"]
 # les classes grammaticales dispo (definitif)
 natureGram=["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",  "determiner", "other"]
 
-#from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
-#from PyQt4 import QtCore
+from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+from PyQt4 import QtCore
 
-from PyQt5 import QtCore, QtWidgets 
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+#from PyQt5 import QtCore, QtWidgets 
+#from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
 
 import sys
 
@@ -123,23 +123,33 @@ class CardCreation(object):
         self.answergrid.addWidget(self.editlanguage, 9, 1, 1, 1)
         for languespossibles in langues:
             self.editlanguage.addItem(languespossibles)
-        # ligne 10 : charge une image
+        self.editlanguage.addItem("Other")
+        #ligne 10 : entrer une nouvelle langue
+        self.myLanguage = QLabel(self.answergridWidget)
+        self.myLanguage.setObjectName("myLanguage")
+        self.myLanguage.setText(" Definissez la nouvelle langue :")
+        self.answergrid.addWidget(self.myLanguage, 10, 0, 1, 1)
+        self.setLanguage = QLineEdit(self.answergridWidget)
+        self.setLanguage.setObjectName("setLanguage")
+        self.answergrid.addWidget(self.setLanguage, 10, 1, 1, 1)
+        self.setLanguage.setEnabled(False)
+        # ligne 11 : charge une image
         self.myillustration = QLabel(self.answergridWidget)
         self.myillustration.setObjectName("myillustration")
-        self.answergrid.addWidget(self.myillustration, 10, 0, 1, 1)
+        self.answergrid.addWidget(self.myillustration, 11, 0, 1, 1)
         self.myillustration.setText(" Selectionez une image :")
         self.chooseButton1 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton1.setObjectName("chooseButton1")
-        self.answergrid.addWidget(self.chooseButton1, 10, 1, 1, 1)
+        self.answergrid.addWidget(self.chooseButton1, 11, 1, 1, 1)
         self.image=""
-        # ligne 11 : charger un fichier son de prononciation
+        # ligne 12 : charger un fichier son de prononciation
         self.mysound = QLabel(self.answergridWidget)
         self.mysound.setObjectName("mysound")
-        self.answergrid.addWidget(self.mysound, 11, 0, 1, 1)
+        self.answergrid.addWidget(self.mysound, 12, 0, 1, 1)
         self.mysound.setText(" Selectionez une prononciation :")
         self.chooseButton2 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton2.setObjectName("chooseButton2")
-        self.answergrid.addWidget(self.chooseButton2, 11, 1, 1, 1)
+        self.answergrid.addWidget(self.chooseButton2, 12, 1, 1, 1)
         self.sound=""
 
         ## le layout du haut
@@ -190,16 +200,26 @@ class CardCreation(object):
         self.edittrad.editingFinished.connect(self.progression)
         self.editexample.editingFinished.connect(self.progression)
         self.editthema.editingFinished.connect(self.progression)
+        self.editlanguage.activated.connect(self.languageChosen)
+        self.setLanguage.editingFinished.connect(self.newLanguage)
         #self.editdifficult.textEdited.connect(self.progression)
         #self.editproficiency.textEdited.connect(self.progression)
         
     def show(self):
-        # ouvreture de la fenetre
+        # ouverture de la fenetre
         self.Dialog.show()
     def progression(self):
         self.progress+=15
         self.progress=min(self.progress,100)
         self.progressBar.setProperty("value", self.progress)
+    def languageChosen(self):
+        langue = str(self.editlanguage.currentText())
+        if (langue=="Other"):
+            self.setLanguage.setEnabled(True)
+            return
+        self.setname.setText(str(database.giveNewCardName(langue)))
+    def newLanguage(self):
+        self.setname.setText("1")
     def browse1(self):
         ex=SearchDirectory()
         self.image=ex.name
@@ -218,8 +238,13 @@ class CardCreation(object):
         soundpath=self.sound
         nature=str(self.editnature.currentText())
         langue=str(self.editlanguage.currentText())
-        mycard=flashcard.FlashCards(name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, nature, langue)
+        if langue=="Other":
+            langue=str(self.setLanguage.text())
+            if (not (database.existsLanguage(langue))):
+                database.addLanguage(langue)
+        mycard=flashcard.FlashCards(str(database.giveNewCardName(langue)), mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, nature, langue)
         database.register(mycard)
+        self.quit()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
     def quit(self):

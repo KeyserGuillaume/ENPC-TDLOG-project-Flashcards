@@ -9,35 +9,42 @@ import flashcard, database
 
 ## a aller récupérer dans une base de donnée plus tard
 ## toutes les langues prises en charges
-langues=database.giveAllLanguages()    #["anglais", "other"]
+langues = database.giveAllLanguages()  # ["anglais", "other"]
 # les classes grammaticales dispo (definitif)
-natureGram=["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",  "determiner", "other"]
+natureGram = ["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",
+              "determiner", "other"]
 
-from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
-from PyQt4 import QtCore
+# from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+# from PyQt4 import QtCore
 
-#from PyQt5 import QtCore, QtWidgets 
-#from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, \
+    QProgressBar, QSlider, QComboBox, QFileDialog
 
 import sys
+
 
 class SearchDirectory(QWidget):
     def __init__(self):
         super().__init__()
-        self._myname=""  
+        self._myname = ""
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"Select your file", "","Image Files (*.png *.jpg *.jp2 *.bmp *.tiff *.xpm *.gif *.webp *.eps);;Sound Files (*.mp3 *.wav *.m4a *.aac *.aiff *.gsm *.m4p *.wma);;All Files (*)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Select your file", "",
+                                                  "Image Files (*.png *.jpg *.jp2 *.bmp *.tiff *.xpm *.gif *.webp *.eps);;Sound Files (*.mp3 *.wav *.m4a *.aac *.aiff *.gsm *.m4p *.wma);;All Files (*)",
+                                                  options=options)
         if fileName:
-            self._myname=fileName
+            self._myname = fileName
+
     @property
     def name(self):
         return self._myname
 
+
 class CardCreation(object):
     def __init__(self):
         ## la fenetre
-        self.Dialog=QWidget()
+        self.Dialog = QWidget()
         self.Dialog.setObjectName("Card Creation")
         self.Dialog.setFixedSize(497, 492)
         ## le layout de la grille centrale
@@ -88,7 +95,7 @@ class CardCreation(object):
         self.dificult.setObjectName("dificult")
         self.answergrid.addWidget(self.dificult, 6, 0, 1, 1)
         self.dificult.setText(" Entrez la difficulté : ")
-        #self.editdifficult = QLineEdit(self.answergridWidget)
+        # self.editdifficult = QLineEdit(self.answergridWidget)
         self.editdifficult = QSlider(self.answergridWidget)
         self.editdifficult.setOrientation(QtCore.Qt.Horizontal)
         self.editdifficult.setObjectName("editdifficult")
@@ -98,7 +105,7 @@ class CardCreation(object):
         self.myproficiency.setObjectName("myproficiency")
         self.answergrid.addWidget(self.myproficiency, 7, 0, 1, 1)
         self.myproficiency.setText(" Entrez votre niveau de maitrise :")
-        #self.editproficiency = QLineEdit(self.answergridWidget)
+        # self.editproficiency = QLineEdit(self.answergridWidget)
         self.editproficiency = QSlider(self.answergridWidget)
         self.editproficiency.setOrientation(QtCore.Qt.Horizontal)
         self.editproficiency.setObjectName("editproficiency")
@@ -124,7 +131,7 @@ class CardCreation(object):
         for languespossibles in langues:
             self.editlanguage.addItem(languespossibles)
         self.editlanguage.addItem("Other")
-        #ligne 10 : entrer une nouvelle langue
+        # ligne 10 : entrer une nouvelle langue
         self.myLanguage = QLabel(self.answergridWidget)
         self.myLanguage.setObjectName("myLanguage")
         self.myLanguage.setText(" Definissez la nouvelle langue :")
@@ -141,7 +148,7 @@ class CardCreation(object):
         self.chooseButton1 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton1.setObjectName("chooseButton1")
         self.answergrid.addWidget(self.chooseButton1, 11, 1, 1, 1)
-        self.image=""
+        self.image = ""
         # ligne 12 : charger un fichier son de prononciation
         self.mysound = QLabel(self.answergridWidget)
         self.mysound.setObjectName("mysound")
@@ -150,7 +157,7 @@ class CardCreation(object):
         self.chooseButton2 = QPushButton(u"Choisir", self.answergridWidget)
         self.chooseButton2.setObjectName("chooseButton2")
         self.answergrid.addWidget(self.chooseButton2, 12, 1, 1, 1)
-        self.sound=""
+        self.sound = ""
 
         ## le layout du haut
         self.nameWidget = QWidget(self.Dialog)
@@ -178,7 +185,7 @@ class CardCreation(object):
         self.tocreate.setContentsMargins(0, 0, 0, 0)
         self.tocreate.setObjectName("tocreate")
         # barre de progression indiquant a quel point la carte est complete
-        self.progress=0 #niveau de progres de le remplissage de la carte
+        self.progress = 0  # niveau de progres de le remplissage de la carte
         self.progressBar = QProgressBar(self.bottomWidget)
         self.progressBar.setProperty("value", self.progress)
         self.progressBar.setObjectName("progressBar")
@@ -202,64 +209,104 @@ class CardCreation(object):
         self.editthema.editingFinished.connect(self.progression)
         self.editlanguage.activated.connect(self.languageChosen)
         self.setLanguage.editingFinished.connect(self.newLanguage)
-        #self.editdifficult.textEdited.connect(self.progression)
-        #self.editproficiency.textEdited.connect(self.progression)
-        
+        # self.editdifficult.textEdited.connect(self.progression)
+        # self.editproficiency.textEdited.connect(self.progression)
+
     def show(self):
         # ouverture de la fenetre
         self.Dialog.show()
+
     def progression(self):
-        self.progress+=15
-        self.progress=min(self.progress,100)
+        self.progress += 12
+        self.progress = min(self.progress, 100)
         self.progressBar.setProperty("value", self.progress)
+
     def languageChosen(self):
         langue = str(self.editlanguage.currentText())
-        if (langue=="Other"):
+        if (langue == "Other"):
             self.setLanguage.setEnabled(True)
             return
         self.setname.setText(str(database.giveNewCardName(langue)))
+
     def newLanguage(self):
         self.setname.setText("1")
+
     def browse1(self):
-        ex=SearchDirectory()
-        self.image=ex.name
+        ex = SearchDirectory()
+        self.image = ex.name
+
     def browse2(self):
-        ex=SearchDirectory()
-        self.sound=ex.name
+        ex = SearchDirectory()
+        self.sound = ex.name
+
     def create(self):
-        name=str(self.setname.text())
-        mot=str(self.editword.text())
-        traduction=str(self.edittrad.text())
-        phrase=str(self.editexample.text())
-        theme=str(self.editthema.text())
-        difficulte=str(round(self.editdifficult.value()/10))
-        maitrise=str(round(self.editproficiency.value()/10))
-        illustrationpath=self.image
-        soundpath=self.sound
-        nature=str(self.editnature.currentText())
-        langue=str(self.editlanguage.currentText())
-        if langue=="Other":
-            langue=str(self.setLanguage.text())
+        name = str(self.setname.text())
+        mot = str(self.editword.text())
+        traduction = str(self.edittrad.text())
+        phrase = str(self.editexample.text())
+        theme = str(self.editthema.text())
+        difficulte = str(round(self.editdifficult.value() / 10))
+        maitrise = str(round(self.editproficiency.value() / 10))
+        illustrationpath = self.image
+        soundpath = self.sound
+        nature = str(self.editnature.currentText())
+        langue = str(self.editlanguage.currentText())
+        if langue == "Other":
+            langue = str(self.setLanguage.text())
             if (not (database.existsLanguage(langue))):
                 database.addLanguage(langue)
-        mycard=flashcard.FlashCards(str(database.giveNewCardName(langue)), mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, nature, langue)
-        database.register(mycard)
-        self.quit()
+        mycard = flashcard.FlashCards(str(database.giveNewCardName(langue)), mot, traduction, phrase, theme, difficulte,
+                                      maitrise, illustrationpath, soundpath, nature, langue)
+        if database.getNextId(langue) <= int(name):
+            database.register(mycard)
+        else:  # nom deja existant dans la table
+            database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
+                                soundpath, nature)
+        self.Dialog.close()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
+
     def quit(self):
         exit(0)
 
 
-if __name__ == "__main__":
-    args=sys.argv
+def createNewCard():
+    args = sys.argv
     a = QApplication(args)
-    mf=CardCreation()
+    mf = CardCreation()
     mf.show()
-    # appliquer les regles souhaitees
-    resultat = a.exec_()
-    #a.exec_()
+    a.exec_()
     a.lastWindowClosed.connect(a.quit)
-    #mf.quit()
-    #sys.exit(resultat)
+    # mf.quit()
+    # sys.exit(a.exec_())
+
+
+def modifyCard(mycard):
+    args = sys.argv
+    b = QApplication(args)
+    # on appelle le createur de carte
+    mf = CardCreation()
+    # on le remplit avec les data existentes
+    mf.editword.setText(mycard.word)
+    mf.editword.setEnabled(False)
+    mf.edittrad.setText(mycard.trad)
+    mf.editexample.setText(mycard.exemple)
+    mf.editthema.setText(mycard.thema)
+    mf.editdifficult.setValue(mycard.howhard * 10)
+    mf.editproficiency.setValue(mycard.level * 10)
+    mf.editlanguage.setCurrentText(mycard.tablename)
+    mf.editlanguage.setEnabled(False)
+    mf.editnature.setCurrentText(mycard.nature)
+    mf.setname.setText(str(mycard.name))
+    mf.createButton.setText("Modify")
+    mf.show()
+    b.exec_()
+    b.lastWindowClosed.connect(b.quit)
+
+
+if __name__ == "__main__":
+    createNewCard()
+    mycard = database.getCardById("anglais", database.getRandomCard("anglais"))
+    print(mycard)
+    modifyCard(mycard)
 

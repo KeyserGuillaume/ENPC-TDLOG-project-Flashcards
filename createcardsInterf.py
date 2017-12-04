@@ -280,29 +280,31 @@ def createNewCard():
     # mf.quit()
     # sys.exit(a.exec_())
 
+class CardModification(CardCreation):
+    def __init__(self, mycard):
+        super().__init__()
+        # remplissage avec les data existantes
+        self.editword.setText(mycard.word)
+        self.editword.setEnabled(False)
+        self.edittrad.setText(mycard.trad)
+        self.editexample.setText(mycard.exemple)
+        self.editthema.setText(mycard.thema)
+        self.editdifficult.setValue(mycard.howhard * 10)
+        self.editproficiency.setValue(mycard.level * 10)
+        self.editlanguage.setCurrentText(mycard.tablename)
+        self.editlanguage.setEnabled(False)
+        self.editnature.setCurrentText(mycard.nature)
+        self.setname.setText(str(mycard.name))
+        self.createButton.setText("Modify")
+
 
 def modifyCard(mycard):
     args = sys.argv
     b = QApplication(args)
-    # on appelle le createur de carte
-    mf = CardCreation()
-    # on le remplit avec les data existentes
-    mf.editword.setText(mycard.word)
-    mf.editword.setEnabled(False)
-    mf.edittrad.setText(mycard.trad)
-    mf.editexample.setText(mycard.exemple)
-    mf.editthema.setText(mycard.thema)
-    mf.editdifficult.setValue(mycard.howhard * 10)
-    mf.editproficiency.setValue(mycard.level * 10)
-    mf.editlanguage.setCurrentText(mycard.tablename)
-    mf.editlanguage.setEnabled(False)
-    mf.editnature.setCurrentText(mycard.nature)
-    mf.setname.setText(str(mycard.name))
-    mf.createButton.setText("Modify")
+    mf = CardModification(mycard)
     mf.show()
     b.exec_()
     b.lastWindowClosed.connect(b.quit)
-
 
 if __name__ == "__main__":
     createNewCard()

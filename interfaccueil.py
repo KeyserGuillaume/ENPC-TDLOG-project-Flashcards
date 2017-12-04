@@ -14,6 +14,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPush
 
 import sys
 
+import createcardsInterf, database, flashcard
+
 class HomeScreen(object):
     def __init__(self, givenLayout):
         # la boite a onglets
@@ -189,9 +191,27 @@ class WelcomeInterf(object):
         self.screenLayout.setObjectName("screenLayout")
         self.myscreen=HomeScreen(self.screenLayout)
 
+        ## gestion des slots et des signaux
+        self.createInterf=None
+        self.newButton.clicked.connect(self.createnew)
+        self.selectedcard=None
+        self.modifInterf=None
+        self.modifyButton.clicked.connect(self.modifycard)
+        #self.searchButton.clicked.connect()
+
     def show(self):
         # ouverture de la fenetre
         self.Dialog.show()
+    def createnew(self):
+        # ouverture de linterface de creation
+        self.createInterf = createcardsInterf.CardCreation()
+        self.createInterf.show()
+    def modifycard(self):
+        # la carte pour l'instant random
+        self.selectedcard=database.getCardById("anglais", database.getRandomCard("anglais"))
+        # ouverture de linterface de modification
+        self.modifInterf=createcardsInterf.CardModification(self.selectedcard)
+        self.modifInterf.show()
 
 
 if __name__ == "__main__":

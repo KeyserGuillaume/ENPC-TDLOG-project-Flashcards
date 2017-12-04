@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ccb47de5-fd0e-4410-82e3-618cdc33bf5b" name="Default" comment="&quot;insertion d'une fonction register appelee lors de la creation affichant la carte a changer plus tard en une ecriture dans la base de donnee&quot;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FlashCards.db" afterPath="$PROJECT_DIR$/FlashCards.db" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/createcardsInterf.py" afterPath="$PROJECT_DIR$/createcardsInterf.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,12 +38,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="createcardsInterf.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="createcardsInterf.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/createcardsInterf.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="254" column="49" lean-forward="true" selection-start-line="254" selection-start-column="49" selection-end-line="254" selection-end-column="49" />
-              <folding />
+            <state relative-caret-position="15">
+              <caret line="272" column="20" lean-forward="false" selection-start-line="272" selection-start-column="20" selection-end-line="272" selection-end-column="20" />
+              <folding>
+                <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -51,11 +53,21 @@
       <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1590">
-              <caret line="111" column="4" lean-forward="false" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="4" />
+            <state relative-caret-position="233">
+              <caret line="191" column="21" lean-forward="true" selection-start-line="191" selection-start-column="21" selection-end-line="191" selection-end-column="21" />
               <folding>
                 <element signature="e#108#122#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="interfaccueil.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/interfaccueil.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="10" column="35" lean-forward="true" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -79,11 +91,12 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/createcardsInterf.py" />
+        <option value="$PROJECT_DIR$/interfaccueil.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="3" />
+    <option name="x" value="40" />
     <option name="y" value="23" />
     <option name="width" value="1201" />
     <option name="height" value="717" />
@@ -117,8 +130,8 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -286,7 +299,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3" y="23" width="1201" height="717" extended-state="0" />
+    <frame x="40" y="23" width="1201" height="717" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19483763" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -340,7 +353,45 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1590">
+          <caret line="111" column="4" lean-forward="false" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="4" />
+          <folding>
+            <element signature="e#108#122#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="65" lean-forward="false" selection-start-line="3" selection-start-column="65" selection-end-line="3" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/createcardsInterf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -374,7 +425,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2400">
           <caret line="160" column="38" lean-forward="true" selection-start-line="160" selection-start-column="38" selection-end-line="160" selection-end-column="38" />
-          <folding />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -408,7 +461,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -424,7 +479,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -432,14 +489,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="18" column="13" lean-forward="true" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -452,21 +501,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/interf_create.py" />
+    <entry file="file://$PROJECT_DIR$/createcardsInterf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="272" column="20" lean-forward="false" selection-start-line="272" selection-start-column="20" selection-end-line="272" selection-end-column="20" />
+          <folding>
+            <marker date="1512400583364" expanded="true" signature="1803:13101" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1590">
-          <caret line="111" column="4" lean-forward="false" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="4" />
+        <state relative-caret-position="233">
+          <caret line="191" column="21" lean-forward="true" selection-start-line="191" selection-start-column="21" selection-end-line="191" selection-end-column="21" />
           <folding>
             <element signature="e#108#122#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/interf_create.py" />
-    <entry file="file://$PROJECT_DIR$/createcardsInterf.py">
+    <entry file="file://$PROJECT_DIR$/interfaccueil.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="254" column="49" lean-forward="true" selection-start-line="254" selection-start-column="49" selection-end-line="254" selection-end-column="49" />
+        <state relative-caret-position="150">
+          <caret line="10" column="35" lean-forward="true" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
           <folding />
         </state>
       </provider>

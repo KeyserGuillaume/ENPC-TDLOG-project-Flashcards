@@ -262,12 +262,12 @@ class CardCreation(object):
         else:  # nom deja existant dans la table
             database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
                                 soundpath, nature)
-        self.Dialog.close()
+        self.close()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
 
-    def quit(self):
-        exit(0)
+    def close(self):
+        self.Dialog.close()
 
 
 def createNewCard():

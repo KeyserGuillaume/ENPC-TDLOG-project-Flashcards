@@ -1,0 +1,24 @@
+{
+  "name": "flashcards",
+  "version": "1.0.0",
+  "description": "desc",
+  "main": "index.html",
+  "dependencies": {
+    "material-design-icons": "^3.0.1",
+    "materialize-css": "^0.98.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "@Team11",
+  "license": "ISC",
+  "homepage": "",
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1"
+  }
+}

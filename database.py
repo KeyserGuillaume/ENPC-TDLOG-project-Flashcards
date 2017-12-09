@@ -7,16 +7,14 @@ import flashcard
 from random import randint
 from scipy.stats import expon
 from math import log, exp
+from connDB import connDB
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
 #      (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #conn.close()
 
-def connDB():
-    conn = sqlite3.connect('FlashCards.db')
-    return conn
-#faire le lien a bade de donnees "Flashcards,db" et renvoyer la connection
+
 
 def getALLtables():
     conn=connDB()

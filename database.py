@@ -24,13 +24,15 @@ def getALLtables():
     return result
 #return a list of tables' names
 
-def getAllCards(tableName):
+## appelee dans rechercheFonct.py
+def getAllCards(language):
+    result = []
     conn=connDB()
-    cursor=conn.execute("SELECT * FROM {}".format(tableName.upper()))
-    result = [row[0:10] for row in cursor]
+    cursor=conn.execute("SELECT * FROM {}".format(language.upper()))
+    for row in cursor:                        
+        result.append(flashcard.FlashCards(*row ))
     conn.close()
     return result
-#return a list of tuples
 
 
 # ne peut pas modifier le mot et la langue
@@ -53,6 +55,8 @@ def getNextId(tableName):
 
 
 # appelee dans createcardsInterf.py
+# appelee dans rechercheInterf.py
+## appelee dans rechercheFonct.py
 def giveAllLanguages():
     #return ["anglais"]
     conn=connDB()
@@ -110,6 +114,7 @@ def addCard(mot, trad, ex, theme, diff, level, image, sound, nature, langue):
 def register(flashcard):
     addCard(flashcard.word, flashcard.trad, flashcard.exemple, flashcard.thema, flashcard.howhard, flashcard.level, flashcard.image, flashcard.prononciation, flashcard.nature, flashcard.tablename)
 
+## appelee dans rechercheFonct.py
 def getCardById(language, name):
     conn=connDB()
     cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
@@ -131,6 +136,7 @@ def getRandomCard(language):
     a=randint(1,n-1)
     return a
 
+##appelee dans rechercheFonct.py
 #returns ids of all cards according to some attribute
 def getCardsWithAttribute(language, attributeName, attribute):
     conn=connDB()
@@ -218,3 +224,10 @@ def extract_audio(a_id):
     with open(filename,'wb') as output_file:
         output_file.write(ablob)
     return filename
+
+
+        
+        
+    
+
+

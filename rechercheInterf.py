@@ -1,11 +1,12 @@
 ############# definition de l'interface de recherche
 
-import rechercheFonct
-CondtPara = ["Mot", "Langue", "Traduction", "Phrase"]
-EtOuPara = ["Et", "Ou"]
+import rechercheFonct, database, flashcard
 
 #from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
 #from PyQt4 import QtCore
+
+langues = database.giveAllLanguages()
+langues.insert(0, 'TOUTES')
 
 from PyQt5 import QtCore, QtWidgets 
 from PyQt5.QtWidgets import QTextBrowser, QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
@@ -17,192 +18,114 @@ class Recherche(object):
         ## La fenetre
         self.rechercheDialog=QWidget()
         self.rechercheDialog.setObjectName("Recherche")
-        self.rechercheDialog.setFixedSize(979, 681)
-        ## Textbrower pour afficher les resultats de recherche
-        self.textbrowserResultat = QtWidgets.QTextBrowser(self.rechercheDialog)
-        self.textbrowserResultat.setGeometry(QtCore.QRect(20, 190, 941, 471))
-        self.textbrowserResultat.setObjectName("textbrowserResultat")        
+        self.rechercheDialog.setFixedSize(894, 593)
+        ## Layout en haut
+        self.hautWidget = QtWidgets.QWidget(self.rechercheDialog)
+        self.hautWidget.setGeometry(QtCore.QRect(30, 10, 841, 51))
+        self.hautWidget.setObjectName("hautWidget")
+        self.hautLayout = QtWidgets.QHBoxLayout(self.hautWidget)
+        self.hautLayout.setContentsMargins(0, 0, 0, 0)
+        self.hautLayout.setObjectName("hautLayout")
+        ## Recherche d'apres Langue 
+        self.lb_langue = QtWidgets.QLabel(u"Langue:", self.hautWidget)
+        self.lb_langue.setObjectName("lb_langue")
+        self.hautLayout.addWidget(self.lb_langue)
+        self.comboB_langue = QtWidgets.QComboBox(self.hautWidget)
+        self.comboB_langue.setObjectName("comboB_langue")
+        self.comboB_langue.addItems(langues)
+        self.comboB_langue.activated.connect(self.active_text)
+        self.hautLayout.addWidget(self.comboB_langue)
+        ## Recherche d'apres Mot
+        self.lb_mot = QtWidgets.QLabel(u"Mot:", self.hautWidget)
+        self.lb_mot.setObjectName("lb_mot")
+        self.hautLayout.addWidget(self.lb_mot)
+        self.lineE_mot = QtWidgets.QLineEdit(self.hautWidget)
+        self.lineE_mot.setObjectName("lineE_mot")
+        self.lineE_mot.textEdited.connect(self.active_text)
+        self.hautLayout.addWidget(self.lineE_mot)
+        ## Recherche d'apres Theme
+        self.lb_theme = QtWidgets.QLabel(u"Thème:", self.hautWidget)
+        self.lb_theme.setObjectName("lb_theme")
+        self.hautLayout.addWidget(self.lb_theme)
+        self.lineE_theme = QtWidgets.QLineEdit(self.hautWidget)
+        self.lineE_theme.setObjectName("lineE_theme")
+        self.lineE_theme.textEdited.connect(self.active_text)
+        self.hautLayout.addWidget(self.lineE_theme)        
         ## Layout au milieu
         self.milieuWidget = QtWidgets.QWidget(self.rechercheDialog)
-        self.milieuWidget.setGeometry(QtCore.QRect(280, 130, 674, 42))
+        self.milieuWidget.setGeometry(QtCore.QRect(30, 70, 841, 41))
         self.milieuWidget.setObjectName("milieuWidget")
-        self.mBoxlayout = QtWidgets.QHBoxLayout(self.milieuWidget)
-        self.mBoxlayout.setContentsMargins(0, 0, 0, 0)
-        self.mBoxlayout.setObjectName("mBoxlayout")
-        ## Checkbox pour decider la recherche floue ou pas 
-        self.chkFloue = QtWidgets.QCheckBox(u"Recherche floue", self.milieuWidget)
-        self.chkFloue.setObjectName("chkFloue")
-        self.chkFloue.setEnabled(False)
-        self.mBoxlayout.addWidget(self.chkFloue)
-        ## Button pour lancer la recherche
-        self.btnLancer = QtWidgets.QPushButton(u"Lancer la recherche", self.milieuWidget)
-        self.btnLancer.setObjectName("btnLancer")
-        self.btnLancer.clicked.connect(self.lancer_recherche)
-        self.mBoxlayout.addWidget(self.btnLancer)
-        ## Button pour effacer les champs de recherche
-        self.btnEffacer = QtWidgets.QPushButton(u"Effacer la recherche", self.milieuWidget)
-        self.btnEffacer.setObjectName("btnEffacer")
-        self.btnEffacer.setEnabled(False)
-        self.btnEffacer.clicked.connect(self.click_btnEffacer) 
-        self.mBoxlayout.addWidget(self.btnEffacer)
-        ## Layout en haut, c'est un Gridlayout
-        self.hautWidget = QtWidgets.QWidget(self.rechercheDialog)
-        self.hautWidget.setGeometry(QtCore.QRect(15, 20, 941, 91))
-        self.hautWidget.setObjectName("hautWidget")
-        self.hGridlayout = QtWidgets.QGridLayout(self.hautWidget)
-        self.hGridlayout.setContentsMargins(0, 0, 0, 0)
-        self.hGridlayout.setObjectName("hGridlayout")
-        ## L'un des sous-layouts en haut 
-        self.hBoxlayout1 = QtWidgets.QHBoxLayout()
-        self.hBoxlayout1.setObjectName("hBoxlayout1")
-        ## ComboBox1 pour choisir un condition de recherche: Mot, Langue, Traduction, Phrase; Mot par defaut
-        self.cmbCondt1 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbCondt1.setObjectName("cmbCondt1")
-        self.cmbCondt1.addItems(CondtPara)
-        self.cmbCondt1.setCurrentIndex(0)
-        self.cmbCondt1.activated.connect(self.active_cmbCondt1)
-        self.hBoxlayout1.addWidget(self.cmbCondt1)
-        ## LineEdit1 pour recu l'input de ComboBox1
-        self.leditCondtV1 = QtWidgets.QLineEdit(self.hautWidget)
-        self.leditCondtV1.setObjectName("leditCondtV1")
-        self.leditCondtV1.textEdited.connect(self.active_cmbCondt1)
-        self.hBoxlayout1.addWidget(self.leditCondtV1)
-        ## ComboBoxEtOu1 pour choisir 'Et' et 'Ou'
-        self.cmbEtOu1 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbEtOu1.setObjectName("cmbEtOu1")
-        self.cmbEtOu1.addItems(EtOuPara)
-        self.cmbEtOu1.setCurrentIndex(0)
-        self.cmbEtOu1.setEnabled(False)
-        self.cmbEtOu1.activated.connect(self.active_cmbCondt2)
-        self.hBoxlayout1.addWidget(self.cmbEtOu1)
-        ## ComboBox2 pour choisir un condition de recherche: Mot, Langue, Traduction, Phrase; Langue par defaut
-        self.cmbCondt2 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbCondt2.setObjectName("cmbCondt2")
-        self.cmbCondt2.addItems(CondtPara)
-        self.cmbCondt2.setCurrentIndex(1)
-        self.cmbCondt2.setEnabled(False)
-        self.cmbCondt2.activated.connect(self.active_cmbCondt2)
-        self.hBoxlayout1.addWidget(self.cmbCondt2)
-        ## LineEdit2 pour recu l'input de ComboBox2
-        self.leditCondtV2 = QtWidgets.QLineEdit(self.hautWidget)
-        self.leditCondtV2.setObjectName("leditCondtV2")
-        self.leditCondtV2.setEnabled(False)
-        self.leditCondtV2.textEdited.connect(self.active_cmbCondt2)
-        self.hBoxlayout1.addWidget(self.leditCondtV2)
-        self.hGridlayout.addLayout(self.hBoxlayout1, 1, 1, 1, 1)
-        ## L'autre des sous-layouts en haut 
-        self.hBoxlayout2 = QtWidgets.QHBoxLayout()
-        self.hBoxlayout2.setObjectName("hBoxlayout2")
-        ## ComboBox3 pour choisir un condition de recherche: Mot, Langue, Traduction, Phrase; Traduction par defaut
-        self.cmbCondt3 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbCondt3.setObjectName("cmbCondt3")
-        self.cmbCondt3.addItems(CondtPara)
-        self.cmbCondt3.setCurrentIndex(2)
-        self.cmbCondt3.setEnabled(False)
-        self.cmbCondt3.activated.connect(self.active_cmbCondt3)
-        self.hBoxlayout2.addWidget(self.cmbCondt3)
-        ## LineEdit3 pour recu l'input de ComboBox3
-        self.leditCondtV3 = QtWidgets.QLineEdit(self.hautWidget)
-        self.leditCondtV3.setObjectName("leditCondtV3")
-        self.leditCondtV3.setEnabled(False)
-        self.leditCondtV3.textEdited.connect(self.active_cmbCondt3)
-        self.hBoxlayout2.addWidget(self.leditCondtV3)
-        ## ComboBoxEtOu3 pour choisir 'Et' et 'Ou'
-        self.cmbEtOu3 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbEtOu3.setObjectName("cmbEtOu3")
-        self.cmbEtOu3.addItems(EtOuPara)
-        self.cmbEtOu3.setEnabled(False)
-        self.hBoxlayout2.addWidget(self.cmbEtOu3)
-        ## ComboBox4 pour choisir un condition de recherche: Mot, Langue, Traduction, Phrase; Phrase par defaut
-        self.cmbCondt4 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbCondt4.setObjectName("cmbCondt4")
-        self.cmbCondt4.addItems(CondtPara)
-        self.cmbCondt4.setCurrentIndex(3)
-        self.cmbCondt4.setEnabled(False)
-        self.hBoxlayout2.addWidget(self.cmbCondt4)
-        ## LineEdit4 pour recu l'input de ComboBox4
-        self.leditCondtV4 = QtWidgets.QLineEdit(self.hautWidget)
-        self.leditCondtV4.setObjectName("leditCondtV4")
-        self.leditCondtV4.setEnabled(False)
-        self.hBoxlayout2.addWidget(self.leditCondtV4)
-        self.hGridlayout.addLayout(self.hBoxlayout2, 2, 1, 1, 1)
-        ## ComboBoxEtOu2 pour choisir 'Et' et 'Ou', Attention: il est dans le Gridlayout
-        self.cmbEtOu2 = QtWidgets.QComboBox(self.hautWidget)
-        self.cmbEtOu2.setObjectName("cmbEtOu2")
-        self.cmbEtOu2.addItems(EtOuPara)
-        self.cmbEtOu2.setEnabled(False)
-        self.cmbEtOu2.activated.connect(self.active_cmbCondt3)
-        self.hGridlayout.addWidget(self.cmbEtOu2, 2, 0, 1, 1)
+        self.milieuLayout = QtWidgets.QHBoxLayout(self.milieuWidget)
+        self.milieuLayout.setContentsMargins(0, 0, 0, 0)
+        self.milieuLayout.setObjectName("milieuLayout")
+        ## Recherche d'apres Traduction
+        self.lb_tra = QtWidgets.QLabel(u"Traduction:", self.milieuWidget)
+        self.lb_tra.setObjectName("lb_tra")
+        self.milieuLayout.addWidget(self.lb_tra)
+        self.lineE_tra = QtWidgets.QLineEdit(self.milieuWidget)
+        self.lineE_tra.setObjectName("lineE_tra")
+        self.lineE_tra.textEdited.connect(self.active_text)
+        self.milieuLayout.addWidget(self.lineE_tra)
+        ## Recherche d'apres Phrase
+        self.lb_phrase = QtWidgets.QLabel(u"Phrase:", self.milieuWidget)
+        self.lb_phrase.setObjectName("lb_phrase")
+        self.milieuLayout.addWidget(self.lb_phrase)
+        self.lineE_phrase = QtWidgets.QLineEdit(self.milieuWidget)
+        self.lineE_phrase.setObjectName("lineE_phrase")
+        self.lineE_phrase.textEdited.connect(self.active_text)
+        self.milieuLayout.addWidget(self.lineE_phrase)
+        ## Layout en bas
+        self.basWidget = QtWidgets.QWidget(self.rechercheDialog)
+        self.basWidget.setGeometry(QtCore.QRect(110, 142, 761, 42))
+        self.basWidget.setObjectName("widget2")
+        self.basLayout = QtWidgets.QHBoxLayout(self.basWidget)
+        self.basLayout.setContentsMargins(0, 0, 0, 0)
+        self.basLayout.setObjectName("basLayout")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.basLayout.addItem(spacerItem)
+        self.checkB_floue = QtWidgets.QCheckBox(u"Recherche floue", self.basWidget)
+        self.checkB_floue.setObjectName("checkB_floue")
+        self.basLayout.addWidget(self.checkB_floue)
+        self.btn_lancer = QtWidgets.QPushButton(u"Lancer la recherche", self.basWidget)
+        self.btn_lancer.setObjectName("btn_lancer")
+        self.btn_lancer.clicked.connect(self.click_btn_lancer)
+        self.basLayout.addWidget(self.btn_lancer)
+        self.btn_effacer = QtWidgets.QPushButton(u"Effacer la recherche", self.basWidget)
+        self.btn_effacer.setObjectName("btn_effacer")
+        self.btn_effacer.setEnabled(False)
+        self.btn_effacer.clicked.connect(self.click_btn_effacer)
+        self.basLayout.addWidget(self.btn_effacer)        
+        ## Textbrower pour afficher les resultats de recherche
+        self.textBrowser_resultat = QtWidgets.QTextBrowser(self.rechercheDialog)
+        self.textBrowser_resultat.setGeometry(QtCore.QRect(20, 200, 851, 371))
+        self.textBrowser_resultat.setObjectName("textBrowser_resultat")   
     def show(self):
         # ouverture de la fenetre
         self.rechercheDialog.show()
-    def click_btnEffacer(self):
-        self.textbrowserResultat.clear()
-        self.cmbEtOu1.setCurrentIndex(0)
-        self.cmbEtOu1.setEnabled(False)
-        self.cmbEtOu2.setCurrentIndex(0)
-        self.cmbEtOu2.setEnabled(False)
-        self.cmbEtOu3.setCurrentIndex(0)
-        self.cmbEtOu3.setEnabled(False)
-        self.chkFloue.setChecked(False)
-        self.chkFloue.setEnabled(False)
-        self.leditCondtV1.clear()
-        self.leditCondtV2.clear()
-        self.leditCondtV2.setEnabled(False)
-        self.leditCondtV3.clear()
-        self.leditCondtV3.setEnabled(False)
-        self.leditCondtV4.clear()
-        self.leditCondtV4.setEnabled(False)
-        self.cmbCondt1.setCurrentIndex(0)
-        self.cmbCondt2.setCurrentIndex(1)
-        self.cmbCondt2.setEnabled(False)
-        self.cmbCondt3.setCurrentIndex(2)
-        self.cmbCondt3.setEnabled(False)
-        self.cmbCondt4.setCurrentIndex(3)
-        self.cmbCondt4.setEnabled(False)
-        self.btnEffacer.setEnabled(False)
-    def active_cmbCondt1(self):
-        self.chkFloue.setEnabled(True)
-        self.btnEffacer.setEnabled(True)
-        self.cmbEtOu1.setEnabled(True)
-        self.cmbCondt2.setEnabled(True)
-        self.leditCondtV2.setEnabled(True)
-    def active_cmbCondt2(self):
-        self.cmbEtOu2.setEnabled(True)
-        self.cmbCondt3.setEnabled(True)
-        self.leditCondtV3.setEnabled(True)
-    def active_cmbCondt3(self):
-        self.cmbEtOu3.setEnabled(True)
-        self.cmbCondt4.setEnabled(True)
-        self.leditCondtV4.setEnabled(True)
-    def quit(self):
-        exit(0)
-    def lancer_recherche(self):
-        if self.chkFloue.isChecked:
-            floue = True
+    def active_text(self):
+        self.btn_effacer.setEnabled(True)
+    def click_btn_effacer(self):
+        self.textBrowser_resultat.clear()
+        self.comboB_langue.setCurrentIndex(0)
+        self.lineE_mot.clear()
+        self.lineE_theme.clear()
+        self.lineE_tra.clear()
+        self.lineE_phrase.clear()
+        self.checkB_floue.setChecked(False)
+        self.btn_effacer.setEnabled(False)
+    def click_btn_lancer(self):
+        self.textBrowser_resultat.clear()
+        self.btn_effacer.setEnabled(True)
+        result = rechercheFonct.recherche(str(self.comboB_langue.currentText()), str(self.lineE_mot.text()), str(self.lineE_theme.text()), str(self.lineE_tra.text()), str(self.lineE_phrase.text()), self.checkB_floue.isChecked())
+        if len(result) == 0:
+            self.textBrowser_resultat.append("Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots")
         else:
-            floue = False
-        condt1 = str(self.cmbCondt1.currentText())
-        condtV1 = str(self.leditCondtV1.text())
-        etou1 = str(self.cmbEtOu1.currentText())
-        condt2 = str(self.cmbCondt2.currentText())
-        condtV2 = str(self.leditCondtV2.text())
-        etou2 = str(self.cmbEtOu2.currentText())
-        condt3 = str(self.cmbCondt3.currentText())
-        condtV3 = str(self.leditCondtV3.text())
-        etou3 = str(self.cmbEtOu3.currentText())
-        condt4 = str(self.cmbCondt4.currentText())
-        condtV4 = str(self.leditCondtV4.text())
-        resultat = rechercheFonct.recherche(floue, condt1, condtV1, etou1, condt2, condtV2, etou2, condt3, condtV3, etou3, condt4, condtV4)
-        if len(resultat) == 0:
-            self.textbrowserResultat.append("Aucun document ne correspond aux termes de recherche spécifiés (). Vous pouvez essayer d'autres mots")
-        else:
-            self.textbrowserResultat.append('\n'.join(str(resultat[k]) for k in range(len(resultat))))
+            for item in result:
+                self.textBrowser_resultat.append('ID: {}   MOT: {}   THEME: {} \nTRADUCTION: {} \nEXEMPLE: {} \n\n'.format(item.name, item.word, item.thema, item.trad, item.exemple))
+    def close(self):
+        self.rechercheDialog.close()   
 
-        
-        
-        
-        
+
 
 if __name__ == "__main__":
     args=sys.argv

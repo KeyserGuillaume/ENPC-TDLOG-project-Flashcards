@@ -9,12 +9,10 @@ cardsToGoOver=["echarpe","amour", "..."]  # entre 5 et 9
 cardsKnown=["bonjour","bienvenue", "..."] # 10
 
 from PyQt5 import QtCore, QtWidgets
-
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox
-
 import sys
 
-import createcardsInterf, database, flashcard
+import createcardsInterf, database, flashcard, rechercheInterf
 
 class HomeScreen(object):
     def __init__(self, givenLayout):
@@ -197,7 +195,8 @@ class WelcomeInterf(object):
         self.selectedcard=None
         self.modifInterf=None
         self.modifyButton.clicked.connect(self.modifycard)
-        #self.searchButton.clicked.connect()
+        self.searchInterf = None
+        self.searchButton.clicked.connect(self.search)
 
     def show(self):
         # ouverture de la fenetre
@@ -212,6 +211,12 @@ class WelcomeInterf(object):
         # ouverture de linterface de modification
         self.modifInterf=createcardsInterf.CardModification(self.selectedcard)
         self.modifInterf.show()
+    def search(self):
+        self.searchInterf = rechercheInterf.Recherche()
+        tosearch=self.searchBar.text()
+        self.searchInterf.lineE_mot.setText(tosearch)
+        self.searchInterf.click_btn_lancer()
+        self.searchInterf.show()
 
 
 if __name__ == "__main__":

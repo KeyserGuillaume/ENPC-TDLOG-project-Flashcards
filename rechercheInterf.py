@@ -125,19 +125,21 @@ class Recherche(object):
     def close(self):
         self.rechercheDialog.close()   
 
-
+def DoSearch():
+    args = sys.argv
+    a = QApplication(args)
+    mf = Recherche()
+    mf.show()
+    a.exec_()
+    a.lastWindowClosed.connect(a.quit)
 
 if __name__ == "__main__":
     args=sys.argv
     a = QApplication(args)
     re = Recherche()
     re.show()
-    # appliquer les regles souhaitees
-    resultat = a.exec_()
-    #a.exec_()
+    a.exec_()
     a.lastWindowClosed.connect(a.quit)
-    #mf.quit()
-    #sys.exit(resultat)
  
 
 

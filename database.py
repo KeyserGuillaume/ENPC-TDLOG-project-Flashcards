@@ -122,6 +122,16 @@ def getCardById(language, name):
         return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
     conn.close()
 
+## donne les cartes avec maitrise < level
+def getCardsToLearn(language, level):
+    result = []
+    conn = connDB()
+    cursor = conn.execute("SELECT * from {} where MAITRISE <= {}".format(language.upper(), level))
+    for row in cursor:
+        result.append(flashcard.FlashCards(*row))
+    conn.close()
+    return result
+
 def removeCard(language, name):
     conn=connDB()
     conn.execute("DELETE from {} where id = {};".format(language.upper(), name))
@@ -142,6 +152,16 @@ def getCardsWithAttribute(language, attributeName, attribute):
     conn=connDB()
     cursor=conn.execute("SELECT id from {} where {} = '{}'".format(language.upper(), attributeName, attribute))
     result=[row[0] for row in cursor]
+    conn.close()
+    return result
+
+## retourne la flash Card complete selon le critere d'egalite donne
+def getCompleteCardsWithAttribute(language, attributeName, attribute):
+    result = []
+    conn=connDB()
+    cursor=conn.execute("SELECT * from {} where {} = '{}'".format(language.upper(), attributeName, attribute))
+    for row in cursor:
+        result.append(flashcard.FlashCards(*row))
     conn.close()
     return result
 

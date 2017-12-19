@@ -1,11 +1,20 @@
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 import sys
-
+import database
 from random import randrange
 
-ListCartesEnJeu=["suspendre","remuer","amour","bonjour","douche","rideau","empreinte","carafe"]
-ListTradsEnJeu=["sling","dwell","love","hello","shower","curtain","mark","carafe"]
+CartesEnJeu=database.getCardsToLearn('anglais',9)
+#ListCartesEnJeu=["suspendre","remuer","amour","bonjour","douche","rideau","empreinte","carafe"]
+#ListTradsEnJeu=["sling","dwell","love","hello","shower","curtain","mark","carafe"]
+
+#### match (meme carte) entre mot et trad dans cet ordre
+def match(text1,text2):
+    answer=False
+    matching=database.getCompleteCardsWithAttribute('anglais', 'mot', text1)
+    for card in matching:
+        answer = answer or (text2==card.trad)
+    return answer
 
 class ButtonToDrag(QPushButton):
     def __init__(self, nom, place):
@@ -19,28 +28,29 @@ class ButtonToDrag(QPushButton):
         drag = QtGui.QDrag(self)
         drag.setMimeData(mimeData)
         drag.exec_(QtCore.Qt.MoveAction)
-        print("moving...")
+        #print("moving...")
 
     # event on a bougé la carte sur une autre carte
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
             event.setDropAction(QtCore.Qt.MoveAction)
             event.accept()
-            print("dragging... ")
+            #print("dragging... ")
         else:
             event.ignore()
 
     def dropEvent(self, event):
         if event.mimeData().hasText():
-            event.acceptProposedAction()
             cardSource = event.source()
-            print("droping...")
-            # bouge les 2 cartes dans le coin en haut à gauche
-            # dans tous les cas pour l'instant (juste ou nom)
-            # il faut maintenant tester que trad !
-            self.move(event.pos())
-            cardSource.move(event.pos())
-            event.accept()
+            #print("droping...")
+            # bouge les 2 cartes dans le coin en haut à gauche si elles coincident
+            if match(cardSource.text(),self.text()) or match(self.text(),cardSource.text()) :
+                event.acceptProposedAction()
+                self.move(event.pos())
+                cardSource.move(event.pos())
+                event.accept()
+            else:
+                event.ignore()
         else:
             event.ignore()
 
@@ -52,15 +62,14 @@ class TestRelie(object):
         self.Dialog.setObjectName("Jeu de reliage")
         self.Dialog.setWindowTitle("Drag and Drop")
         self.Dialog.setFixedSize(633, 415)
-        self.myCards=ListCartesEnJeu
-        for i,carte in enumerate(ListCartesEnJeu) :
-            self.myCards[i]=ButtonToDrag(carte, self.Dialog)
+        self.myCards = CartesEnJeu
+        self.myTrads = CartesEnJeu
+        for i,carte in enumerate(CartesEnJeu) :
+            self.myCards[i]=ButtonToDrag(carte.word, self.Dialog)
             myx=randrange(5,520,1)
             myy=randrange(5,380,1)
             self.myCards[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
-        self.myTrads = ListTradsEnJeu
-        for i, carte in enumerate(ListTradsEnJeu):
-            self.myTrads[i] = ButtonToDrag(carte, self.Dialog)
+            self.myTrads[i] = ButtonToDrag(carte.trad, self.Dialog)
             myx = randrange(5, 520, 1)
             myy = randrange(5, 380, 1)
             self.myTrads[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))

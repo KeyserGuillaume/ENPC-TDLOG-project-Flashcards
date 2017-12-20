@@ -122,11 +122,11 @@ def getCardById(language, name):
         return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
     conn.close()
 
-## donne les cartes avec maitrise < level
-def getCardsToLearn(language, level):
+## donne les cartes avec givenleveldown <= maitrise <= givenlevelup
+def getCardsToLearn(language, givenleveldown, givenlevelup):
     result = []
     conn = connDB()
-    cursor = conn.execute("SELECT * from {} where MAITRISE <= {}".format(language.upper(), level))
+    cursor = conn.execute("SELECT * from {} where MAITRISE <= {} and MAITRISE >= {}".format(language.upper(), givenlevelup, givenleveldown))
     for row in cursor:
         result.append(flashcard.FlashCards(*row))
     conn.close()

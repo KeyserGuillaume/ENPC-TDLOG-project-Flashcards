@@ -1,19 +1,53 @@
 #interface global à afficher à l'ouverture
-
-### contenus de carte à aller recuperer dans la database : comment ?
-# sur le niveau de maitrise ?
-## les listes suivantes doivent OBLIGATOIREMENT contenir au moins 2 items (len>1)
-## dans le cas contraire on les complète par "..."
-cardsToLearn=["suspendre","remuer","..."] # entre 0 et 4
-cardsToGoOver=["echarpe","amour", "..."]  # entre 5 et 9
-cardsKnown=["bonjour","bienvenue", "..."] # 10
-
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard
 
+
+### traitement des listes d'apprentissage
+Table='anglais'
+# entre 0 et 4
+cardsToLearn=database.getCardsToLearn(Table,0,4)
+#cardsToLearn=["suspendre","remuer","..."]
+ # entre 5 et 9
+cardsToGoOver=database.getCardsToLearn(Table,5,9)
+#cardsToGoOver=["echarpe","amour", "..."]
+# 10
+cardsKnown=database.getCardsToLearn(Table,10,10)
+#cardsKnown=["bonjour","bienvenue", "..."]
+
+
+### les boutons de commande connecté a l'interface de lecture
+## gere quand les listes conteniennent moins de 3 items (len<3)
+class ConnectedButton(QCommandLinkButton):
+    def __init__(self, cardlist, rank, place, name):
+        self.cardlist=cardlist
+        self.rank=rank
+        super(ConnectedButton, self).__init__(place)
+        self.setObjectName(name)
+        self.LinkedInterf = None
+        if len(self.cardlist) == 0 : ## pas assez d'elements dans la liste
+           self.rank=3
+        if len(self.cardlist) == 1 and rank>0 : ## pas assez d'elements dans la liste
+           self.rank=3
+        if len(self.cardlist) == 2 and rank>1 : ## pas assez d'elements dans la liste
+            self.rank = 3
+
+        if self.rank<=1:
+            self.setText(cardlist[self.rank].word)
+        else:
+            self.setText("...")
+
+
+    def open(self):
+        if self.rank<3:
+            # ouverture de l interface de lecture de cartes
+            self.LinkedInterf = viewCard.ViewDialog(self.rank, self.cardlist)
+            self.LinkedInterf.show()
+
+## l'ecran d'accueil interne avec des onglets
 class HomeScreen(object):
     def __init__(self, givenLayout):
         # la boite a onglets
@@ -48,7 +82,7 @@ class HomeScreen(object):
         # selection de l'onglet principal
         self.ongletsAccueil.setCurrentIndex(0)
 
-
+## la fenetre principale
 class WelcomeInterf(object):
     def __init__(self):
         # la fenetre
@@ -124,51 +158,33 @@ class WelcomeInterf(object):
         self.learnlabel.setObjectName("learnlabel")
         self.learnlabel.setText("  Cards to learn")
         self.barreResume.addWidget(self.learnlabel)
-        self.learn1 = QCommandLinkButton(self.ResumeBox)
-        self.learn1.setObjectName("learn1")
-        self.learn1.setText(cardsToLearn[0])
+        self.learn1 = ConnectedButton(cardsToLearn, 0, self.ResumeBox, "learn1")
         self.barreResume.addWidget(self.learn1)
-        self.learn2 = QCommandLinkButton(self.ResumeBox)
-        self.learn2.setObjectName("learn2")
-        self.learn2.setText(cardsToLearn[1])
+        self.learn2 = ConnectedButton(cardsToLearn, 1, self.ResumeBox, "learn2")
         self.barreResume.addWidget(self.learn2)
-        self.learn3 = QCommandLinkButton(self.ResumeBox)
-        self.learn3.setObjectName("learn3")
-        self.learn3.setText("...")
+        self.learn3 = ConnectedButton(cardsToLearn, 2, self.ResumeBox, "learn3")
         self.barreResume.addWidget(self.learn3)
         # label cartes a revoir et les 3 boutons carte associés
         self.overlabel = QLabel(self.ResumeBox)
         self.overlabel.setObjectName("overlabel")
         self.overlabel.setText("  Cards to go over")
         self.barreResume.addWidget(self.overlabel)
-        self.over1 = QCommandLinkButton(self.ResumeBox)
-        self.over1.setObjectName("over1")
-        self.over1.setText(cardsToGoOver[0])
+        self.over1 = ConnectedButton(cardsToGoOver, 0, self.ResumeBox, "over1")
         self.barreResume.addWidget(self.over1)
-        self.over2 = QCommandLinkButton(self.ResumeBox)
-        self.over2.setObjectName("over2")
-        self.over2.setText(cardsToGoOver[1])
+        self.over2 = ConnectedButton(cardsToGoOver, 1, self.ResumeBox, "over2")
         self.barreResume.addWidget(self.over2)
-        self.over3 = QtWidgets.QCommandLinkButton(self.ResumeBox)
-        self.over3.setObjectName("over3")
-        self.over3.setText("...")
+        self.over3 = ConnectedButton(cardsToGoOver, 2, self.ResumeBox, "over3")
         self.barreResume.addWidget(self.over3)
         # label cartes bien connues et les 3 boutons carte associés
         self.knowledgelabel = QLabel(self.ResumeBox)
         self.knowledgelabel.setObjectName("knowledgelabel")
         self.knowledgelabel.setText("  Cards known")
         self.barreResume.addWidget(self.knowledgelabel)
-        self.know1 = QCommandLinkButton(self.ResumeBox)
-        self.know1.setObjectName("know1")
-        self.know1.setText(cardsKnown[0])
+        self.know1 = ConnectedButton(cardsKnown, 0, self.ResumeBox, "know1")
         self.barreResume.addWidget(self.know1)
-        self.know2 = QCommandLinkButton(self.ResumeBox)
-        self.know2.setObjectName("know2")
-        self.know2.setText(cardsKnown[1])
+        self.know2 = ConnectedButton(cardsKnown, 1, self.ResumeBox, "know2")
         self.barreResume.addWidget(self.know2)
-        self.know3 = QCommandLinkButton(self.ResumeBox)
-        self.know3.setObjectName("know3")
-        self.know3.setText("...")
+        self.know3 = ConnectedButton(cardsKnown, 2, self.ResumeBox, "know3")
         self.barreResume.addWidget(self.know3)
         # une ligne de séparation horizontale
         self.line2 = QFrame(self.ResumeBox)
@@ -200,6 +216,15 @@ class WelcomeInterf(object):
         self.modifyButton.clicked.connect(self.modifycard)
         self.searchInterf = None
         self.searchButton.clicked.connect(self.search)
+        self.learn1.clicked.connect(self.learn1.open)
+        self.learn2.clicked.connect(self.learn2.open)
+        self.learn3.clicked.connect(self.learn3.open)
+        self.over1.clicked.connect(self.over1.open)
+        self.over2.clicked.connect(self.over2.open)
+        self.over3.clicked.connect(self.over3.open)
+        self.know1.clicked.connect(self.know1.open)
+        self.know2.clicked.connect(self.know2.open)
+        self.know3.clicked.connect(self.know3.open)
 
     def show(self):
         # ouverture de la fenetre
@@ -220,7 +245,6 @@ class WelcomeInterf(object):
         self.searchInterf.lineE_mot.setText(tosearch)
         self.searchInterf.click_btn_lancer()
         self.searchInterf.show()
-
 
 if __name__ == "__main__":
     args = sys.argv

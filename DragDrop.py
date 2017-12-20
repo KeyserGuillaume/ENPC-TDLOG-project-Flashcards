@@ -6,7 +6,7 @@ from random import randrange
 
 Table='anglais'
 ### cartes concernées par le jeu
-CartesEnJeu=database.getCardsToLearn(Table,9)
+CartesEnJeu=database.getCardsToLearn(Table,0,9)
 #ListCartesEnJeu=["suspendre","remuer","amour","bonjour","douche","rideau","empreinte","carafe"]
 #ListTradsEnJeu=["sling","dwell","love","hello","shower","curtain","mark","carafe"]
 

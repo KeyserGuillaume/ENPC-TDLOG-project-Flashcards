@@ -37,7 +37,7 @@ class parcoursLanguesFolder(object):
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(0, 0, 0, 0)
         self.folderGrid.setObjectName("folderGrid")
-        self.myfolders = AllLangages
+        self.myfolders = AllLangages.copy()
         for i, langue in enumerate(AllLangages):
             self.myfolders[i] = LangageButton(langue, self.gridWidget)
             # 4 dossiers par ligne
@@ -49,7 +49,8 @@ class parcoursLanguesFolder(object):
             self.myfolders[i].clicked.connect(self.myfolders[i].openChosenCard)
 
 class CardButton(QPushButton):
-    def __init__(self, card, place):
+    def __init__(self, card, cardslist, place):
+        self.allcards=cardslist
         self.lacarte=card
         super(CardButton, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(151, 111))
@@ -60,7 +61,7 @@ class CardButton(QPushButton):
 
     def openChosenCard(self):
         # ouverture de l interface de parcours de cartes
-        self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1)
+        self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
         self.CardInterf.show()
 
 class parcoursChosenCards(object):
@@ -78,9 +79,9 @@ class parcoursChosenCards(object):
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(0, 0, 0, 0)
         self.folderGrid.setObjectName("folderGrid")
-        self.mycards = self.cardslist
+        self.mycards = self.cardslist.copy()
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButton(carte, self.gridWidget)
+            self.mycards[i] = CardButton(carte, self.cardslist, self.gridWidget)
             # 5 dossiers par ligne
             row = i/5
             column = i%5

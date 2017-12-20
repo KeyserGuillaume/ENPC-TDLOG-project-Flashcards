@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file>speaker.png</file>
+    <file>picture.png</file>
     <file>edit.png</file>
     <file>next.png</file>
     <file>previous.png</file>
@@ -11,5 +13,9 @@
     <file>pointTo.png</file>
     <file>dragdrop.png</file>
     <file>dossier.png</file>
+  </qresource>
+  <qresource prefix="fond">
+    <file>notebook.jpg</file>
+    <file>blackboard.jpg</file>
   </qresource>
 </RCC>

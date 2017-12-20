@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf
+import createcardsInterf, database, flashcard, rechercheInterf, parcours
 
 class HomeScreen(object):
     def __init__(self, givenLayout):
@@ -26,12 +26,14 @@ class HomeScreen(object):
         self.MesCartes = QWidget()
         self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
         self.MesCartes.setObjectName("MesCartes")
+        folders = parcours.parcoursLanguesFolder( self.MesCartes)
         self.ongletsAccueil.addItem(self.MesCartes, "")
         self.ongletsAccueil.setItemText(self.ongletsAccueil.indexOf(self.MesCartes),"Mes Cartes")
         # onglet 2
         self.MesJeux = QWidget()
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
+        iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
         self.ongletsAccueil.addItem(self.MesJeux, "")
         self.ongletsAccueil.setItemText(self.ongletsAccueil.indexOf(self.MesJeux), "Mes Jeux")
         self.mainpage.addWidget(self.ongletsAccueil)

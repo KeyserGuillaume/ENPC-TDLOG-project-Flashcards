@@ -1,95 +1,91 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout
+import sys
+import database
+
+import DragDrop
+
+from icons import icons
+# permet l'accès aux images des icones
+
+AllLangages = database.giveAllLanguages()
 
 _root = QtCore.QFileInfo(__file__).absolutePath()
 
-from icons import icons
+class parcoursLanguesFolder(object):
+    def __init__(self, Dialog):
+        Dialog.resize(685, 430)
+        self.gridWidget = QWidget(Dialog)
+        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
+        self.gridWidget.setObjectName("grille de placement")
+        self.folderGrid = QGridLayout(self.gridWidget)
+        self.folderGrid.setContentsMargins(0, 0, 0, 0)
+        self.folderGrid.setObjectName("folderGrid")
+        self.myfolders = AllLangages
+        for i, langue in enumerate(AllLangages):
+            self.myfolders[i] = QPushButton(langue, self.gridWidget)
+            self.myfolders[i].setMinimumSize(QtCore.QSize(101, 91))
+            self.myfolders[i].setMaximumSize(QtCore.QSize(101, 91))
+            self.myfolders[i].setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
+            self.myfolders[i].setObjectName(langue)
+            row = i/4
+            column = i%4
+            self.folderGrid.addWidget(self.myfolders[i], row, column, 1, 1)
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
+
+class parcoursIconsGame(object):
+    def __init__(self, Dialog):
         Dialog.resize(663, 406)
-        self.gridLayoutWidget = QtWidgets.QWidget(Dialog)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
-        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setObjectName("gridLayout")
-        self.pushButton = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton.setMinimumSize(QtCore.QSize(101, 91))
-        self.pushButton.setMaximumSize(QtCore.QSize(101, 91))
-        self.pushButton.setStyleSheet("background-image: url(:/icons/dossier.png);\n"
-"font: 75 14pt \"Arial\";")
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 0, 0, 1, 1)
-        self.pushButton_4 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_4.setMinimumSize(QtCore.QSize(101, 101))
-        self.pushButton_4.setMaximumSize(QtCore.QSize(101, 101))
-        self.pushButton_4.setStyleSheet("background-image: url(:/icons/dragdrop.png);")
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout.addWidget(self.pushButton_4, 1, 2, 1, 1)
-        self.pushButton_6 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_6.setMinimumSize(QtCore.QSize(101, 91))
-        self.pushButton_6.setMaximumSize(QtCore.QSize(101, 91))
-        self.pushButton_6.setStyleSheet("background-image: url(:/icons/dossier.png);\n"
-"font: 75 14pt \"Arial\";")
-        self.pushButton_6.setObjectName("pushButton_6")
-        self.gridLayout.addWidget(self.pushButton_6, 0, 1, 1, 1)
-        self.pushButton_7 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_7.setMinimumSize(QtCore.QSize(101, 91))
-        self.pushButton_7.setMaximumSize(QtCore.QSize(101, 91))
-        self.pushButton_7.setStyleSheet("background-image: url(:/icons/dossier.png);\n"
-"font: 75 14pt \"Arial\";")
-        self.pushButton_7.setObjectName("pushButton_7")
-        self.gridLayout.addWidget(self.pushButton_7, 0, 2, 1, 1)
-        self.pushButton_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_2.setMinimumSize(QtCore.QSize(101, 101))
-        self.pushButton_2.setMaximumSize(QtCore.QSize(101, 101))
-        self.pushButton_2.setStyleSheet("background-image: url(:/icons/memory.png);")
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout.addWidget(self.pushButton_2, 1, 0, 1, 1)
-        self.pushButton_3 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_3.setMinimumSize(QtCore.QSize(101, 101))
-        self.pushButton_3.setMaximumSize(QtCore.QSize(101, 101))
-        self.pushButton_3.setStyleSheet("background-image: url(:/icons/hotcold.png);")
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout.addWidget(self.pushButton_3, 1, 1, 1, 1)
-        self.pushButton_5 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_5.setMinimumSize(QtCore.QSize(131, 101))
-        self.pushButton_5.setMaximumSize(QtCore.QSize(131, 101))
-        self.pushButton_5.setStyleSheet("background-image: url(:/icons/pointTo.png);")
-        self.pushButton_5.setObjectName("pushButton_5")
-        self.gridLayout.addWidget(self.pushButton_5, 1, 3, 1, 1)
-        self.pushButton_8 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.pushButton_8.setMinimumSize(QtCore.QSize(101, 91))
-        self.pushButton_8.setMaximumSize(QtCore.QSize(101, 91))
-        self.pushButton_8.setStyleSheet("background-image: url(:/icons/dossier.png);\n"
-"font: 75 14pt \"Arial\";")
-        self.pushButton_8.setObjectName("pushButton_8")
-        self.gridLayout.addWidget(self.pushButton_8, 0, 3, 1, 1)
+        self.gridWidget = QWidget(Dialog)
+        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
+        self.gridWidget.setObjectName("gridWidget")
+        self.gameGrid = QGridLayout(self.gridWidget)
+        self.gameGrid.setContentsMargins(0, 0, 0, 0)
+        self.gameGrid.setObjectName("gameGrid")
+        # drag and drop game
+        self.DDButton = QPushButton(u" ", self.gridWidget)
+        self.DDButton.setMinimumSize(QtCore.QSize(101, 101))
+        self.DDButton.setMaximumSize(QtCore.QSize(101, 101))
+        self.DDButton.setStyleSheet("background-image: url(:/icons/dragdrop.png);")
+        self.DDButton.setObjectName("DDButton")
+        self.gameGrid.addWidget(self.DDButton, 0, 0, 1, 1)
+        # memory game
+        self.MemoryButton = QPushButton(u" ", self.gridWidget)
+        self.MemoryButton.setMinimumSize(QtCore.QSize(101, 101))
+        self.MemoryButton.setMaximumSize(QtCore.QSize(101, 101))
+        self.MemoryButton.setStyleSheet("background-image: url(:/icons/memory.png);")
+        self.MemoryButton.setObjectName("MemoryButton")
+        self.gameGrid.addWidget(self.MemoryButton, 0, 1, 1, 1)
+        # hot or cold game
+        self.HCButton = QPushButton(u" ", self.gridWidget)
+        self.HCButton.setMinimumSize(QtCore.QSize(101, 101))
+        self.HCButton.setMaximumSize(QtCore.QSize(101, 101))
+        self.HCButton.setStyleSheet("background-image: url(:/icons/hotcold.png);")
+        self.HCButton.setObjectName("HCButton")
+        self.gameGrid.addWidget(self.HCButton, 0, 2, 1, 1)
+        # point the answer game
+        self.pointButton = QPushButton(u" ", self.gridWidget)
+        self.pointButton.setMinimumSize(QtCore.QSize(131, 101))
+        self.pointButton.setMaximumSize(QtCore.QSize(131, 101))
+        self.pointButton.setStyleSheet("background-image: url(:/icons/pointTo.png);")
+        self.pointButton.setObjectName("pointButton")
+        self.gameGrid.addWidget(self.pointButton, 0, 3, 1, 1)
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        ## signaux et slots : ouverture de la fenetre de jeux
+        self.DDInterf = None
+        self.DDButton.clicked.connect(self.openDD)
 
-    def retranslateUi(self, Dialog):
-        _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.pushButton.setText(_translate("Dialog", "Anglais"))
-        self.pushButton_4.setText(_translate("Dialog", " "))
-        self.pushButton_6.setText(_translate("Dialog", "Espagnol"))
-        self.pushButton_7.setText(_translate("Dialog", "Autres"))
-        self.pushButton_2.setText(_translate("Dialog", " "))
-        self.pushButton_3.setText(_translate("Dialog", " "))
-        self.pushButton_5.setText(_translate("Dialog", " "))
-        self.pushButton_8.setText(_translate("Dialog", "Francais"))
-
-import sys
+    def openDD(self):
+        # ouverture de l'interface de jeu
+        self.DDInterf = DragDrop.GameWindow()
+        self.DDInterf.show()
 
 def main():
     args = sys.argv
-    a = QtWidgets.QApplication(args)
-    MyDialog=QtWidgets.QWidget()
-    mf = Ui_Dialog()
-    mf.setupUi(MyDialog)
+    a = QApplication(args)
+    MyDialog=QWidget()
+    mf = parcoursIconsGame(MyDialog)
+    #mf.setupUi(MyDialog)
     MyDialog.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)

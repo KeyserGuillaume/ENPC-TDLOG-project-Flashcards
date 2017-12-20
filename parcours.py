@@ -12,6 +12,21 @@ AllLangages = database.giveAllLanguages()
 
 _root = QtCore.QFileInfo(__file__).absolutePath()
 
+class LangageButton(QPushButton):
+    def __init__(self, langue, place):
+        self.langue=langue
+        super(LangageButton, self).__init__(langue, place)
+        self.setMinimumSize(QtCore.QSize(101, 91))
+        self.setMaximumSize(QtCore.QSize(101, 91))
+        self.setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
+        self.setObjectName(langue)
+        self.CardInterf = None
+
+    def openChosenCard(self):
+        # ouverture de l interface de parcours de cartes
+        self.CardInterf = parcoursChosenCards(self.langue)
+        self.CardInterf.show()
+
 class parcoursLanguesFolder(object):
     def __init__(self, Dialog):
         Dialog.resize(685, 430)
@@ -23,20 +38,61 @@ class parcoursLanguesFolder(object):
         self.folderGrid.setObjectName("folderGrid")
         self.myfolders = AllLangages
         for i, langue in enumerate(AllLangages):
-            self.myfolders[i] = QPushButton(langue, self.gridWidget)
-            self.myfolders[i].setMinimumSize(QtCore.QSize(101, 91))
-            self.myfolders[i].setMaximumSize(QtCore.QSize(101, 91))
-            self.myfolders[i].setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
-            self.myfolders[i].setObjectName(langue)
+            self.myfolders[i] = LangageButton(langue, self.gridWidget)
+            #self.myfolders[i] = QPushButton(langue, self.gridWidget)
+            #self.myfolders[i].setMinimumSize(QtCore.QSize(101, 91))
+            #self.myfolders[i].setMaximumSize(QtCore.QSize(101, 91))
+            #self.myfolders[i].setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
+            #self.myfolders[i].setObjectName(langue)
             row = i/4
             column = i%4
             self.folderGrid.addWidget(self.myfolders[i], row, column, 1, 1)
 
+        for i, langue in enumerate(AllLangages):
+            self.myfolders[i].clicked.connect(self.myfolders[i].openChosenCard)
+
+class CardButton(QPushButton):
+    def __init__(self, card, place):
+        self.lacarte=card
+        super(CardButton, self).__init__(card.word, place)
+        self.setMinimumSize(QtCore.QSize(151, 111))
+        self.setMaximumSize(QtCore.QSize(151, 111))
+        self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "font: 75 18pt \"Arial\";")
+        self.setObjectName(card.word)
+
+class parcoursChosenCards(object):
+    def __init__(self, langue):
+        self.cardslist=database.getAllCards(langue)
+        ### il faudrait rajouter une barre de scrolling
+        # et la possibilité de déplacement vertical
+        self.Dialog = QWidget()
+        self.Dialog.setObjectName("SelectCard")
+        self.Dialog.setWindowTitle("Your Card selection")
+        self.Dialog.resize(780, 430)
+        self.gridWidget = QWidget(self.Dialog)
+        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 760, 361))
+        self.gridWidget.setObjectName("grille de placement")
+        self.folderGrid = QGridLayout(self.gridWidget)
+        self.folderGrid.setContentsMargins(0, 0, 0, 0)
+        self.folderGrid.setObjectName("folderGrid")
+        self.mycards = self.cardslist
+        for i, carte in enumerate(self.cardslist):
+            self.mycards[i] = CardButton(carte, self.gridWidget)
+            row = i/5
+            column = i%5
+            self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
+
+    def show(self):
+        # ouverture de la fenetre
+        self.Dialog.show()
 
 class parcoursIconsGame(object):
-    def __init__(self, Dialog):
-        Dialog.resize(663, 406)
-        self.gridWidget = QWidget(Dialog)
+    def __init__(self):
+        self.Dialog = QWidget()
+        self.Dialog.setObjectName("SelectGame")
+        self.Dialog.setWindowTitle("Our Game selection")
+        self.Dialog.resize(663, 406)
+        self.gridWidget = QWidget(self.Dialog)
         self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
         self.gridWidget.setObjectName("gridWidget")
         self.gameGrid = QGridLayout(self.gridWidget)
@@ -70,10 +126,21 @@ class parcoursIconsGame(object):
         self.pointButton.setStyleSheet("background-image: url(:/icons/pointTo.png);")
         self.pointButton.setObjectName("pointButton")
         self.gameGrid.addWidget(self.pointButton, 0, 3, 1, 1)
+        # the right wrong game
+        self.RWButton = QPushButton(u" ", self.gridWidget)
+        self.RWButton.setMinimumSize(QtCore.QSize(101, 101))
+        self.RWButton.setMaximumSize(QtCore.QSize(101, 101))
+        self.RWButton.setStyleSheet("background-image: url(:/icons/rightWrong.png);")
+        self.RWButton.setObjectName("RWButton")
+        self.gameGrid.addWidget(self.RWButton, 0, 4, 1, 1)
 
         ## signaux et slots : ouverture de la fenetre de jeux
         self.DDInterf = None
         self.DDButton.clicked.connect(self.openDD)
+
+    def show(self):
+        # ouverture de la fenetre
+        self.Dialog.show()
 
     def openDD(self):
         # ouverture de l'interface de jeu
@@ -84,8 +151,10 @@ def main():
     args = sys.argv
     a = QApplication(args)
     MyDialog=QWidget()
-    mf = parcoursIconsGame(MyDialog)
-    #mf.setupUi(MyDialog)
+    #mf = parcoursIconsGame()
+    #mf = parcoursChosenCards('anglais')
+    mf = parcoursLanguesFolder(MyDialog)
+    #mf.show()
     MyDialog.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)

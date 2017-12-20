@@ -1,5 +1,11 @@
 <RCC>
   <qresource prefix="icons">
+    <file>edit.png</file>
+    <file>next.png</file>
+    <file>previous.png</file>
+    <file>fcard.png</file>
+    <file>flip.png</file>
+    <file>rightWrong.png</file>
     <file>hotcold.png</file>
     <file>memory.png</file>
     <file>pointTo.png</file>

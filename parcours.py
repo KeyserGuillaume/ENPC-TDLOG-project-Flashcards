@@ -4,6 +4,7 @@ import sys
 import database
 
 import DragDrop
+import viewCard
 
 from icons import icons
 # permet l'accès aux images des icones
@@ -39,11 +40,7 @@ class parcoursLanguesFolder(object):
         self.myfolders = AllLangages
         for i, langue in enumerate(AllLangages):
             self.myfolders[i] = LangageButton(langue, self.gridWidget)
-            #self.myfolders[i] = QPushButton(langue, self.gridWidget)
-            #self.myfolders[i].setMinimumSize(QtCore.QSize(101, 91))
-            #self.myfolders[i].setMaximumSize(QtCore.QSize(101, 91))
-            #self.myfolders[i].setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
-            #self.myfolders[i].setObjectName(langue)
+            # 4 dossiers par ligne
             row = i/4
             column = i%4
             self.folderGrid.addWidget(self.myfolders[i], row, column, 1, 1)
@@ -59,6 +56,12 @@ class CardButton(QPushButton):
         self.setMaximumSize(QtCore.QSize(151, 111))
         self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "font: 75 18pt \"Arial\";")
         self.setObjectName(card.word)
+        self.CardInterf = None
+
+    def openChosenCard(self):
+        # ouverture de l interface de parcours de cartes
+        self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1)
+        self.CardInterf.show()
 
 class parcoursChosenCards(object):
     def __init__(self, langue):
@@ -78,9 +81,13 @@ class parcoursChosenCards(object):
         self.mycards = self.cardslist
         for i, carte in enumerate(self.cardslist):
             self.mycards[i] = CardButton(carte, self.gridWidget)
+            # 5 dossiers par ligne
             row = i/5
             column = i%5
             self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
+
+        for i, carte in enumerate(self.cardslist):
+            self.mycards[i].clicked.connect(self.mycards[i].openChosenCard)
 
     def show(self):
         # ouverture de la fenetre
@@ -150,12 +157,12 @@ class parcoursIconsGame(object):
 def main():
     args = sys.argv
     a = QApplication(args)
-    MyDialog=QWidget()
+    #MyDialog=QWidget()
     #mf = parcoursIconsGame()
-    #mf = parcoursChosenCards('anglais')
-    mf = parcoursLanguesFolder(MyDialog)
-    #mf.show()
-    MyDialog.show()
+    mf = parcoursChosenCards('anglais')
+    #mf = parcoursLanguesFolder(MyDialog)
+    mf.show()
+    #MyDialog.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)
 

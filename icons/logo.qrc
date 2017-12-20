@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>hotcold.png</file>
+    <file>memory.png</file>
+    <file>pointTo.png</file>
+    <file>dragdrop.png</file>
+    <file>dossier.png</file>
+  </qresource>
+</RCC>

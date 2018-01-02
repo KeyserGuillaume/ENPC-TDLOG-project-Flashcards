@@ -13,14 +13,15 @@ def recherche(langue, mot, theme, tra, phrase, floue):
         else:
             resultat.extend(recherche_one(langue, mot, theme, tra, phrase))
     elif floue == True:
-        mots = floue_mot(mot)
         if langue.strip() == 'TOUTES':
             for item in langues:
+                mots = floue_mot_rapide(item, mot)
                 for item_mot in mots:
                     resultat.extend(recherche_one(item, item_mot, theme, tra, phrase))
-            else:
-                for item_mot in mots:
-                    resultat.extend(recherche_one(langue, item_mot, theme, tra, phrase))
+        else:
+            mots = floue_mot_rapide(item, mot)
+            for item_mot in mots:
+                resultat.extend(recherche_one(langue, item_mot, theme, tra, phrase))
     return resultat
             
         
@@ -59,11 +60,36 @@ def recherche_one(langue, mot, theme, tra, phrase):
                 resultat.append(database.getCardById(langue, i))
     return resultat
 
-def floue_mot(mot):
+#voir les pages wikipedia Distance De Levenshtein et Distance De Damerau Levenshtein
+def DistanceDeDamerauLevenshtein(chaine1, chaine2):
+    l1=len(chaine1)
+    l2=len(chaine2)
+    d=[[0 for j in range(l2+1)]for i in range(l1+1)]
+    for i in range(l1+1):
+       d[i][0]=i
+    for j in range(l2+1):
+       d[0][j]=j
+
+    for i in range(l1):
+        for j in range(l2):
+            if (chaine1[i]==chaine2[j]):
+                coutSubstitution = 0
+            else:
+                coutSubstitution = 1
+            d[i+1][j+1]=min(d[i][j+1]+1, d[i+1][j]+1, d[i][j]+coutSubstitution)
+            if (i>0 and j>0 and chaine1[i]==chaine2[j-1] and chaine1[i-1]==chaine2[j]):
+                d[i+1] [j+1]=min(d[i+1][j+1], d[i-1][j-1]+coutSubstitution)
+    return (d[l1][l2])
+ 
+
+def floue_mot_rapide(langue, mot):
     list_mot = []
+    for card in database.getAllCards(langue):
+        if DistanceDeDamerauLevenshtein(card.word, mot) < 3:
+            list_mot.append(card.word)
     return list_mot
                
-                
+               
             
             
             

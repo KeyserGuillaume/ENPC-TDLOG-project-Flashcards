@@ -50,7 +50,31 @@ class FlashCards:
     def tablename(self):
         return self._tablename
     
-    
-        
     def __str__(self):
-        return " name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "+ self.exemple+"\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)+"\n image : "+self.image+"\n son : "+self.prononciation+"\n nature : "+self.nature+"\n langue : "+self.tablename
+        result= " name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "
+        #si la phrase d'exemple est trop longue, je la coupe en deux pour qu'elle se voit dans l'interface de viewCard.py
+        if len(self._exemple) > 20:
+            splitExemple=self._exemple.split()
+            moitie=len(splitExemple)//2
+            partie1=" ".join(splitExemple[:moitie])
+            partie2=" ".join(splitExemple[moitie:])
+            result+=partie1+"\n "+partie2
+        else:
+            result+=self.exemple
+        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)+"\n image : "+self.image+"\n son : "+self.prononciation+"\n nature : "+self.nature+"\n langue : "+self.tablename
+        return result
+        
+    #l'affichage de la carte sans les chemins vers le fichier son et le fichier image
+    def shortStr(self):
+        result= " name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "
+        if len(self._exemple) > 20:
+            splitExemple=self._exemple.split()
+            moitie=len(splitExemple)//2
+            partie1=" ".join(splitExemple[:moitie])
+            partie2=" ".join(splitExemple[moitie:])
+            result+=partie1+"\n "+partie2
+        else:
+            result+=self.exemple
+        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "
+        return result
+        

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout
 import sys
 import database
 
-import DragDrop
+import dragAndDrop
 import viewCard
 
 from icons import icons
@@ -152,7 +152,7 @@ class parcoursIconsGame(object):
 
     def openDD(self):
         # ouverture de l'interface de jeu
-        self.DDInterf = DragDrop.GameWindow()
+        self.DDInterf = dragAndDrop.GameWindow()
         self.DDInterf.show()
 
 def main():

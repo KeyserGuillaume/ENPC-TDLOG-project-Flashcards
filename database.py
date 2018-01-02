@@ -38,8 +38,9 @@ def getAllCards(language):
 # ne peut pas modifier le mot et la langue
 def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature):
     conn=connDB()
-    cursor=conn.execute("UPDATE {} SET TRADUCTION = '{}', EXEMPLE = '{}', THEME = '{}', DIFFICULTE = {}, MAITRISE = {}, ILLUSTRATIONPATH = '{}', SOUNDPATH = '{}', NATURE = '{}' \
-                        WHERE ID = {}".format(tableName.upper(), trad, ex, theme, diff, level, image, sound, nature, Id))
+#    cursor=conn.execute('''UPDATE ANGLAIS SET TRADUCTION = ?, EXEMPLE = ?, THEME = ?, DIFFICULTE = ?, MAITRISE = ? WHERE ID = ? ''', (trad, ex, theme, diff, level, Id))
+    cursor=conn.execute("UPDATE '{}' SET TRADUCTION = ?, EXEMPLE = ?, THEME = ? ,DIFFICULTE = ? , MAITRISE = ? , ILLUSTRATIONPATH = ? , SOUNDPATH = ? , NATURE = ? WHERE ID = ? ".format(tableName.upper()), 
+    (trad, ex, theme, diff, level, image, sound, nature, Id))
     conn.commit()
     conn.close()
 #modifyCard('ANGLAIS', 7, 'salut', 'Hello World', 'communication', 0, 10, '', '', 'jsp')
@@ -178,7 +179,7 @@ def getCardsWithTraduction(language, traduction):
 def existeSameCard(language,mot,traduction):
     conn=connDB()
     #sql = "select count(*) from {} where mot = '{}' and traduction = '{}';".format(language.upper(),mot,traduction)
-    cursor = conn.execute("select count(*) from {} where mot = '{}' and traduction = '{}'".format(language.upper(),mot,traduction))
+    cursor = conn.execute("select count(*) from '{}' where mot = ? and traduction = ? ".format(language.upper()),(mot,traduction))
     result = cursor.fetchone()[0]
     conn.close()
     if result:

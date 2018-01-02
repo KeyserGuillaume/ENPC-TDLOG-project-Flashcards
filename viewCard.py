@@ -78,11 +78,11 @@ class CardWidget(QWidget):
         self.viewWidget1.setObjectName("viewWidget0")
         self.viewLayout1 = QVBoxLayout(self.viewWidget1)
         self.viewLayout1.setObjectName("viewLayout0")
-        self.description = QPushButton(card.__str__(), self.viewWidget1)
+        self.description = QPushButton(card.shortStr(), self.viewWidget1)
         self.description.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 11pt \"Arial Black\";")
         self.description.setObjectName("description")
         self.viewLayout1.addWidget(self.description)
-        # code precedent, je ne sais pas s'il est utile, mais je n'ai pas voulu le supprimer
+    # code precedent, je ne sais pas s'il est utile, mais je n'ai pas voulu le supprimer
 #        self.viewWidget1 = QWidget(self)
 #        self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
 #        self.viewWidget1.setObjectName("viewWidget1")

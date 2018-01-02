@@ -49,7 +49,7 @@ def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature
 
 def getNextId(tableName):
     conn=connDB()
-    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0] #je sais pas pourquoi ça marche, mais ça marche
+    result=1+[x for x in conn.execute("SELECT Count(*) FROM {}".format(tableName.upper()))][0][0]
     conn.close()
     return result
 
@@ -145,6 +145,9 @@ def getRandomCard(language):
     n=giveNewCardName(language)
     a=randint(1,n-1)
     return a
+    
+def removeLastCard(language):
+    removeCard(language, getNextId(language)-1)
 
 ##appelee dans rechercheFonct.py
 #returns ids of all cards according to some attribute
@@ -244,10 +247,3 @@ def extract_audio(a_id):
     with open(filename,'wb') as output_file:
         output_file.write(ablob)
     return filename
-
-
-        
-        
-    
-
-

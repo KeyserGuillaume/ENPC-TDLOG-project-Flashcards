@@ -1,4 +1,4 @@
-############# definition de l'interface de creation de flasch cards
+############# definition de l'interface de creation de flash cards
 
 ## reste a gerer les boutons choisir
 ## il faut aussi ameliorer la gestion de la progression
@@ -14,8 +14,8 @@ langues = database.giveAllLanguages()  # ["anglais", "other"]
 natureGram = ["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition", "conjunction", "interjection",
               "determiner", "other"]
 
-# from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
-# from PyQt4 import QtCore
+#from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
+#from PyQt4 import QtCore
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, \
@@ -200,7 +200,7 @@ class CardCreation(object):
         self.chooseButton1.clicked.connect(self.browse1)
         self.chooseButton2.clicked.connect(self.browse2)
         # creation d'une carte
-        self.createButton.clicked.connect(self.create)
+        self.createButton.clicked.connect(self.commit)
         # mise a jour du progres
         self.setname.textEdited.connect(self.progression)
         self.editword.editingFinished.connect(self.progression)
@@ -239,7 +239,8 @@ class CardCreation(object):
         ex = SearchDirectory()
         self.sound = ex.name
 
-    def create(self):
+#renamed it because it's used both for creating and modifying
+    def commit(self):
         name = str(self.setname.text())
         mot = str(self.editword.text())
         traduction = str(self.edittrad.text())
@@ -251,6 +252,12 @@ class CardCreation(object):
         soundpath = self.sound
         nature = str(self.editnature.currentText())
         langue = str(self.editlanguage.currentText())
+        if mot=="":
+            self.myword.setText(" Entrez votre mot : (Non facultatif !)")
+            return
+        if traduction=="":
+            self.mytrad.setText(" Entrez sa traduction : (Non facultatif !)")
+            return
         if langue == "Other":
             langue = str(self.setLanguage.text())
             if (not (database.existsLanguage(langue))):
@@ -262,6 +269,13 @@ class CardCreation(object):
         else:  # nom deja existant dans la table
             database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
                                 soundpath, nature)
+        if (not database.existeSameCard(langue, mot, traduction)):
+            database.register(mycard)
+        else:
+            #l'utilisateur a entre une carte pour un mot deja entre
+            #il faudrait lui demander s'il souhaite ecrire par dessus 
+            #la carte deja existante, en lui affichant cette carte si possible
+            self.close()
         self.close()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
@@ -296,6 +310,8 @@ class CardModification(CardCreation):
         self.editnature.setCurrentText(mycard.nature)
         self.setname.setText(str(mycard.name))
         self.createButton.setText("Modify")
+        self.progressBar.setVisible(False)
+        self.bottomWidget.resize(self.bottomWidget.sizeHint())
 
 
 def modifyCard(mycard):
@@ -307,7 +323,7 @@ def modifyCard(mycard):
     b.lastWindowClosed.connect(b.quit)
 
 if __name__ == "__main__":
-    createNewCard()
+    #createNewCard()
     mycard = database.getCardById("anglais", database.getRandomCard("anglais"))
     print(mycard)
     modifyCard(mycard)

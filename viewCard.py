@@ -1,7 +1,6 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QGridLayout, QLabel
 import sys
 
 import database, createcardsInterf
@@ -13,17 +12,17 @@ from icons import icons
 # permet l'accès aux images des icones
 
 
-### pour l'instant un probleme inconnu limite a un seul flip visuel par carte
+### pour l'instant un probleme inconnu limite a un seul flip visuel par carte -> Pb regle
 
 class CardWidget(QWidget):
     def __init__(self, card, place):
         super(CardWidget, self).__init__(place)
-        # sauvegarde des données de la carte pour le flip
+        # sauvegarde des donnees de la carte pour le flip
         self.card=card
         # la face affichee
         ### petit probleme avec de l'affichage laminaire en changent de face (widgets, ...)
         self.currentview=0
-        # les caractéristiques du widget de la carte
+        # les caracteristiques du widget de la carte
         self.setMinimumSize(QtCore.QSize(361, 251))
         self.setMaximumSize(QtCore.QSize(361, 251))
         self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);")
@@ -76,27 +75,37 @@ class CardWidget(QWidget):
         # la face Infos
         self.viewWidget1 = QWidget(self)
         self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
-        self.viewWidget1.setObjectName("viewWidget1")
+        self.viewWidget1.setObjectName("viewWidget0")
         self.viewLayout1 = QVBoxLayout(self.viewWidget1)
-        self.viewLayout1.setObjectName("viewLayout1")
-        self.trad = QPushButton(card.trad, self.viewWidget1)
-        self.trad.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 18pt \"Arial Black\";")
-        self.trad.setObjectName("trad")
-        self.viewLayout1.addWidget(self.trad)
-        self.nature = QPushButton(card.nature, self.viewWidget1)
-        self.nature.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: italic 13pt \"Arial Narrow\";")
-        self.nature.setObjectName("nature")
-        self.viewLayout1.addWidget(self.nature)
-        viewexemple = "exemple : "+ card.exemple
-        self.exemple = QPushButton(viewexemple, self.viewWidget1)
-        self.exemple.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 18pt \"Arial\";")
-        self.exemple.setObjectName("exemple")
-        self.viewLayout1.addWidget(self.exemple)
-        viewautre = "in : " + card.thema + ", "+ card.tablename + " ; niveau : " + str(card.howhard) + " ; ..."
-        self.autre = QPushButton(viewautre, self.viewWidget1)
-        self.autre.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 14pt \"Arial\";")
-        self.autre.setObjectName("autre")
-        self.viewLayout1.addWidget(self.autre)
+        self.viewLayout1.setObjectName("viewLayout0")
+        self.description = QPushButton(card.__str__(), self.viewWidget1)
+        self.description.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 11pt \"Arial Black\";")
+        self.description.setObjectName("description")
+        self.viewLayout1.addWidget(self.description)
+        # code precedent, je ne sais pas s'il est utile, mais je n'ai pas voulu le supprimer
+#        self.viewWidget1 = QWidget(self)
+#        self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
+#        self.viewWidget1.setObjectName("viewWidget1")
+#        self.viewLayout1 = QVBoxLayout(self.viewWidget1)
+#        self.viewLayout1.setObjectName("viewLayout1")
+#        self.trad = QPushButton(card.trad, self.viewWidget1)
+#        self.trad.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 18pt \"Arial Black\";")
+#        self.trad.setObjectName("trad")
+#        self.viewLayout1.addWidget(self.trad)
+#        self.nature = QPushButton(card.nature, self.viewWidget1)
+#        self.nature.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: italic 13pt \"Arial Narrow\";")
+#        self.nature.setObjectName("nature")
+#        self.viewLayout1.addWidget(self.nature)
+#        viewexemple = "exemple : "+ card.exemple
+#        self.exemple = QPushButton(viewexemple, self.viewWidget1)
+#        self.exemple.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 18pt \"Arial\";")
+#        self.exemple.setObjectName("exemple")
+#        self.viewLayout1.addWidget(self.exemple)
+#        viewautre = "in : " + card.thema + ", "+ card.tablename + " ; niveau : " + str(card.howhard) + " ; ..."
+#        self.autre = QPushButton(viewautre, self.viewWidget1)
+#        self.autre.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 14pt \"Arial\";")
+#        self.autre.setObjectName("autre")
+#        self.viewLayout1.addWidget(self.autre)
 
         ## affichage de la bonne face
         if self.currentview==0:
@@ -115,12 +124,16 @@ class CardWidget(QWidget):
             # changement de cote
             self.viewNtools.removeWidget(self.viewWidget0)
             self.viewNtools.addWidget(self.viewWidget1, 1, 1, 1, 1)
+            self.viewWidget0.setVisible(False)
+            self.viewWidget1.setVisible(True)
             print("flip", self.currentview)
         else:
             self.currentview=0
             # changement de cote
             self.viewNtools.removeWidget(self.viewWidget1)
             self.viewNtools.addWidget(self.viewWidget0, 1, 1, 1, 1)
+            self.viewWidget1.setVisible(False)
+            self.viewWidget0.setVisible(True)
             print("flip", self.currentview)
 
     def openmodif(self):
@@ -170,10 +183,10 @@ class ViewDialog(object):
         self.viewbar.addWidget(self.next)
 
         ## signaux et slots : ouverture de la fenetre de jeux
-        self.next.clicked.connect(self.tonextcard)
-        self.previous.clicked.connect(self.topreviouscard)
+        self.next.clicked.connect(self.toNextCard)
+        self.previous.clicked.connect(self.toPreviousCard)
 
-    def tonextcard(self):
+    def toNextCard(self):
         if self.cardnumber<self.nbCard-1:
             self.cardnumber += 1
             #changement de carte (dans l'ordre des noms) vers +1
@@ -184,7 +197,7 @@ class ViewDialog(object):
         else:
             self.next.setEnabled(False)
 
-    def topreviouscard(self):
+    def toPreviousCard(self):
         if self.cardnumber>0:
             self.cardnumber -= 1
             #changement de carte (dans l'ordre des noms) vers -1

@@ -72,6 +72,7 @@ class CardWidget(QWidget):
         self.mot.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 18pt \"Arial Black\";")
         self.mot.setObjectName("mot")
         self.viewLayout0.addWidget(self.mot)
+        #self.viewWidget0.setVisible(False)
         # la face Infos
         self.viewWidget1 = QWidget(self)
         self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
@@ -82,7 +83,8 @@ class CardWidget(QWidget):
         self.description.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 11pt \"Arial Black\";")
         self.description.setObjectName("description")
         self.viewLayout1.addWidget(self.description)
-    # code precedent, je ne sais pas s'il est utile, mais je n'ai pas voulu le supprimer
+        self.viewWidget1.setVisible(False)
+    # code precedent de la face Infos, au cas ou qq veut le reprendre
 #        self.viewWidget1 = QWidget(self)
 #        self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
 #        self.viewWidget1.setObjectName("viewWidget1")
@@ -106,35 +108,58 @@ class CardWidget(QWidget):
 #        self.autre.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 14pt \"Arial\";")
 #        self.autre.setObjectName("autre")
 #        self.viewLayout1.addWidget(self.autre)
+        #face Image
+        #path=card.image
+        path='images/image.jpg'
+        if path == '':
+            self.viewWidget2=None              #pas d'image fournie
+        else:
+            self.viewWidget2=QWidget(self)
+            self.label=QLabel(self.viewWidget2)
+            self.pixmap=QtGui.QPixmap()
+            
+            self.pixmap.load(path)
+            self.pixmap=self.pixmap.scaled(300, 250, QtCore.Qt.KeepAspectRatio)
+            self.label.setPixmap(self.pixmap)
+            self.label.setScaledContents(True)
+            self.viewWidget2.setVisible(False)
 
         ## affichage de la bonne face
-        if self.currentview==0:
-            self.viewNtools.addWidget(self.viewWidget0, 1, 1, 1, 1)
-        else:
-            self.viewNtools.addWidget(self.viewWidget1, 1, 1, 1, 1)
+        self.viewWidgets=[self.viewWidget0, self.viewWidget1, self.viewWidget2]
+        self.viewNtools.addWidget(self.viewWidgets[self.currentview], 1, 1, 1, 1)
+        self.viewWidgets[self.currentview].setVisible(True)
+#        if self.currentview==0:
+#            self.viewNtools.addWidget(self.viewWidget0, 1, 1, 1, 1)
+#        else:
+#            self.viewNtools.addWidget(self.viewWidget1, 1, 1, 1, 1)
 
         # signaux et slots
         self.flipButton.clicked.connect(self.flipping)
+        self.pictureButton.clicked.connect(self.flipPicture)
         self.modifInterf=None
         self.editButton.clicked.connect(self.openmodif)
+        
+    def alternateViews(self):
+        self.viewNtools.removeWidget(self.viewWidgets[self.previousview])
+        self.viewNtools.addWidget(self.viewWidgets[self.currentview], 1, 1, 1, 1)
+        self.viewWidgets[self.previousview].setVisible(False)
+        self.viewWidgets[self.currentview].setVisible(True)
 
     def flipping(self):
-        if self.currentview==0:
+        self.previousview=self.currentview
+        if self.previousview==0:    #face mot -> face carte
             self.currentview=1
-            # changement de cote
-            self.viewNtools.removeWidget(self.viewWidget0)
-            self.viewNtools.addWidget(self.viewWidget1, 1, 1, 1, 1)
-            self.viewWidget0.setVisible(False)
-            self.viewWidget1.setVisible(True)
-            print("flip", self.currentview)
+        elif self.previousview==1 or self.previousview==2:    #face carte ou image -> face mot
+            self.currentview=0    
+        self.alternateViews()
+       
+    def flipPicture(self):
+        if self.currentview==2:
+            (self.previousview, self.currentview)=(self.currentview, self.previousview)
         else:
-            self.currentview=0
-            # changement de cote
-            self.viewNtools.removeWidget(self.viewWidget1)
-            self.viewNtools.addWidget(self.viewWidget0, 1, 1, 1, 1)
-            self.viewWidget1.setVisible(False)
-            self.viewWidget0.setVisible(True)
-            print("flip", self.currentview)
+            self.previousview=self.currentview
+            self.currentview=2
+        self.alternateViews()
 
     def openmodif(self):
         self.modifInterf = createcardsInterf.CardModification(self.card)

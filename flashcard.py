@@ -75,6 +75,6 @@ class FlashCards:
             result+=partie1+"\n "+partie2
         else:
             result+=self.exemple
-        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "
+        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)
         return result
         

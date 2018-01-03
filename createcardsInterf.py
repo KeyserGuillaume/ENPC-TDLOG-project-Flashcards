@@ -169,7 +169,7 @@ class CardCreation(object):
         # label et linedit pour entrer le nom de la carte
         self.mycardname = QLabel(self.nameWidget)
         self.mycardname.setObjectName("mycardname")
-        self.mycardname.setText(" Le nom de votre carte :")
+        self.mycardname.setText(" Le numéro de votre carte :")
         self.togivename.addWidget(self.mycardname)
         self.setname = QLineEdit(self.nameWidget)
         self.setname.setObjectName("setname")

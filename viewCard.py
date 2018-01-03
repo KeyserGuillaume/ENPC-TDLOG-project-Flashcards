@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QGridLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QGridLayout, QLabel, QShortcut
 import sys
 
 import database, createcardsInterf
@@ -15,13 +15,13 @@ from icons import icons
 ### pour l'instant un probleme inconnu limite a un seul flip visuel par carte -> Pb regle
 
 class CardWidget(QWidget):
-    def __init__(self, card, place):
+    def __init__(self, card, place, view=0):
         super(CardWidget, self).__init__(place)
         # sauvegarde des donnees de la carte pour le flip
         self.card=card
         # la face affichee
         ### petit probleme avec de l'affichage laminaire en changent de face (widgets, ...)
-        self.currentview=0
+        self.currentview=view
         # les caracteristiques du widget de la carte
         self.setMinimumSize(QtCore.QSize(361, 251))
         self.setMaximumSize(QtCore.QSize(361, 251))
@@ -161,9 +161,22 @@ class CardWidget(QWidget):
             self.currentview=2
         self.alternateViews()
 
+    deletedSignal=QtCore.pyqtSignal()
+    modifiedSignal=QtCore.pyqtSignal()
+    
     def openmodif(self):
         self.modifInterf = createcardsInterf.CardModification(self.card)
+        self.modifInterf.deleted.connect(self.deleted)
+        self.modifInterf.modified.connect(self.modified)
         self.modifInterf.show()
+    
+    def deleted(self):
+        print('CardWidget received deleted from CardModification; deletedSignal emitted')
+        self.deletedSignal.emit()
+    
+    def modified(self):
+        self.modifiedSignal.emit()
+    
 
 
 class ViewDialog(object):
@@ -197,7 +210,7 @@ class ViewDialog(object):
         self.viewbar.addWidget(self.previous)
         # la carte
         self.cardnumber=begin
-        self.currentCard=CardWidget(givenCards[self.cardnumber],self.background)
+        self.currentCard=CardWidget(self.givenCards[self.cardnumber],self.background)
         self.viewbar.addWidget(self.currentCard)
         # le bouton suivant
         self.next = QtWidgets.QPushButton(u" ", self.background)
@@ -206,10 +219,42 @@ class ViewDialog(object):
         self.next.setStyleSheet("background-image: url(:/icons/next.png);\n" "background-color: rgba(255, 255, 255, 0);")
         self.next.setObjectName("next")
         self.viewbar.addWidget(self.next)
+        
+        #shortcuts
+        self.nextShortcut=QShortcut(QtGui.QKeySequence('Right'), self.Dialog)
+        self.prevShortcut=QShortcut(QtGui.QKeySequence('Left'), self.Dialog)
 
         ## signaux et slots : ouverture de la fenetre de jeux
         self.next.clicked.connect(self.toNextCard)
         self.previous.clicked.connect(self.toPreviousCard)
+        self.nextShortcut.activated.connect(self.toNextCard)
+        self.prevShortcut.activated.connect(self.toPreviousCard)
+        self.currentCard.modifiedSignal.connect(self.currentCardWasModified)
+        self.currentCard.deletedSignal.connect(self.currentCardWasDeleted)
+        
+    #fonction appelee apres modification de la carte 
+    def currentCardWasModified(self):
+        #on modifie la carte
+        self.givenCards[self.cardnumber]=database.getCardById(self.givenCards[self.cardnumber].tablename, self.givenCards[self.cardnumber].name)
+        print(self.givenCards[self.cardnumber])
+        #on reinitialise currentCard en gardant la meme vue
+        view=self.currentCard.currentview
+        self.viewbar.removeWidget(self.currentCard)
+        self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background, view)
+        self.viewbar.insertWidget(1,self.currentCard)
+        #l'utilisateur peut voir les changements apportes a la carte
+        
+    #fonction appelee apres suppression de la carte
+    def currentCardWasDeleted(self):
+        print("received deletedSignal from CardWidget; deleting")
+        del self.givenCards[self.cardnumber]
+        
+        self.nbCard-=1
+        if (self.cardnumber==self.nbCard):
+            self.toPreviousCard()
+        else:
+            self.cardnumber-=1
+            self.toNextCard()
 
     def toNextCard(self):
         if self.cardnumber<self.nbCard-1:
@@ -219,6 +264,8 @@ class ViewDialog(object):
             self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background)
             self.viewbar.insertWidget(1,self.currentCard)
             self.previous.setEnabled(True)
+            self.currentCard.modifiedSignal.connect(self.currentCardWasModified)
+            self.currentCard.deletedSignal.connect(self.currentCardWasDeleted)
         else:
             self.next.setEnabled(False)
 
@@ -230,6 +277,8 @@ class ViewDialog(object):
             self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background)
             self.viewbar.insertWidget(1, self.currentCard)
             self.next.setEnabled(True)
+            self.currentCard.modifiedSignal.connect(self.currentCardWasModified)
+            self.currentCard.deletedSignal.connect(self.currentCardWasDeleted)
         else:
             self.previous.setEnabled(False)
 

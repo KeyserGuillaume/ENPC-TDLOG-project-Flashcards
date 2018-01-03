@@ -19,8 +19,8 @@ cardsKnown=database.getCardsToLearn(Table,10,10)
 #cardsKnown=["bonjour","bienvenue", "..."]
 
 
-### les boutons de commande connecté a l'interface de lecture
-## gere quand les listes conteniennent moins de 3 items (len<3)
+### les boutons de commande connectés a l'interface de lecture
+## gere quand les listes contiennent moins de 3 items (len<3)
 class ConnectedButton(QCommandLinkButton):
     def __init__(self, cardlist, rank, place, name):
         self.cardlist=cardlist
@@ -164,7 +164,7 @@ class WelcomeInterf(object):
         self.barreResume.addWidget(self.learn2)
         self.learn3 = ConnectedButton(cardsToLearn, 2, self.ResumeBox, "learn3")
         self.barreResume.addWidget(self.learn3)
-        # label cartes a revoir et les 3 boutons carte associés
+        # label cartes a revoir et les 3 boutons carte associésAttributeError: 'PyQt5.QtCore.pyqtSignal' object has no attribute 'connect'
         self.overlabel = QLabel(self.ResumeBox)
         self.overlabel.setObjectName("overlabel")
         self.overlabel.setText("  Cards to go over")

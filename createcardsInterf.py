@@ -23,6 +23,28 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabe
 
 import sys
 
+class pop_upWidget(QWidget):
+    def __init__(self, queryText, yesText, noText):
+        super().__init__()
+        self.gridLayout=QGridLayout(self)
+        self.query=QLabel(queryText, self)
+        self.gridLayout.addWidget(self.query, 0, 0, 1, 2)
+        self.yesButton=QPushButton(yesText, self)
+        self.gridLayout.addWidget(self.yesButton, 1, 0, 1, 1)
+        self.noButton=QPushButton(noText, self)
+        self.gridLayout.addWidget(self.noButton, 1, 1, 1, 1)        
+        
+        #signals and slots
+        self.yesButton.clicked.connect(self.choice1)
+        self.noButton.clicked.connect(self.choice2)
+    accept=QtCore.pyqtSignal()
+    refuse=QtCore.pyqtSignal()
+    def choice1(self):
+        self.accept.emit()
+        self.close()
+    def choice2(self):
+        self.refuse.emit()
+        self.close()
 
 class SearchDirectory(QWidget):
     def __init__(self):
@@ -41,14 +63,14 @@ class SearchDirectory(QWidget):
         return self._myname
 
 
-class CardCreation(object):
+class CardCreation(QWidget):
     def __init__(self):
+        super().__init__()
         ## la fenetre
-        self.Dialog = QWidget()
-        self.Dialog.setObjectName("Card Creation")
-        self.Dialog.setFixedSize(497, 492)
+        self.setObjectName("Card Creation")
+        self.setFixedSize(497, 492)
         ## le layout de la grille centrale
-        self.answergridWidget = QWidget(self.Dialog)
+        self.answergridWidget = QWidget(self)
         self.answergridWidget.setGeometry(QtCore.QRect(10, 50, 451, 341))
         self.answergridWidget.setObjectName("answergridWidget")
         self.answergrid = QGridLayout(self.answergridWidget)
@@ -160,7 +182,7 @@ class CardCreation(object):
         self.sound = ""
 
         ## le layout du haut
-        self.nameWidget = QWidget(self.Dialog)
+        self.nameWidget = QWidget(self)
         self.nameWidget.setGeometry(QtCore.QRect(10, 10, 451, 31))
         self.nameWidget.setObjectName("nameWidget")
         self.togivename = QHBoxLayout(self.nameWidget)
@@ -178,7 +200,7 @@ class CardCreation(object):
         self.setname.setEnabled(False)
 
         ## le layout du bas
-        self.bottomWidget = QWidget(self.Dialog)
+        self.bottomWidget = QWidget(self)
         self.bottomWidget.setGeometry(QtCore.QRect(10, 400, 451, 32))
         self.bottomWidget.setObjectName("bottomWidget")
         self.tocreate = QHBoxLayout(self.bottomWidget)
@@ -211,10 +233,6 @@ class CardCreation(object):
         self.setLanguage.editingFinished.connect(self.newLanguage)
         # self.editdifficult.textEdited.connect(self.progression)
         # self.editproficiency.textEdited.connect(self.progression)
-
-    def show(self):
-        # ouverture de la fenetre
-        self.Dialog.show()
 
     def progression(self):
         self.progress += 12
@@ -269,6 +287,7 @@ class CardCreation(object):
         else:  # nom deja existant dans la table
             database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
                                 soundpath, nature)
+            self.modified.emit()
         if (not database.existeSameCard(langue, mot, traduction)):
             database.register(mycard)
         else:
@@ -279,10 +298,6 @@ class CardCreation(object):
         self.close()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
         # return mycard
-
-    def close(self):
-        self.Dialog.close()
-
 
 def createNewCard():
     args = sys.argv
@@ -297,6 +312,7 @@ def createNewCard():
 class CardModification(CardCreation):
     def __init__(self, mycard):
         super().__init__()
+        self.myCard=mycard
         # remplissage avec les data existantes
         self.editword.setText(mycard.word)
         self.editword.setEnabled(False)
@@ -311,7 +327,21 @@ class CardModification(CardCreation):
         self.setname.setText(str(mycard.name))
         self.createButton.setText("Modify")
         self.progressBar.setVisible(False)
+        self.deleteWidget=QPushButton("delete", self.bottomWidget)
+        self.tocreate.addWidget(self.deleteWidget)
         self.bottomWidget.resize(self.bottomWidget.sizeHint())
+        self.deleteWidget.clicked.connect(self.confirmDeletion)
+    deleted=QtCore.pyqtSignal()
+    modified=QtCore.pyqtSignal()
+    def confirmDeletion(self):
+        self.pop_up = pop_upWidget("Cette action effacera la carte '{}'. Êtes-vous certain de vouloir continuer ?".format(self.myCard.word), "J'en suis sûr", "Annuler")
+        self.pop_up.show()
+        self.pop_up.accept.connect(self.delete)
+    
+    def delete(self):
+        database.removeCard(self.myCard.tablename, self.myCard.name)
+        self.deleted.emit()
+        self.close()
 
 
 def modifyCard(mycard):

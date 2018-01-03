@@ -17,7 +17,7 @@ def match(text1,text2):
 ## baisse de un la maitrise dans la carte et la base
 def downgradeLevel(card):
     card._level -= 1
-    database.modifyCard(Table, card.name, card.trad, card.exemple, card.thema, card.howhard, card.level, card.image, card.prononciation, card.nature)
+    database.modifyCard(card.tablename, card.name, card.trad, card.exemple, card.thema, card.howhard, card.level, card.image, card.prononciation, card.nature)
     #print("maitrise moins")
 
 ### la classe de bouton qui se drop
@@ -31,6 +31,7 @@ class ButtonToDrag(QPushButton):
             self.setStyleSheet("background-color: rgb(122, 227, 255);\n" "border-color: rgb(0, 0, 0);\n" "font: 75 13pt \"Helvetica Neue\";")
         self.setAcceptDrops(True)
         self.jouees=depot
+    error=QtCore.pyqtSignal()
 
     # event on veut bouger la carte
     def mouseMoveEvent(self, event):
@@ -38,6 +39,7 @@ class ButtonToDrag(QPushButton):
         text=self.text()+';'+('%d,%d' % (event.x(), event.y()))
         mimeData.setText(text)
         #make a transparent button be dragged by the pointer
+        b=QtCore.QCoreApplication.instance ()
         pixmap = QtGui.QScreen.grabWindow(b.primaryScreen(),self.winId())
         #pixmap = QtGui.QPixmap.grabWindow(self.winId())
         #screen=QScreen.grabWindow(self)
@@ -66,6 +68,10 @@ class ButtonToDrag(QPushButton):
             cardSource = event.source()
             #print("droping...")
             # bouge les 2 cartes dans le layout sur le cote si elles coincident
+            if self.text()=="GAME OVER" or self.text()=="TIME IS OUT":
+                event.ignore()
+                e.source().setDown(False)
+                return
             if match(cardSource.text(),self.text()) or match(self.text(),cardSource.text()) :
                 event.acceptProposedAction()
                 #self.move(event.pos())
@@ -85,7 +91,7 @@ class ButtonToDrag(QPushButton):
                     downgradeLevel(cardSource.lacarte)
                 # mise a jour du decompte d'erreurs
                 global nberreurs
-                nberreurs += 1
+                self.error.emit()
                 event.ignore()
         else:
             event.ignore()
@@ -115,10 +121,13 @@ class DragDropGame(QWidget):
             myx=randrange(5,470,1)
             myy=randrange(5,390,1)
             self.myCards[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
+            self.myCards[i].error.connect(self.error.emit)
             self.myTrads.append(ButtonToDrag(carte,'trad', self, self.Welldone))
             myx = randrange(5, 520, 1)
             myy = randrange(5, 380, 1)
             self.myTrads[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
+            self.myTrads[i].error.connect(self.error.emit)
+    error=QtCore.pyqtSignal()
     
     def dragEnterEvent(self, e):
         e.accept()
@@ -144,6 +153,7 @@ class GameWindow (QWidget):
         self.myCards=CartesJouees
         self.initGame()
     def initGame(self):
+        self.nberreurs=0
         self.t0=time()
         self.timeGiven=60
         ## la fenetre
@@ -152,6 +162,7 @@ class GameWindow (QWidget):
         self.setFixedSize(853, 554)
         ## le jeu comme defini ci dessus
         self.theGame=DragDropGame(self, self.myCards)
+        self.theGame.error.connect(self.incrementErrorCount)
         ## la barre de boutons/compteurs du bas
         self.BottomWidget = QWidget(self)
         self.BottomWidget.setGeometry(QtCore.QRect(10, 440, 731, 61))
@@ -191,7 +202,9 @@ class GameWindow (QWidget):
         self.timer2.timeout.connect(self.Mistake)
         self.timer2.start(10)
         self.GameBox.addWidget(self.failure)
-
+        
+    def incrementErrorCount(self):
+        self.nberreurs+=1
     def Time(self):
         #currenttime = time()-t0
         # affiche l'heure
@@ -214,7 +227,7 @@ class GameWindow (QWidget):
         self.theGame.show()
         self.BottomWidget.show()
     def Mistake(self):
-        self.failure.display(nberreurs)
+        self.failure.display(self.nberreurs)
 
 
 
@@ -222,8 +235,6 @@ if __name__ == "__main__":
     Table='anglais'
     ### cartes concernées par le jeu
     CartesEnJeu=database.getCardsToLearn(Table,0,9)
-    ## variable globale comptant les erreurs
-    nberreurs=0
     args = sys.argv
     b = QApplication(args)
     mf = GameWindow(CartesEnJeu)

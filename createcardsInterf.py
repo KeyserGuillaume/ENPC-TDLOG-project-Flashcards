@@ -17,15 +17,20 @@ natureGram = ["noun", "adjective", "verbe", "adverbe", "pronoun", "preposition",
 #from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
 #from PyQt4 import QtCore
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, \
-    QProgressBar, QSlider, QComboBox, QFileDialog
+    QProgressBar, QSlider, QComboBox, QFileDialog, QFrame
 
 import sys
 
 class pop_upWidget(QWidget):
-    def __init__(self, queryText, yesText, noText):
-        super().__init__()
+    def __init__(self, parent, queryText, yesText, noText):
+        super().__init__(parent)
+        self.resize(451, 80)
+#        self.setAutoFillBackground(True)
+#        self.col = QtGui.QColor(255, 255, 255)
+#        self.setStyleSheet("QWidget { background-color: %s }" %  
+#            self.col.name())
         self.gridLayout=QGridLayout(self)
         self.query=QLabel(queryText, self)
         self.gridLayout.addWidget(self.query, 0, 0, 1, 2)
@@ -64,8 +69,8 @@ class SearchDirectory(QWidget):
 
 
 class CardCreation(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         ## la fenetre
         self.setObjectName("Card Creation")
         self.setFixedSize(497, 492)
@@ -233,7 +238,7 @@ class CardCreation(QWidget):
         self.setLanguage.editingFinished.connect(self.newLanguage)
         # self.editdifficult.textEdited.connect(self.progression)
         # self.editproficiency.textEdited.connect(self.progression)
-
+    created=QtCore.pyqtSignal()
     def progression(self):
         self.progress += 12
         self.progress = min(self.progress, 100)
@@ -284,6 +289,7 @@ class CardCreation(QWidget):
                                       maitrise, illustrationpath, soundpath, nature, langue)
         if database.getNextId(langue) <= int(name):
             database.register(mycard)
+            self.created.emit()
         else:  # nom deja existant dans la table
             database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
                                 soundpath, nature)
@@ -302,16 +308,19 @@ class CardCreation(QWidget):
 def createNewCard():
     args = sys.argv
     a = QApplication(args)
-    mf = CardCreation()
-    mf.show()
+    w=QWidget()
+    w.resize(497, 492)
+    mf = CardCreation(w)
+    mf.created.connect(w.close)
+    w.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)
     # mf.quit()
     # sys.exit(a.exec_())
 
 class CardModification(CardCreation):
-    def __init__(self, mycard):
-        super().__init__()
+    def __init__(self, parent, mycard):
+        super().__init__(parent)
         self.myCard=mycard
         # remplissage avec les data existantes
         self.editword.setText(mycard.word)
@@ -334,21 +343,37 @@ class CardModification(CardCreation):
     deleted=QtCore.pyqtSignal()
     modified=QtCore.pyqtSignal()
     def confirmDeletion(self):
-        self.pop_up = pop_upWidget("Cette action effacera la carte '{}'. Êtes-vous certain de vouloir continuer ?".format(self.myCard.word), "J'en suis sûr", "Annuler")
-        self.pop_up.show()
+        self.pop_up = pop_upWidget(self, "Cette action effacera la carte '{}'. Êtes-vous certain de vouloir continuer ?".format(self.myCard.word), "J'en suis sûr", "Annuler")
         self.pop_up.accept.connect(self.delete)
+        self.pop_up.refuse.connect(self.deletionWasCancelled)
+        self.nameWidget.setVisible(False)
+        self.bottomWidget.setVisible(False)
+        self.answergridWidget.setVisible(False)
+#        self.col = QtGui.QColor(255, 255, 255)
+#        self.setStyleSheet("QWidget { background-color: %s }" %  
+#            self.col.name())
+        self.pop_up.show()
     
     def delete(self):
         database.removeCard(self.myCard.tablename, self.myCard.name)
         self.deleted.emit()
         self.close()
+        
+    def deletionWasCancelled(self):
+        self.nameWidget.setVisible(True)
+        self.bottomWidget.setVisible(True)
+        self.answergridWidget.setVisible(True)
 
 
 def modifyCard(mycard):
     args = sys.argv
     b = QApplication(args)
-    mf = CardModification(mycard)
-    mf.show()
+    w=QWidget()
+    w.setFixedSize(497, 492)
+    mf = CardModification(w, mycard)
+    mf.modified.connect(w.close)
+    mf.deleted.connect(w.close)
+    w.show()
     b.exec_()
     b.lastWindowClosed.connect(b.quit)
 

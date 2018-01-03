@@ -152,7 +152,7 @@ class parcoursIconsGame(object):
 
     def openDD(self):
         # ouverture de l'interface de jeu
-        self.DDInterf = dragAndDrop.GameWindow()
+        self.DDInterf = dragAndDrop.GameWindow(database.getCardsToLearn('anglais',0,9))
         self.DDInterf.show()
 
 def main():

@@ -81,6 +81,8 @@ class HomeScreen(object):
         self.mainpage.addWidget(self.ongletsAccueil)
         # selection de l'onglet principal
         self.ongletsAccueil.setCurrentIndex(0)
+    def setVisible(self, myBool):#pas pratique...
+        self.ongletsAccueil.setVisible(myBool)
 
 ## la fenetre principale
 class WelcomeInterf(object):
@@ -230,15 +232,23 @@ class WelcomeInterf(object):
         # ouverture de la fenetre
         self.Dialog.show()
     def createnew(self):
-        # ouverture de linterface de creation
-        self.createInterf = createcardsInterf.CardCreation()
+        # ouverture de l'interface de creation
+        self.createInterf = createcardsInterf.CardCreation(self.screenLayout)
+        self.myscreen.setVisible(False)
         self.createInterf.show()
+        self.createInterf.created.connect(self.displayHomeScreen)
     def modifycard(self):
         # la carte pour l'instant random
         self.selectedcard=database.getCardById("anglais", database.getRandomCard("anglais"))
-        # ouverture de linterface de modification
-        self.modifInterf=createcardsInterf.CardModification(self.selectedcard)
+        # ouverture de l'interface de modification
+        self.modifInterf=createcardsInterf.CardModification(self.screenLayout, self.selectedcard)
+        #on cache l'ecran d'accueil
+        self.myscreen.setVisible(False)
         self.modifInterf.show()
+        self.modifInterf.modified.connect(self.displayHomeScreen)
+        self.modifInterf.deleted.connect(self.displayHomeScreen)
+    def displayHomeScreen(self):
+        self.myscreen.setVisible(True)
     def search(self):
         self.searchInterf = rechercheInterf.Recherche()
         tosearch=self.searchBar.text()

@@ -143,9 +143,10 @@ def giveNewCardName(language):
     return getNextId(language)
 
 def getRandomCard(language):
-    n=giveNewCardName(language)
+    cardList=getAllCards(language)
+    n=len(cardList)
     a=randint(1,n-1)
-    return a
+    return cardList[a].name
     
 def removeLastCard(language):
     removeCard(language, getNextId(language)-1)

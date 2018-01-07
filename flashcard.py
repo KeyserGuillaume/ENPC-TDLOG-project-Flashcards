@@ -66,7 +66,7 @@ class FlashCards:
         
     #l'affichage de la carte sans les chemins vers le fichier son et le fichier image
     def shortStr(self):
-        result= " name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple : "
+        result= " name : "+str(self.name)+"\n mot : "+self.word+"\n traduction : "+self.trad+"\n exemple :\n"
         if len(self._exemple) > 20:
             splitExemple=self._exemple.split()
             moitie=len(splitExemple)//2

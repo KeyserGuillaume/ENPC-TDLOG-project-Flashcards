@@ -165,19 +165,21 @@ class CardWidget(QWidget):
     modifiedSignal=QtCore.pyqtSignal()
     
     def openmodif(self):
-        self.modifInterf = createcardsInterf.CardModification(self.card)
+        self.modifWindow = QWidget()
+        self.modifWindow.setFixedSize(497, 492)
+        self.modifInterf = createcardsInterf.CardModification(self.modifWindow, self.card)
         self.modifInterf.deleted.connect(self.deleted)
         self.modifInterf.modified.connect(self.modified)
+        self.modifWindow.show()
         self.modifInterf.show()
-    
+        
     def deleted(self):
-        print('CardWidget received deleted from CardModification; deletedSignal emitted')
+        self.modifWindow.close()
         self.deletedSignal.emit()
     
     def modified(self):
+        self.modifWindow.close()
         self.modifiedSignal.emit()
-    
-
 
 class ViewDialog(object):
     def __init__(self, begin, givenCards):

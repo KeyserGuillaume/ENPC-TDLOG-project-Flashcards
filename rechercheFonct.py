@@ -14,14 +14,21 @@ def recherche(langue, mot, theme, tra, phrase, floue):
             resultat.extend(recherche_one(langue, mot, theme, tra, phrase))
     elif floue == True:
         if langue.strip() == 'TOUTES':
-            for item in langues:
-                mots = floue_mot_rapide(item, mot)
-                for item_mot in mots:
-                    resultat.extend(recherche_one(item, item_mot, theme, tra, phrase))
+            if mot.strip() == '':
+                for item in langues:
+                    resultat.extend(recherche_one(item, mot, theme, tra, phrase))
+            else:
+                for item in langues:
+                    mots = floue_mot_rapide(item, mot)
+                    for item_mot in mots:
+                        resultat.extend(recherche_one(item, item_mot, theme, tra, phrase))
         else:
-            mots = floue_mot_rapide(item, mot)
-            for item_mot in mots:
-                resultat.extend(recherche_one(langue, item_mot, theme, tra, phrase))
+            if mot.strip() == '':
+                resultat.extend(recherche_one(langue, mot, theme, tra, phrase))
+            else:
+                mots = floue_mot_rapide(langue, mot)
+                for item_mot in mots:
+                    resultat.extend(recherche_one(langue, item_mot, theme, tra, phrase))
     return resultat
             
         

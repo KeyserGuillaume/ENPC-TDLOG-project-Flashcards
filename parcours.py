@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, QScrollArea, QScrollBar
 import sys
 import database
 
@@ -55,7 +55,7 @@ class CardButton(QPushButton):
         super(CardButton, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(151, 111))
         self.setMaximumSize(QtCore.QSize(151, 111))
-        self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "font: 75 18pt \"Arial\";")
+        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "font: 75 18pt \"Arial\";")
         self.setObjectName(card.word)
         self.CardInterf = None
 
@@ -69,16 +69,21 @@ class parcoursChosenCards(object):
         self.cardslist=database.getAllCards(langue)
         ### il faudrait rajouter une barre de scrolling
         # et la possibilité de déplacement vertical
-        self.Dialog = QWidget()
+        self.Dialog = QScrollArea()  #QWidget()
         self.Dialog.setObjectName("SelectCard")
         self.Dialog.setWindowTitle("Your Card selection")
-        self.Dialog.resize(780, 430)
+        self.Dialog.setGeometry(QtCore.QRect(0, 0, 780, 430))
+        self.Dialog.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.Dialog.setWidgetResizable(True)
         self.gridWidget = QWidget(self.Dialog)
-        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 760, 361))
+        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 760, 111*(len(self.cardslist)/5+1)))
         self.gridWidget.setObjectName("grille de placement")
+        self.gridWidget.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
+        self.Dialog.setWidget(self.gridWidget)
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(0, 0, 0, 0)
         self.folderGrid.setObjectName("folderGrid")
+        self.scrollbar = QScrollBar()
         self.mycards = self.cardslist.copy()
         for i, carte in enumerate(self.cardslist):
             self.mycards[i] = CardButton(carte, self.cardslist, self.gridWidget)
@@ -158,12 +163,8 @@ class parcoursIconsGame(object):
 def main():
     args = sys.argv
     a = QApplication(args)
-    #MyDialog=QWidget()
-    #mf = parcoursIconsGame()
     mf = parcoursChosenCards('anglais')
-    #mf = parcoursLanguesFolder(MyDialog)
     mf.show()
-    #MyDialog.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)
 

@@ -238,7 +238,6 @@ class ViewDialog(object):
     def currentCardWasModified(self):
         #on modifie la carte
         self.givenCards[self.cardnumber]=database.getCardById(self.givenCards[self.cardnumber].tablename, self.givenCards[self.cardnumber].name)
-        print(self.givenCards[self.cardnumber])
         #on reinitialise currentCard en gardant la meme vue
         view=self.currentCard.currentview
         self.viewbar.removeWidget(self.currentCard)
@@ -248,7 +247,6 @@ class ViewDialog(object):
         
     #fonction appelee apres suppression de la carte
     def currentCardWasDeleted(self):
-        print("received deletedSignal from CardWidget; deleting")
         del self.givenCards[self.cardnumber]
         
         self.nbCard-=1

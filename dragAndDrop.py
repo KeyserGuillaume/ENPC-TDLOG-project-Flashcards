@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLCDNumber
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLCDNumber, QLabel
 import sys
 import database
 from random import randrange
@@ -32,6 +32,7 @@ class ButtonToDrag(QPushButton):
         self.setAcceptDrops(True)
         self.jouees=depot
     error=QtCore.pyqtSignal()
+    success=QtCore.pyqtSignal()
 
     # event on veut bouger la carte
     def mouseMoveEvent(self, event):
@@ -75,7 +76,8 @@ class ButtonToDrag(QPushButton):
             if match(cardSource.text(),self.text()) or match(self.text(),cardSource.text()) :
                 event.acceptProposedAction()
                 #self.move(event.pos())
-                #cardSource.move(event.pos())
+                #cardSource.move(event.pos())                
+                self.success.emit()
                 horizontalLayout = QHBoxLayout()
                 horizontalLayout.setAlignment(QtCore.Qt.AlignTop)
                 horizontalLayout.setObjectName("Mon coup")
@@ -122,12 +124,28 @@ class DragDropGame(QWidget):
             myy=randrange(5,390,1)
             self.myCards[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
             self.myCards[i].error.connect(self.error.emit)
+            self.myCards[i].success.connect(self.success.emit)
             self.myTrads.append(ButtonToDrag(carte,'trad', self, self.Welldone))
             myx = randrange(5, 520, 1)
             myy = randrange(5, 380, 1)
             self.myTrads[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
             self.myTrads[i].error.connect(self.error.emit)
+            self.myTrads[i].success.connect(self.success.emit)
+        #le message de victoire
+        self.victoryWidget=QWidget(self)
+        self.victoryWidget.resize(300, 200)
+        qr=self.victoryWidget.frameGeometry()
+        qr.moveCenter(self.rect().center())
+        self.victoryWidget.move(qr.topLeft())
+        self.label=QLabel(self.victoryWidget)
+        path="icons/victory.png"
+        self.pixmap=QtGui.QPixmap()
+        self.pixmap.load(path)
+        self.label.setPixmap(self.pixmap)
+        self.label.setScaledContents(True) 
+        self.victoryWidget.setVisible(False) 
     error=QtCore.pyqtSignal()
+    success=QtCore.pyqtSignal()
     
     def dragEnterEvent(self, e):
         e.accept()
@@ -154,6 +172,7 @@ class GameWindow (QWidget):
         self.initGame()
     def initGame(self):
         self.nberreurs=0
+        self.nbSucces=0
         self.t0=time()
         self.timeGiven=60
         ## la fenetre
@@ -163,6 +182,7 @@ class GameWindow (QWidget):
         ## le jeu comme defini ci dessus
         self.theGame=DragDropGame(self, self.myCards)
         self.theGame.error.connect(self.incrementErrorCount)
+        self.theGame.success.connect(self.incrementSuccessCount)
         ## la barre de boutons/compteurs du bas
         self.BottomWidget = QWidget(self)
         self.BottomWidget.setGeometry(QtCore.QRect(10, 440, 731, 61))
@@ -203,9 +223,17 @@ class GameWindow (QWidget):
         self.timer2.start(10)
         self.GameBox.addWidget(self.failure)
         
+    def incrementSuccessCount(self):
+        self.nbSucces+=1;
+        if (self.nbSucces==1):#len(self.myCards)):
+            print("ok")
+            self.theGame.victoryWidget.setVisible(True)
+        
     def incrementErrorCount(self):
         self.nberreurs+=1
     def Time(self):
+        if (self.nbSucces==len(self.myCards)):
+            return
         #currenttime = time()-t0
         # affiche l'heure
         # regarder doc de time pour changer en un chrono descendant
@@ -226,6 +254,7 @@ class GameWindow (QWidget):
         self.initGame()
         self.theGame.show()
         self.BottomWidget.show()
+        self.theGame.victoryWidget.setVisible(False)
     def Mistake(self):
         self.failure.display(self.nberreurs)
 

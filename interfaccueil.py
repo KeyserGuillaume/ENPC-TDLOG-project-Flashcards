@@ -7,16 +7,16 @@ import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCa
 
 
 ### traitement des listes d'apprentissage
-Table='anglais'
-# entre 0 et 4
-cardsToLearn=database.getCardsToLearn(Table,0,4)
-#cardsToLearn=["suspendre","remuer","..."]
- # entre 5 et 9
-cardsToGoOver=database.getCardsToLearn(Table,5,9)
-#cardsToGoOver=["echarpe","amour", "..."]
-# 10
-cardsKnown=database.getCardsToLearn(Table,10,10)
-#cardsKnown=["bonjour","bienvenue", "..."]
+#Table='anglais'
+## entre 0 et 4
+#cardsToLearn=database.getCardsToLearn(Table,0,4)
+##cardsToLearn=["suspendre","remuer","..."]
+# # entre 5 et 9
+#cardsToGoOver=database.getCardsToLearn(Table,5,9)
+##cardsToGoOver=["echarpe","amour", "..."]
+## 10
+#cardsKnown=database.getCardsToLearn(Table,10,10)
+##cardsKnown=["bonjour","bienvenue", "..."]
 
 
 ### les boutons de commande connectés a l'interface de lecture
@@ -39,7 +39,6 @@ class ConnectedButton(QCommandLinkButton):
             self.setText(cardlist[self.rank].word)
         else:
             self.setText("...")
-
 
     def open(self):
         if self.rank<3:
@@ -81,12 +80,19 @@ class HomeScreen(object):
         self.mainpage.addWidget(self.ongletsAccueil)
         # selection de l'onglet principal
         self.ongletsAccueil.setCurrentIndex(0)
+        
     def setVisible(self, myBool):#pas pratique...
         self.ongletsAccueil.setVisible(myBool)
+        
+    #un peu alambique : pour fermer, on cache ongletsAccueil
+    def close(self):
+        self.setVisible(False)
 
 ## la fenetre principale
 class WelcomeInterf(object):
     def __init__(self):
+        self.Table='anglais'
+        self.getCards()
         # la fenetre
         self.Dialog = QWidget()
         self.Dialog.setObjectName("Welcome")
@@ -142,7 +148,7 @@ class WelcomeInterf(object):
         self.accueil = QPushButton(u"Accueil", self.ResumeBox)
         self.accueil.setObjectName("accueil")
         self.barreResume.addWidget(self.accueil)
-        self.accueil.setEnabled(False)
+        self.accueil.setEnabled(True)
         # bouton de profil utilisateur
         # non pris en compte
         self.profil = QPushButton(u"User profile", self.ResumeBox)
@@ -160,33 +166,33 @@ class WelcomeInterf(object):
         self.learnlabel.setObjectName("learnlabel")
         self.learnlabel.setText("  Cards to learn")
         self.barreResume.addWidget(self.learnlabel)
-        self.learn1 = ConnectedButton(cardsToLearn, 0, self.ResumeBox, "learn1")
+        self.learn1 = ConnectedButton(self.cardsToLearn, 0, self.ResumeBox, "learn1")
         self.barreResume.addWidget(self.learn1)
-        self.learn2 = ConnectedButton(cardsToLearn, 1, self.ResumeBox, "learn2")
+        self.learn2 = ConnectedButton(self.cardsToLearn, 1, self.ResumeBox, "learn2")
         self.barreResume.addWidget(self.learn2)
-        self.learn3 = ConnectedButton(cardsToLearn, 2, self.ResumeBox, "learn3")
+        self.learn3 = ConnectedButton(self.cardsToLearn, 2, self.ResumeBox, "learn3")
         self.barreResume.addWidget(self.learn3)
         # label cartes a revoir et les 3 boutons carte associésAttributeError: 'PyQt5.QtCore.pyqtSignal' object has no attribute 'connect'
         self.overlabel = QLabel(self.ResumeBox)
         self.overlabel.setObjectName("overlabel")
         self.overlabel.setText("  Cards to go over")
         self.barreResume.addWidget(self.overlabel)
-        self.over1 = ConnectedButton(cardsToGoOver, 0, self.ResumeBox, "over1")
+        self.over1 = ConnectedButton(self.cardsToGoOver, 0, self.ResumeBox, "over1")
         self.barreResume.addWidget(self.over1)
-        self.over2 = ConnectedButton(cardsToGoOver, 1, self.ResumeBox, "over2")
+        self.over2 = ConnectedButton(self.cardsToGoOver, 1, self.ResumeBox, "over2")
         self.barreResume.addWidget(self.over2)
-        self.over3 = ConnectedButton(cardsToGoOver, 2, self.ResumeBox, "over3")
+        self.over3 = ConnectedButton(self.cardsToGoOver, 2, self.ResumeBox, "over3")
         self.barreResume.addWidget(self.over3)
         # label cartes bien connues et les 3 boutons carte associés
         self.knowledgelabel = QLabel(self.ResumeBox)
         self.knowledgelabel.setObjectName("knowledgelabel")
         self.knowledgelabel.setText("  Cards known")
         self.barreResume.addWidget(self.knowledgelabel)
-        self.know1 = ConnectedButton(cardsKnown, 0, self.ResumeBox, "know1")
+        self.know1 = ConnectedButton(self.cardsKnown, 0, self.ResumeBox, "know1")
         self.barreResume.addWidget(self.know1)
-        self.know2 = ConnectedButton(cardsKnown, 1, self.ResumeBox, "know2")
+        self.know2 = ConnectedButton(self.cardsKnown, 1, self.ResumeBox, "know2")
         self.barreResume.addWidget(self.know2)
-        self.know3 = ConnectedButton(cardsKnown, 2, self.ResumeBox, "know3")
+        self.know3 = ConnectedButton(self.cardsKnown, 2, self.ResumeBox, "know3")
         self.barreResume.addWidget(self.know3)
         # une ligne de séparation horizontale
         self.line2 = QFrame(self.ResumeBox)
@@ -213,10 +219,12 @@ class WelcomeInterf(object):
         ## gestion des slots et des signaux
         self.createInterf=None
         self.newButton.clicked.connect(self.createnew)
+        self.accueil.clicked.connect(self.retourAccueil)
         self.selectedcard=None
         self.modifInterf=None
         self.modifyButton.clicked.connect(self.modifycard)
         self.searchInterf = None
+        self.currentScreen=self.myscreen
         self.searchButton.clicked.connect(self.search)
         self.learn1.clicked.connect(self.learn1.open)
         self.learn2.clicked.connect(self.learn2.open)
@@ -228,13 +236,21 @@ class WelcomeInterf(object):
         self.know2.clicked.connect(self.know2.open)
         self.know3.clicked.connect(self.know3.open)
 
+    def getCards(self):
+        self.cardsToLearn=database.getCardsToLearn(self.Table,0,4)
+        self.cardsToGoOver=database.getCardsToLearn(self.Table,5,9)
+        self.cardsKnown=database.getCardsToLearn(self.Table,10,10)
     def show(self):
         # ouverture de la fenetre
         self.Dialog.show()
+    def retourAccueil(self):
+        self.currentScreen.close()
+        self.displayHomeScreen()
     def createnew(self):
         # ouverture de l'interface de creation
         self.createInterf = createcardsInterf.CardCreation(self.screenLayout)
         self.myscreen.setVisible(False)
+        self.currentScreen = self.createInterf
         self.createInterf.show()
         self.createInterf.created.connect(self.displayHomeScreen)
     def modifycard(self):
@@ -244,10 +260,12 @@ class WelcomeInterf(object):
         self.modifInterf=createcardsInterf.CardModification(self.screenLayout, self.selectedcard)
         #on cache l'ecran d'accueil
         self.myscreen.setVisible(False)
+        self.currentScreen = self.modifInterf
         self.modifInterf.show()
         self.modifInterf.modified.connect(self.displayHomeScreen)
         self.modifInterf.deleted.connect(self.displayHomeScreen)
     def displayHomeScreen(self):
+        self.getCards()
         self.myscreen.setVisible(True)
     def search(self):
         self.searchInterf = rechercheInterf.Recherche()

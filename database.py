@@ -38,7 +38,6 @@ def getAllCards(language):
 # ne peut pas modifier le mot et la langue
 def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature):
     conn=connDB()
-#    cursor=conn.execute('''UPDATE ANGLAIS SET TRADUCTION = ?, EXEMPLE = ?, THEME = ?, DIFFICULTE = ?, MAITRISE = ? WHERE ID = ? ''', (trad, ex, theme, diff, level, Id))
     cursor=conn.execute("UPDATE '{}' SET TRADUCTION = ?, EXEMPLE = ?, THEME = ? ,DIFFICULTE = ? , MAITRISE = ? , ILLUSTRATIONPATH = ? , SOUNDPATH = ? , NATURE = ? WHERE ID = ? ".format(tableName.upper()), 
     (trad, ex, theme, diff, level, image, sound, nature, Id))
     conn.commit()
@@ -106,7 +105,8 @@ def addCard(mot, trad, ex, theme, diff, level, image, sound, nature, langue):
     conn=connDB()
     nextId=getNextId(langue)
     conn.execute("INSERT INTO {} (ID, MOT, TRADUCTION, EXEMPLE, THEME, DIFFICULTE, MAITRISE, ILLUSTRATIONPATH, SOUNDPATH, NATURE, LANGUE) \
-         VALUES({}, '{}', '{}', '{}', '{}', {}, {}, '{}', '{}', '{}', '{}')".format(langue.upper(), nextId, mot, trad, ex, theme, int(diff), int(level), image, sound, nature, langue.upper()))
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ".format(langue.upper()), 
+    (nextId, mot, trad, ex, theme, diff, level, image, sound, nature, langue.upper()))
     conn.commit()
     conn.close()
 

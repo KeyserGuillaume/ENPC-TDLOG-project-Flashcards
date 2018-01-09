@@ -42,8 +42,6 @@ class ButtonToDrag(QPushButton):
         #make a transparent button be dragged by the pointer
         b=QtCore.QCoreApplication.instance ()
         pixmap = QtGui.QScreen.grabWindow(b.primaryScreen(),self.winId())
-        #pixmap = QtGui.QPixmap.grabWindow(self.winId())
-        #screen=QScreen.grabWindow(self)
         painter = QtGui.QPainter(pixmap)
         painter.setCompositionMode(painter.CompositionMode_DestinationIn)
         painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
@@ -168,6 +166,7 @@ from time import time, strftime,localtime
 class GameWindow (QWidget):
     def __init__(self, CartesJouees):
         super(QWidget, self).__init__()
+        print(len(CartesJouees))
         self.myCards=CartesJouees
         self.initGame()
     def initGame(self):

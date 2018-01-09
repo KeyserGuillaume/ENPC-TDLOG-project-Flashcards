@@ -90,14 +90,13 @@ class parcoursChosenCards(object):
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(20, 20, 20, 20)
         self.folderGrid.setObjectName("folderGrid")
-        self.scrollbar = QScrollBar()
         self.mycards = self.cardslist.copy()
         #print([x.word for x in self.cardslist])
         #print([x.name for x in self.cardslist])
         #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
         for i, carte in enumerate(self.cardslist):
             self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget)
-            # 5 dossiers par ligne
+            # 5 cartes par ligne
             row = i/5
             column = i%5
             self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)

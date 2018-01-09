@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file>fcard2.png</file>
+    <file>fcard3.png</file>
     <file>speaker.png</file>
     <file>picture.png</file>
     <file>edit.png</file>
@@ -15,6 +17,10 @@
     <file>dossier.png</file>
   </qresource>
   <qresource prefix="fond">
+    <file>silver.jpg</file>
+    <file>wood.jpg</file>
+    <file>green.jpg</file>
+    <file>yellow.jpg</file>
     <file>notebook.jpg</file>
     <file>blackboard.jpg</file>
   </qresource>

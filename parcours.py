@@ -9,6 +9,8 @@ import viewCard
 from icons import icons
 # permet l'accès aux images des icones
 
+from math import ceil
+
 AllLangages = database.giveAllLanguages()
 
 _root = QtCore.QFileInfo(__file__).absolutePath()
@@ -49,19 +51,24 @@ class parcoursLanguesFolder(object):
             self.myfolders[i].clicked.connect(self.myfolders[i].openChosenCard)
 
 class CardButton(QPushButton):
-    def __init__(self, card, cardslist, place):
+    def __init__(self, card, rank, cardslist, place):
         self.allcards=cardslist
         self.lacarte=card
+        self.lerang=rank
         super(CardButton, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(151, 111))
         self.setMaximumSize(QtCore.QSize(151, 111))
-        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "font: 75 18pt \"Arial\";")
+        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "background-color: rgba(255, 255, 255, 0);\n" "font: 75 18pt \"Arial\";")
+        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75 18pt \"Arial\";")
         self.setObjectName(card.word)
         self.CardInterf = None
 
     def openChosenCard(self):
         # ouverture de l interface de parcours de cartes
-        self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
+        #self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
+        # ne marche plus car certains noms ne sont plus attribués dans anglais (2,4,5,7,8,12,13)
+        # donc plus de lien direct entre rang et nom
+        self.CardInterf = viewCard.ViewDialog(self.lerang, self.allcards)
         self.CardInterf.show()
 
 class parcoursChosenCards(object):
@@ -72,22 +79,24 @@ class parcoursChosenCards(object):
         self.Dialog = QScrollArea()  #QWidget()
         self.Dialog.setObjectName("SelectCard")
         self.Dialog.setWindowTitle("Your Card selection")
-        self.Dialog.setGeometry(QtCore.QRect(0, 0, 780, 430))
+        self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
         self.Dialog.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.Dialog.setWidgetResizable(True)
         self.gridWidget = QWidget(self.Dialog)
-        self.gridWidget.setGeometry(QtCore.QRect(10, 10, 760, 111*(len(self.cardslist)/5+1)))
+        self.gridWidget.setGeometry(QtCore.QRect(0, 0, 760, 131*ceil(len(self.cardslist)/5)))
         self.gridWidget.setObjectName("grille de placement")
         self.gridWidget.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         self.Dialog.setWidget(self.gridWidget)
         self.folderGrid = QGridLayout(self.gridWidget)
-        self.folderGrid.setContentsMargins(0, 0, 0, 0)
+        self.folderGrid.setContentsMargins(20, 20, 20, 20)
         self.folderGrid.setObjectName("folderGrid")
-        self.scrollbar = QScrollBar()
         self.mycards = self.cardslist.copy()
+        #print([x.word for x in self.cardslist])
+        #print([x.name for x in self.cardslist])
+        #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButton(carte, self.cardslist, self.gridWidget)
-            # 5 dossiers par ligne
+            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget)
+            # 5 cartes par ligne
             row = i/5
             column = i%5
             self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)

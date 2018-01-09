@@ -3,6 +3,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLCDNumber, QLabel
 import sys
 import database
+import gameWindow
 from random import randrange
 
 
@@ -95,15 +96,16 @@ class ButtonToDrag(QPushButton):
                 event.ignore()
         else:
             event.ignore()
-
+            
 ### le widget de jeu (cartes aleatoires qui se droppent et layout de droppage)
-class DragDropGame(QWidget):
+class dragDropGameWindow(QWidget):
     def __init__(self,bigWindow, CardsPlayed):
-        ## la fenetre
-        super(DragDropGame, self).__init__(bigWindow)
+        ## la fenetre de jeux
+        super(dragDropGameWindow, self).__init__(bigWindow)
         self.setObjectName("Jeu de reliage")
         self.setWindowTitle("Drag and Drop")
-        self.resize(833, 423)
+        self.resize(bigWindow.frameSize())
+        #self.resize(833, 423)
         self.setAcceptDrops(True)
         ## les futures listes de boutons
         self.myCards = []
@@ -160,112 +162,44 @@ class DragDropGame(QWidget):
     #### il faut bouger un bouton sur un autre
     #### la classe ButtonToDrag gere les events
 
-from time import time, strftime,localtime
-
-
-class GameWindow (QWidget):
-    def __init__(self, CartesJouees):
-        super(QWidget, self).__init__()
-        print(len(CartesJouees))
-        self.myCards=CartesJouees
-        self.initGame()
-    def initGame(self):
-        self.nberreurs=0
-        self.nbSucces=0
-        self.t0=time()
-        self.timeGiven=60
-        ## la fenetre
-        self.setObjectName("Jeu de reliage")
-        self.setWindowTitle("Drag and Drop")
-        self.setFixedSize(853, 554)
-        ## le jeu comme defini ci dessus
-        self.theGame=DragDropGame(self, self.myCards)
-        self.theGame.error.connect(self.incrementErrorCount)
-        self.theGame.success.connect(self.incrementSuccessCount)
-        ## la barre de boutons/compteurs du bas
-        self.BottomWidget = QWidget(self)
-        self.BottomWidget.setGeometry(QtCore.QRect(10, 440, 731, 61))
-        self.BottomWidget.setObjectName("BottomWidget")
-        self.GameBox = QHBoxLayout(self.BottomWidget)
-        self.GameBox.setContentsMargins(0, 0, 0, 0)
-        self.GameBox.setObjectName("GameBox")
-        # les boutons de gestion de partie
-        self.newButton = QPushButton(u"New Round",self.BottomWidget)
-        self.newButton.setObjectName("newButton")
-        self.GameBox.addWidget(self.newButton)
-        self.saveButton = QPushButton(u"Save Round", self.BottomWidget)
-        self.saveButton.setObjectName("saveButton")
-        self.GameBox.addWidget(self.saveButton)
-        self.resetButton = QPushButton(u"Reset",self.BottomWidget)
-        self.resetButton.setObjectName("resetButton")
-        self.resetButton.clicked.connect(self.reset)
-        self.GameBox.addWidget(self.resetButton)
-        # compteur chrono
-        self.chrono = QLCDNumber(self.BottomWidget)
-        self.chrono.setDigitCount(2)
-        self.chrono.setObjectName("chrono")
-        self.GameBox.addWidget(self.chrono)
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.Time)
-        self.timer.start(10)
-        # bouton pour afficher ses erreurs
-        self.mistakesButton = QPushButton(u"See mistakes",self.BottomWidget)
-        self.mistakesButton.setObjectName("mistakesButton")
-        self.GameBox.addWidget(self.mistakesButton)
-        # compteur d'erreurs
-        self.failure = QLCDNumber(self.BottomWidget)
-        self.failure.setStyleSheet("color: rgb(252, 0, 6);\n" "border-color: rgb(0, 0, 0);\n" "")
-        self.failure.setDigitCount(5)
-        self.failure.setObjectName("failure")
-        self.timer2 = QtCore.QTimer(self)
-        self.timer2.timeout.connect(self.Mistake)
-        self.timer2.start(10)
-        self.GameBox.addWidget(self.failure)
+class dragDropGame(QWidget):
+    def __init__(self, givenWindow, cardsPlayed):
+        super(dragDropGame, self).__init__(givenWindow)
+        self.resize(givenWindow.frameSize())
+        self.cartesJouees=cardsPlayed
+        self.init()
+    def init(self):
+        self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
+        self.game=dragDropGameWindow(self.window.gameArea, self.cartesJouees)
+        self.window.show()
         
-    def incrementSuccessCount(self):
-        self.nbSucces+=1;
-        if (self.nbSucces==1):#len(self.myCards)):
-            print("ok")
-            self.theGame.victoryWidget.setVisible(True)
-        
-    def incrementErrorCount(self):
-        self.nberreurs+=1
-    def Time(self):
-        if (self.nbSucces==len(self.myCards)):
-            return
-        #currenttime = time()-t0
-        # affiche l'heure
-        # regarder doc de time pour changer en un chrono descendant
-        timeLeft=self.timeGiven-(time()-self.t0)//1
-        if (timeLeft<0) :
-            self.timeIsOut()
-            return
-        self.chrono.display(timeLeft)
-        #self.chrono.display(strftime("%H" + ":" + "%M" + ":" + "%S", localtime()))
-    def timeIsOut(self):
-        for carte in self.theGame.myCards:
-            carte.setText('TIME IS OUT')
-        for carte in self.theGame.myTrads:
-            carte.setText('GAME OVER')
+        self.window.resetSignal.connect(self.reset)
+        self.game.error.connect(self.window.incrementErrorCount)
+        self.game.success.connect(self.window.incrementSuccessCount)
+        self.window.gameWon.connect(self.game.victoryWidget.show)
+        self.window.timeIsOut.connect(self.timeIsOut)
     def reset(self):
-        self.theGame.close()
-        self.BottomWidget.close()
-        self.initGame()
-        self.theGame.show()
-        self.BottomWidget.show()
-        self.theGame.victoryWidget.setVisible(False)
-    def Mistake(self):
-        self.failure.display(self.nberreurs)
-
-
-
+        self.game.close()
+        #la ligne suivante evite que la fenetre, meme fermee, envoie le signal timeIsOut
+        self.window.timeIsOut.disconnect()
+        self.window.close()
+        self.init()
+    def timeIsOut(self):
+        for carte in self.game.myCards:
+            carte.setText('TIME IS OUT')
+        for carte in self.game.myTrads:
+            carte.setText('GAME OVER')
+    #self.theGame.victoryWidget.setVisible(True)
+    
 if __name__ == "__main__":
     Table='anglais'
     ### cartes concernées par le jeu
     CartesEnJeu=database.getCardsToLearn(Table,0,9)
     args = sys.argv
     b = QApplication(args)
-    mf = GameWindow(CartesEnJeu)
-    mf.show()
+    w = QWidget()
+    w.resize(853, 554)
+    mf = dragDropGame(w, CartesEnJeu)
+    w.show()
     b.exec_()
     b.lastWindowClosed.connect(b.quit)

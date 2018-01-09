@@ -166,7 +166,11 @@ class parcoursIconsGame(object):
 
     def openDD(self):
         # ouverture de l'interface de jeu
-        self.DDInterf = dragAndDrop.GameWindow(database.getCardsToLearn('anglais',0,10))
+    #this is where things go wrong. it doesn't show up
+        w = QWidget()
+        w.resize(853, 554)
+        self.DDInterf = dragAndDrop.dragDropGame(w, database.getCardsToLearn('anglais',0,10))
+        w.show()
         self.DDInterf.show()
 
 def main():

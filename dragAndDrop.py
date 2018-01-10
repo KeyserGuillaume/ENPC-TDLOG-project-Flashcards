@@ -175,12 +175,14 @@ class dragDropGame(QWidget):
         self.resize(givenWindow.frameSize())
         self.cartesJouees=cardsPlayed
         self.init()
+    leave=QtCore.pyqtSignal()
     def init(self):
         self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
         self.game=dragDropGameWindow(self.window.gameArea, self.cartesJouees)
         self.window.show()
         
         self.window.resetSignal.connect(self.reset)
+        self.window.leaveSignal.connect(self.endOfGame)
         self.game.error.connect(self.window.incrementErrorCount)
         self.game.success.connect(self.window.incrementSuccessCount)
         self.window.gameWon.connect(self.game.victoryWidget.show)
@@ -196,7 +198,9 @@ class dragDropGame(QWidget):
             carte.setText('TIME IS OUT')
         for carte in self.game.myTrads:
             carte.setText('GAME OVER')
-    #self.theGame.victoryWidget.setVisible(True)
+    def endOfGame(self):
+        self.leave.emit()
+        self.close()
     
 if __name__ == "__main__":
     Table='anglais'

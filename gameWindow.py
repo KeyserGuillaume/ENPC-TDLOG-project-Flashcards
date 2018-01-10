@@ -18,6 +18,7 @@ class GameWindow (QWidget):
     resetSignal=QtCore.pyqtSignal()
     timeIsOut=QtCore.pyqtSignal()
     gameWon=QtCore.pyqtSignal()
+    leaveSignal=QtCore.pyqtSignal()
     def initGame(self):
         self.nberreurs=0
         self.nbSucces=0
@@ -77,6 +78,10 @@ class GameWindow (QWidget):
         self.timer2.timeout.connect(self.Mistake)
         self.timer2.start(10)
         self.GameBox.addWidget(self.failure)
+        #bouton pour quitter        
+        self.leaveButton = QPushButton("quitter",self.BottomWidget)
+        self.GameBox.addWidget(self.leaveButton)
+        self.leaveButton.clicked.connect(self.leave)
         
     def incrementSuccessCount(self):
         self.nbSucces+=1;
@@ -108,6 +113,9 @@ class GameWindow (QWidget):
 #        self.theGame.victoryWidget.setVisible(False)
     def Mistake(self):
         self.failure.display(self.nberreurs)
+    def leave(self):
+        self.leaveSignal.emit()
+        self.close()
 
 
 

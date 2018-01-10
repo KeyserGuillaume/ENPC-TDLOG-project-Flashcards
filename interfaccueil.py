@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop
 
 
 ### traitement des listes d'apprentissage
@@ -47,42 +47,51 @@ class ConnectedButton(QCommandLinkButton):
             self.LinkedInterf.show()
 
 ## l'ecran d'accueil interne avec des onglets
-class HomeScreen(object):
+class HomeScreen(QToolBox):
     def __init__(self, givenLayout):
-        # la boite a onglets
-        self.mainpage = QVBoxLayout(givenLayout)
-        self.mainpage.setContentsMargins(0, 0, 0, 0)
-        self.mainpage.setObjectName("mainpage")
-        self.ongletsAccueil = QToolBox(givenLayout)
-        self.ongletsAccueil.setObjectName("ongletsAccueil")
+        super(HomeScreen, self).__init__(givenLayout)
+        self.setFixedSize(givenLayout.frameSize())
+        self.setObjectName("ongletsAccueil")
         # onglet 1
         self.MesCartes = QWidget()
-        self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
+        self.MesCartes.setFixedSize(649, 401)
+        #self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
         self.MesCartes.setObjectName("MesCartes")
-        folders = parcours.parcoursLanguesFolder( self.MesCartes)
-        self.ongletsAccueil.addItem(self.MesCartes, "")
-        self.ongletsAccueil.setItemText(self.ongletsAccueil.indexOf(self.MesCartes),"Mes Cartes")
+        folders = parcours.parcoursLanguesFolder(self.MesCartes)
+        self.w1=QWidget()
+        #self.addItem(self.w1, "")
+        #self.setItemText(0, "w1")
+        self.addItem(self.MesCartes, "")
+        self.setItemText(self.indexOf(self.MesCartes),"Mes Cartes")
         # onglet 2
         #self.MesJeux = QWidget()
-        self.MesJeux = parcours.parcoursIconsGame()
-        self.MesJeux.Dialog.setGeometry(QtCore.QRect(0, 0, 669, 431))
-        self.MesJeux.Dialog.setObjectName("MesJeux")
-        #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
-        self.ongletsAccueil.addItem(self.MesJeux.Dialog, "")
-        self.ongletsAccueil.setItemText(self.ongletsAccueil.indexOf(self.MesJeux.Dialog), "Mes Jeux")
-        self.mainpage.addWidget(self.ongletsAccueil)
+        self.MesJeux = parcours.parcoursIconsGame(663, 406)
+        self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
+        self.MesJeux.setObjectName("MesJeux")
+        self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
+        #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)        
+        self.w2=QWidget()
+        #self.addItem(self.w2, "")
+        #self.setItemText(1, "w2")
+        self.addItem(self.MesJeux, "")
+        self.setItemText(self.indexOf(self.MesJeux), "Mes Jeux")
         # onglet 3
         self.MesParties = QWidget()
         self.MesParties.setGeometry(QtCore.QRect(0, 0, 649, 431))
         self.MesParties.setObjectName("MesParties")
-        self.ongletsAccueil.addItem(self.MesParties, "")
-        self.ongletsAccueil.setItemText(self.ongletsAccueil.indexOf(self.MesParties), "Mes Parties")
-        self.mainpage.addWidget(self.ongletsAccueil)
+        self.w3=QWidget()
+        #self.addItem(self.w3, "")
+        #self.setItemText(2, "w3")
+        self.addItem(self.MesParties, "")
+        self.setItemText(self.indexOf(self.MesParties), "Mes Parties")
         # selection de l'onglet principal
-        self.ongletsAccueil.setCurrentIndex(0)
-        
-    def setVisible(self, myBool):#pas pratique...
-        self.ongletsAccueil.setVisible(myBool)
+        self.setCurrentIndex(0)
+    dragAndDropSignal=QtCore.pyqtSignal()    
+    memorySignal=QtCore.pyqtSignal()
+    hotAndColdSignal=QtCore.pyqtSignal()
+    pointSignal=QtCore.pyqtSignal()
+    rightWrongSignal=QtCore.pyqtSignal()
+    
         
     #un peu alambique : pour fermer, on cache ongletsAccueil
     def close(self):
@@ -235,6 +244,7 @@ class WelcomeInterf(object):
         self.know1.clicked.connect(self.know1.open)
         self.know2.clicked.connect(self.know2.open)
         self.know3.clicked.connect(self.know3.open)
+        self.myscreen.dragAndDropSignal.connect(self.openDragAndDrop)
 
     def getCards(self):
         self.cardsToLearn=database.getCardsToLearn(self.Table,0,4)
@@ -264,6 +274,11 @@ class WelcomeInterf(object):
         self.modifInterf.show()
         self.modifInterf.modified.connect(self.displayHomeScreen)
         self.modifInterf.deleted.connect(self.displayHomeScreen)
+    def openDragAndDrop(self):
+        self.myscreen.setVisible(False)
+        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn('anglais',0,10))
+        self.DDInterf.show()
+        self.DDInterf.leave.connect(self.displayHomeScreen)
     def displayHomeScreen(self):
         self.getCards()
         self.myscreen.setVisible(True)

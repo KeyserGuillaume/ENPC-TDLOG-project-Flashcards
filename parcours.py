@@ -108,14 +108,16 @@ class parcoursChosenCards(object):
         # ouverture de la fenetre
         self.Dialog.show()
 
-class parcoursIconsGame(object):
-    def __init__(self):
-        self.Dialog = QWidget()
-        self.Dialog.setObjectName("SelectGame")
-        self.Dialog.setWindowTitle("Our Game selection")
-        self.Dialog.resize(663, 406)
-        self.gridWidget = QWidget(self.Dialog)
+class parcoursIconsGame(QWidget):
+    def __init__(self, width, height):
+        super(parcoursIconsGame, self).__init__()
+        self.setObjectName("SelectGame")
+        self.setWindowTitle("Our Game selection")
+        #self.resize(663, 406)
+        self.resize(width, height)
+        self.gridWidget = QWidget(self)
         self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
+        self.gridWidget.setGeometry(QtCore.QRect(10, 10, self.frameSize().width()-22, self.frameSize().height()-45))
         self.gridWidget.setObjectName("gridWidget")
         self.gameGrid = QGridLayout(self.gridWidget)
         self.gameGrid.setContentsMargins(0, 0, 0, 0)
@@ -158,11 +160,15 @@ class parcoursIconsGame(object):
 
         ## signaux et slots : ouverture de la fenetre de jeux
         self.DDInterf = None
-        self.DDButton.clicked.connect(self.openDD)
-
+        self.DDButton.clicked.connect(self.dragAndDropSignal.emit)
+    dragAndDropSignal=QtCore.pyqtSignal()
+    memorySignal=QtCore.pyqtSignal()
+    hotAndColdSignal=QtCore.pyqtSignal()
+    pointSignal=QtCore.pyqtSignal()
+    rightWrongSignal=QtCore.pyqtSignal()
     def show(self):
         # ouverture de la fenetre
-        self.Dialog.show()
+        self.show()
 
     def openDD(self):
         # ouverture de l'interface de jeu

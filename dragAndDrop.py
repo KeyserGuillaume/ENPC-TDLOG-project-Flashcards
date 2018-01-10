@@ -105,6 +105,8 @@ class dragDropGameWindow(QWidget):
         self.setObjectName("Jeu de reliage")
         self.setWindowTitle("Drag and Drop")
         self.resize(bigWindow.frameSize())
+        self.width=self.frameSize().width()
+        self.height=self.frameSize().height()
         #self.resize(833, 423)
         self.setAcceptDrops(True)
         ## les futures listes de boutons
@@ -112,7 +114,8 @@ class dragDropGameWindow(QWidget):
         self.myTrads = []
         ## le layout pour mettre les cartes jouees
         self.doneWidget = QWidget(self)
-        self.doneWidget.setGeometry(QtCore.QRect(590, 10, 228, 401))
+        self.doneWidget.setGeometry(QtCore.QRect(3/4*self.width-10, 10, 1/4*self.width, self.height))
+        #self.doneWidget.setGeometry(QtCore.QRect(590, 10, 228, 401))
         self.doneWidget.setObjectName("Bien joué")
         self.Welldone = QVBoxLayout(self.doneWidget)
         self.Welldone.setAlignment(QtCore.Qt.AlignTop)
@@ -120,14 +123,18 @@ class dragDropGameWindow(QWidget):
         ## l'ajout de tous les boutons concernés (maitrise < ...)
         for i,carte in enumerate(CardsPlayed) :
             self.myCards.append(ButtonToDrag(carte,'mot', self, self.Welldone))
-            myx=randrange(5,470,1)
-            myy=randrange(5,390,1)
+            #myx=randrange(5,470,1)
+            myx=randrange(5, int(3/4*self.width-150), 1)
+            #myy=randrange(5,390,1)
+            myy=randrange(5, int(3/4*self.height), 1)
             self.myCards[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
             self.myCards[i].error.connect(self.error.emit)
             self.myCards[i].success.connect(self.success.emit)
             self.myTrads.append(ButtonToDrag(carte,'trad', self, self.Welldone))
-            myx = randrange(5, 520, 1)
-            myy = randrange(5, 380, 1)
+            #myx = randrange(5, 520, 1)
+            myx=randrange(5, int(3/4*self.width-115), 1)
+            #myy = randrange(5, 380, 1)
+            myy=randrange(5, int(3/4*self.height), 1)
             self.myTrads[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
             self.myTrads[i].error.connect(self.error.emit)
             self.myTrads[i].success.connect(self.success.emit)
@@ -198,7 +205,8 @@ if __name__ == "__main__":
     args = sys.argv
     b = QApplication(args)
     w = QWidget()
-    w.resize(853, 554)
+    #w.resize(853, 554)
+    w.resize(1000, 600)#on peut modifier
     mf = dragDropGame(w, CartesEnJeu)
     w.show()
     b.exec_()

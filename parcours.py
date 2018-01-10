@@ -166,11 +166,11 @@ class parcoursIconsGame(object):
 
     def openDD(self):
         # ouverture de l'interface de jeu
-    #this is where things go wrong. it doesn't show up
-        w = QWidget()
-        w.resize(853, 554)
-        self.DDInterf = dragAndDrop.dragDropGame(w, database.getCardsToLearn('anglais',0,10))
-        w.show()
+    #a remplacer qd on aura vire les dimensions absolues
+        self.w = QWidget()
+        self.w.resize(853, 554)
+        self.DDInterf = dragAndDrop.dragDropGame(self.w, database.getCardsToLearn('anglais',0,10))
+        self.w.show()
         self.DDInterf.show()
 
 def main():

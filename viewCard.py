@@ -15,21 +15,25 @@ from icons import icons
 ### pour l'instant un probleme inconnu limite a un seul flip visuel par carte -> Pb regle
 
 class CardWidget(QWidget):
-    def __init__(self, card, place, view=0):
-        super(CardWidget, self).__init__(place)
+    def __init__(self, card, parentWindow, view=0):
+        super(CardWidget, self).__init__(parentWindow)
         # sauvegarde des donnees de la carte pour le flip
         self.card=card
         # la face affichee
         ### petit probleme avec de l'affichage laminaire en changent de face (widgets, ...)
         self.currentview=view
         # les caracteristiques du widget de la carte
-        self.setMinimumSize(QtCore.QSize(361, 251))
-        self.setMaximumSize(QtCore.QSize(361, 251))
+        #self.resize(parentWindow.frameSize())
+        #self.setMinimumSize(QtCore.QSize(361, 251))
+        #self.setMaximumSize(QtCore.QSize(361, 251))
+        self.setMinimumSize(parentWindow.frameSize())
+        self.setMaximumSize(parentWindow.frameSize())
         self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);")
         self.setObjectName("Card")
         # le layout separant contenu et outils
         self.gridLayoutWidget = QWidget(self)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 361, 251))
+        self.gridLayoutWidget.resize(self.frameSize())
+        #self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 361, 251))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.viewNtools = QGridLayout(self.gridLayoutWidget)
         self.viewNtools.setContentsMargins(0, 0, 0, 0)
@@ -64,7 +68,8 @@ class CardWidget(QWidget):
         self.viewNtools.addWidget(self.soundButton, 0, 0, 1, 1)
         # la face Mot
         self.viewWidget0 = QWidget(self)
-        self.viewWidget0.setGeometry(QtCore.QRect(361, 0, 288, 186))
+        #self.viewWidget0.setGeometry(QtCore.QRect(361, 0, 288, 186))
+        self.viewWidget0.resize(self.frameSize())
         self.viewWidget0.setObjectName("viewWidget0")
         self.viewLayout0 = QVBoxLayout(self.viewWidget0)
         self.viewLayout0.setObjectName("viewLayout0")
@@ -72,10 +77,11 @@ class CardWidget(QWidget):
         self.mot.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 18pt \"Arial Black\";")
         self.mot.setObjectName("mot")
         self.viewLayout0.addWidget(self.mot)
-        #self.viewWidget0.setVisible(False)
+        self.viewWidget0.setVisible(False)
         # la face Infos
         self.viewWidget1 = QWidget(self)
-        self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
+        #self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
+        self.viewWidget1.resize(self.frameSize())
         self.viewWidget1.setObjectName("viewWidget0")
         self.viewLayout1 = QVBoxLayout(self.viewWidget1)
         self.viewLayout1.setObjectName("viewLayout0")
@@ -84,44 +90,24 @@ class CardWidget(QWidget):
         self.description.setObjectName("description")
         self.viewLayout1.addWidget(self.description)
         self.viewWidget1.setVisible(False)
-    # code precedent de la face Infos, au cas ou qq veut le reprendre
-#        self.viewWidget1 = QWidget(self)
-#        self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
-#        self.viewWidget1.setObjectName("viewWidget1")
-#        self.viewLayout1 = QVBoxLayout(self.viewWidget1)
-#        self.viewLayout1.setObjectName("viewLayout1")
-#        self.trad = QPushButton(card.trad, self.viewWidget1)
-#        self.trad.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 18pt \"Arial Black\";")
-#        self.trad.setObjectName("trad")
-#        self.viewLayout1.addWidget(self.trad)
-#        self.nature = QPushButton(card.nature, self.viewWidget1)
-#        self.nature.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: italic 13pt \"Arial Narrow\";")
-#        self.nature.setObjectName("nature")
-#        self.viewLayout1.addWidget(self.nature)
-#        viewexemple = "exemple : "+ card.exemple
-#        self.exemple = QPushButton(viewexemple, self.viewWidget1)
-#        self.exemple.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 18pt \"Arial\";")
-#        self.exemple.setObjectName("exemple")
-#        self.viewLayout1.addWidget(self.exemple)
-#        viewautre = "in : " + card.thema + ", "+ card.tablename + " ; niveau : " + str(card.howhard) + " ; ..."
-#        self.autre = QPushButton(viewautre, self.viewWidget1)
-#        self.autre.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 14pt \"Arial\";")
-#        self.autre.setObjectName("autre")
-#        self.viewLayout1.addWidget(self.autre)
         #face Image
         #path=card.image
         path='images/image.jpg'
         if path == '':
             self.viewWidget2=None              #pas d'image fournie
         else:
-            self.viewWidget2=QWidget(self)
-            self.label=QLabel(self.viewWidget2)
+            #self.viewWidget2=QWidget(self)
+            self.viewWidget2=QLabel(self)
+            #self.label=QLabel(self.viewWidget2)
+            self.viewWidget2=self.viewWidget2
+            self.viewWidget2.resize(self.frameSize().width()-100, self.frameSize().height()-60)
             self.pixmap=QtGui.QPixmap()
             
             self.pixmap.load(path)
-            self.pixmap=self.pixmap.scaled(300, 250, QtCore.Qt.KeepAspectRatio)
-            self.label.setPixmap(self.pixmap)
-            self.label.setScaledContents(True)
+            #self.pixmap=self.pixmap.scaled(300, 250, QtCore.Qt.KeepAspectRatio)
+            self.pixmap=self.pixmap.scaled(self.viewWidget2.frameSize().width(), self.viewWidget2.frameSize().height()-30, QtCore.Qt.KeepAspectRatio)
+            self.viewWidget2.setPixmap(self.pixmap)
+            self.viewWidget2.setScaledContents(True)
             self.viewWidget2.setVisible(False)
 
         ## affichage de la bonne face
@@ -181,21 +167,21 @@ class CardWidget(QWidget):
         self.modifWindow.close()
         self.modifiedSignal.emit()
 
-class ViewDialog(object):
-    def __init__(self, begin, givenCards):
+class viewDialog(QWidget):
+    def __init__(self, parentWindow, begin, givenCards):
+        super(QWidget, self).__init__(parentWindow)
+        self.setWindowTitle("Enjoy reading your FlashCard")
+        self.resize(parentWindow.frameSize())
         # le nombre de cartes
         self.nbCard=len(givenCards)
         self.givenCards=givenCards
-        # la fenetre
-        self.Dialog = QWidget()
-        self.Dialog.setObjectName("View")
-        self.Dialog.setWindowTitle("Enjoy reading your FlashCard")
-        self.Dialog.resize(830, 480)
         # le widget de vue
-        self.background = QWidget(self.Dialog)
-        self.background.setGeometry(QtCore.QRect(0, 0, 830, 480))
+        self.background = QWidget(self)
+        #self.background.setGeometry(QtCore.QRect(0, 0, 830, 480))
+        self.background.resize(self.frameSize())
         self.background.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         self.background.setObjectName("background")
+        #self.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         ### 3 lignes suivantes peut etre a enlever
         #self.horizontalLayoutWidget = QWidget(self.background)
         #self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 830, 480))
@@ -212,8 +198,13 @@ class ViewDialog(object):
         self.viewbar.addWidget(self.previous)
         # la carte
         self.cardnumber=begin
-        self.currentCard=CardWidget(self.givenCards[self.cardnumber],self.background)
-        self.viewbar.addWidget(self.currentCard)
+        self.cardWindow=QWidget(self.background)
+        self.cardWindow.setMinimumSize(QtCore.QSize(361, 251))
+        self.cardWindow.setMaximumSize(QtCore.QSize(361, 251))
+        #self.cardWindow.setMinimumSize(QtCore.QSize(43*self.frameSize().width()/100, 52*self.frameSize().height()/100))
+        #self.cardWindow.setMaximumSize(QtCore.QSize(43*self.frameSize().width()/100, 52*self.frameSize().height()/100))
+        self.currentCard=CardWidget(self.givenCards[self.cardnumber],self.cardWindow)
+        self.viewbar.addWidget(self.cardWindow)
         # le bouton suivant
         self.next = QtWidgets.QPushButton(u" ", self.background)
         self.next.setMinimumSize(QtCore.QSize(71, 71))
@@ -223,8 +214,8 @@ class ViewDialog(object):
         self.viewbar.addWidget(self.next)
         
         #shortcuts
-        self.nextShortcut=QShortcut(QtGui.QKeySequence('Right'), self.Dialog)
-        self.prevShortcut=QShortcut(QtGui.QKeySequence('Left'), self.Dialog)
+        self.nextShortcut=QShortcut(QtGui.QKeySequence('Right'), self)
+        self.prevShortcut=QShortcut(QtGui.QKeySequence('Left'), self)
 
         ## signaux et slots : ouverture de la fenetre de jeux
         self.next.clicked.connect(self.toNextCard)
@@ -240,9 +231,9 @@ class ViewDialog(object):
         self.givenCards[self.cardnumber]=database.getCardById(self.givenCards[self.cardnumber].tablename, self.givenCards[self.cardnumber].name)
         #on reinitialise currentCard en gardant la meme vue
         view=self.currentCard.currentview
-        self.viewbar.removeWidget(self.currentCard)
-        self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background, view)
-        self.viewbar.insertWidget(1,self.currentCard)
+        self.currentCard.close()
+        self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.cardWindow, view)
+        self.currentCard.show()
         #l'utilisateur peut voir les changements apportes a la carte
         
     #fonction appelee apres suppression de la carte
@@ -260,9 +251,9 @@ class ViewDialog(object):
         if self.cardnumber<self.nbCard-1:
             self.cardnumber += 1
             #changement de carte (dans l'ordre des noms) vers +1
-            self.viewbar.removeWidget(self.currentCard)
-            self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background)
-            self.viewbar.insertWidget(1,self.currentCard)
+            self.currentCard.close()
+            self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.cardWindow)
+            self.currentCard.show()
             self.previous.setEnabled(True)
             self.currentCard.modifiedSignal.connect(self.currentCardWasModified)
             self.currentCard.deletedSignal.connect(self.currentCardWasDeleted)
@@ -273,27 +264,25 @@ class ViewDialog(object):
         if self.cardnumber>0:
             self.cardnumber -= 1
             #changement de carte (dans l'ordre des noms) vers -1
-            self.viewbar.removeWidget(self.currentCard)
-            self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.background)
-            self.viewbar.insertWidget(1, self.currentCard)
+            self.currentCard.close()
+            self.currentCard = CardWidget(self.givenCards[self.cardnumber], self.cardWindow)
+            self.currentCard.show()
             self.next.setEnabled(True)
             self.currentCard.modifiedSignal.connect(self.currentCardWasModified)
             self.currentCard.deletedSignal.connect(self.currentCardWasDeleted)
         else:
             self.previous.setEnabled(False)
-
-    def show(self):
-        # ouverture de la fenetre
-        self.Dialog.show()
-
-def main():
-    args = sys.argv
-    a = QApplication(args)
-    AllCard = database.getAllCards('anglais')
-    mf = ViewDialog(0, AllCard)
-    mf.show()
-    a.exec_()
-    a.lastWindowClosed.connect(a.quit)
-
+    
 if __name__ == "__main__":
-    main()
+    Table='anglais'
+    ### cartes concernées par le jeu
+    AllCards = database.getAllCards('anglais')
+    args = sys.argv
+    b = QApplication(args)
+    w = QWidget()
+    #w.resize(830, 480)
+    w.resize(1000, 600)
+    mf = viewDialog(w, 0, AllCards)
+    w.show()
+    b.exec_()
+    b.lastWindowClosed.connect(b.quit)

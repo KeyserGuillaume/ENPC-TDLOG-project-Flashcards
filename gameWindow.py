@@ -9,7 +9,8 @@ from random import randrange
 
 from time import time, strftime,localtime
 
-
+#nbSuccessRequired defines how many good answers you need to get before winning
+#parentWindow is the QWidget inside which you want the gameWindow to appear
 class GameWindow (QWidget):
     def __init__(self, parentWindow, nbSuccessRequired):
         super(QWidget, self).__init__(parentWindow)
@@ -79,9 +80,9 @@ class GameWindow (QWidget):
         self.timer2.start(10)
         self.GameBox.addWidget(self.failure)
         #bouton pour quitter        
-        self.leaveButton = QPushButton("quitter",self.BottomWidget)
-        self.GameBox.addWidget(self.leaveButton)
-        self.leaveButton.clicked.connect(self.leave)
+        #self.leaveButton = QPushButton("quitter",self.BottomWidget)
+        #self.GameBox.addWidget(self.leaveButton)
+        #self.leaveButton.clicked.connect(self.leave)
         
     def incrementSuccessCount(self):
         self.nbSucces+=1;

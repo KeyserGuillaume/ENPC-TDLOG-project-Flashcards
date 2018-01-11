@@ -21,6 +21,8 @@ import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCa
 
 ### les boutons de commande connectés a l'interface de lecture
 ## gere quand les listes contiennent moins de 3 items (len<3)
+#openFunction contient la fonction qui doit etre appelee qd le
+#connectedButton est active
 class ConnectedButton(QCommandLinkButton):
     def __init__(self, cardlist, rank, place, name, openFunction):
         self.cardlist=cardlist
@@ -39,11 +41,9 @@ class ConnectedButton(QCommandLinkButton):
             self.setText(cardlist[self.rank].word)
         else:
             self.setText("...")
-    openSignal=QtCore.pyqtSignal(int)
     def open(self):
         if self.rank<3:
             # ouverture de l interface de lecture de cartes
-            #self.openSignal.emit(rank)
             self.openInterfFunction(self.rank, self.cardlist)
 
 ## l'ecran d'accueil interne avec des onglets
@@ -58,30 +58,20 @@ class HomeScreen(QToolBox):
         #self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
         self.MesCartes.setObjectName("MesCartes")
         folders = parcours.parcoursLanguesFolder(self.MesCartes)
-        self.w1=QWidget()
-        #self.addItem(self.w1, "")
-        #self.setItemText(0, "w1")
         self.addItem(self.MesCartes, "")
         self.setItemText(self.indexOf(self.MesCartes),"Mes Cartes")
         # onglet 2
-        #self.MesJeux = QWidget()
         self.MesJeux = parcours.parcoursIconsGame(663, 406)
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
-        #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)        
-        self.w2=QWidget()
-        #self.addItem(self.w2, "")
-        #self.setItemText(1, "w2")
+        #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
         self.addItem(self.MesJeux, "")
         self.setItemText(self.indexOf(self.MesJeux), "Mes Jeux")
         # onglet 3
         self.MesParties = QWidget()
         self.MesParties.setGeometry(QtCore.QRect(0, 0, 649, 431))
         self.MesParties.setObjectName("MesParties")
-        self.w3=QWidget()
-        #self.addItem(self.w3, "")
-        #self.setItemText(2, "w3")
         self.addItem(self.MesParties, "")
         self.setItemText(self.indexOf(self.MesParties), "Mes Parties")
         # selection de l'onglet principal
@@ -181,7 +171,7 @@ class WelcomeInterf(object):
         self.barreResume.addWidget(self.learn2)
         self.learn3 = ConnectedButton(self.cardsToLearn, 2, self.ResumeBox, "learn3", self.openViewCards)
         self.barreResume.addWidget(self.learn3)
-        # label cartes a revoir et les 3 boutons carte associésAttributeError: 'PyQt5.QtCore.pyqtSignal' object has no attribute 'connect'
+        # label cartes a revoir et les 3 boutons carte associés
         self.overlabel = QLabel(self.ResumeBox)
         self.overlabel.setObjectName("overlabel")
         self.overlabel.setText("  Cards to go over")

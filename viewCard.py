@@ -23,9 +23,6 @@ class CardWidget(QWidget):
         ### petit probleme avec de l'affichage laminaire en changent de face (widgets, ...)
         self.currentview=view
         # les caracteristiques du widget de la carte
-        #self.resize(parentWindow.frameSize())
-        #self.setMinimumSize(QtCore.QSize(361, 251))
-        #self.setMaximumSize(QtCore.QSize(361, 251))
         self.setMinimumSize(parentWindow.frameSize())
         self.setMaximumSize(parentWindow.frameSize())
         self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);")
@@ -33,7 +30,6 @@ class CardWidget(QWidget):
         # le layout separant contenu et outils
         self.gridLayoutWidget = QWidget(self)
         self.gridLayoutWidget.resize(self.frameSize())
-        #self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 361, 251))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.viewNtools = QGridLayout(self.gridLayoutWidget)
         self.viewNtools.setContentsMargins(0, 0, 0, 0)
@@ -68,7 +64,6 @@ class CardWidget(QWidget):
         self.viewNtools.addWidget(self.soundButton, 0, 0, 1, 1)
         # la face Mot
         self.viewWidget0 = QWidget(self)
-        #self.viewWidget0.setGeometry(QtCore.QRect(361, 0, 288, 186))
         self.viewWidget0.resize(self.frameSize())
         self.viewWidget0.setObjectName("viewWidget0")
         self.viewLayout0 = QVBoxLayout(self.viewWidget0)
@@ -80,7 +75,6 @@ class CardWidget(QWidget):
         self.viewWidget0.setVisible(False)
         # la face Infos
         self.viewWidget1 = QWidget(self)
-        #self.viewWidget1.setGeometry(QtCore.QRect(361, 0, 288, 186))
         self.viewWidget1.resize(self.frameSize())
         self.viewWidget1.setObjectName("viewWidget0")
         self.viewLayout1 = QVBoxLayout(self.viewWidget1)
@@ -96,15 +90,12 @@ class CardWidget(QWidget):
         if path == '':
             self.viewWidget2=None              #pas d'image fournie
         else:
-            #self.viewWidget2=QWidget(self)
             self.viewWidget2=QLabel(self)
-            #self.label=QLabel(self.viewWidget2)
             self.viewWidget2=self.viewWidget2
             self.viewWidget2.resize(self.frameSize().width()-100, self.frameSize().height()-60)
             self.pixmap=QtGui.QPixmap()
             
             self.pixmap.load(path)
-            #self.pixmap=self.pixmap.scaled(300, 250, QtCore.Qt.KeepAspectRatio)
             self.pixmap=self.pixmap.scaled(self.viewWidget2.frameSize().width(), self.viewWidget2.frameSize().height()-30, QtCore.Qt.KeepAspectRatio)
             self.viewWidget2.setPixmap(self.pixmap)
             self.viewWidget2.setScaledContents(True)
@@ -114,10 +105,6 @@ class CardWidget(QWidget):
         self.viewWidgets=[self.viewWidget0, self.viewWidget1, self.viewWidget2]
         self.viewNtools.addWidget(self.viewWidgets[self.currentview], 1, 1, 1, 1)
         self.viewWidgets[self.currentview].setVisible(True)
-#        if self.currentview==0:
-#            self.viewNtools.addWidget(self.viewWidget0, 1, 1, 1, 1)
-#        else:
-#            self.viewNtools.addWidget(self.viewWidget1, 1, 1, 1, 1)
 
         # signaux et slots
         self.flipButton.clicked.connect(self.flipping)
@@ -177,7 +164,6 @@ class viewDialog(QWidget):
         self.givenCards=givenCards
         # le widget de vue
         self.background = QWidget(self)
-        #self.background.setGeometry(QtCore.QRect(0, 0, 830, 480))
         self.background.resize(self.frameSize())
         self.background.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         self.background.setObjectName("background")
@@ -201,8 +187,6 @@ class viewDialog(QWidget):
         self.cardWindow=QWidget(self.background)
         self.cardWindow.setMinimumSize(QtCore.QSize(361, 251))
         self.cardWindow.setMaximumSize(QtCore.QSize(361, 251))
-        #self.cardWindow.setMinimumSize(QtCore.QSize(43*self.frameSize().width()/100, 52*self.frameSize().height()/100))
-        #self.cardWindow.setMaximumSize(QtCore.QSize(43*self.frameSize().width()/100, 52*self.frameSize().height()/100))
         self.currentCard=CardWidget(self.givenCards[self.cardnumber],self.cardWindow)
         self.viewbar.addWidget(self.cardWindow)
         # le bouton suivant

@@ -49,7 +49,11 @@ def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature
 
 def getNextId(tableName):
     conn=connDB()
-    result=1+[x for x in conn.execute("SELECT max(ID) FROM {}".format(tableName.upper()))][0][0]
+    a=[x for x in conn.execute("SELECT max(ID) FROM {}".format(tableName.upper()))][0][0]
+    if (a):
+        result=1+a
+    else:
+        result=1
     conn.close()
     return result
 

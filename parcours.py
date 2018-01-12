@@ -68,8 +68,9 @@ class CardButton(QPushButton):
         #self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
         # ne marche plus car certains noms ne sont plus attribués dans anglais (2,4,5,7,8,12,13)
         # donc plus de lien direct entre rang et nom
-        self.CardInterf = viewCard.ViewDialog(self.lerang, self.allcards)
-        self.CardInterf.show()
+        self.w=QWidget()
+        self.CardInterf = viewCard.viewDialog(self.w, self.lerang, self.allcards)
+        self.w.show()
 
 class parcoursChosenCards(object):
     def __init__(self, langue):

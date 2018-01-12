@@ -1,6 +1,6 @@
 #interface global à afficher à l'ouverture
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox
 import sys
 
 import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop
@@ -30,26 +30,32 @@ class ConnectedButton(QCommandLinkButton):
         super(ConnectedButton, self).__init__(place)
         self.setObjectName(name)
         self.openInterfFunction=openFunction
+        self.init()
+    def init(self):
         if len(self.cardlist) == 0 : ## pas assez d'elements dans la liste
            self.rank=3
-        if len(self.cardlist) == 1 and rank>0 : ## pas assez d'elements dans la liste
+        if len(self.cardlist) == 1 and self.rank>0 : ## pas assez d'elements dans la liste
            self.rank=3
-        if len(self.cardlist) == 2 and rank>1 : ## pas assez d'elements dans la liste
+        if len(self.cardlist) == 2 and self.rank>1 : ## pas assez d'elements dans la liste
             self.rank = 3
 
         if self.rank<=1:
-            self.setText(cardlist[self.rank].word)
+            self.setText(self.cardlist[self.rank].word)
         else:
             self.setText("...")
     def open(self):
         if self.rank<3:
             # ouverture de l interface de lecture de cartes
             self.openInterfFunction(self.rank, self.cardlist)
+    def changeCardList(self, cardlist):
+        self.cardlist=cardlist
+        self.init()
 
 ## l'ecran d'accueil interne avec des onglets
 class HomeScreen(QToolBox):
-    def __init__(self, givenLayout):
+    def __init__(self, givenLayout, language):
         super(HomeScreen, self).__init__(givenLayout)
+        self.language=language
         self.setFixedSize(givenLayout.frameSize())
         self.setObjectName("ongletsAccueil")
         # onglet 1
@@ -61,7 +67,7 @@ class HomeScreen(QToolBox):
         self.addItem(self.MesCartes, "")
         self.setItemText(self.indexOf(self.MesCartes),"Mes Cartes")
         # onglet 2
-        self.MesJeux = parcours.parcoursIconsGame(663, 406)
+        self.MesJeux = parcours.parcoursIconsGame(663, 406, self.language)
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
@@ -90,8 +96,6 @@ class HomeScreen(QToolBox):
 ## la fenetre principale
 class WelcomeInterf(object):
     def __init__(self):
-        self.Table='anglais'
-        self.getCards()
         # la fenetre
         self.Dialog = QWidget()
         self.Dialog.setObjectName("Welcome")
@@ -148,12 +152,20 @@ class WelcomeInterf(object):
         self.accueil.setObjectName("accueil")
         self.barreResume.addWidget(self.accueil)
         self.accueil.setEnabled(True)
+        #bouton de language
+        self.editlanguage = QComboBox(self.ResumeBox)
+        self.langues = database.giveAllLanguages()
+        for languespossibles in self.langues:
+            self.editlanguage.addItem(languespossibles)        
+        self.barreResume.addWidget(self.editlanguage)
+        self.Table=self.editlanguage.currentText()
+        self.getCards()
         # bouton de profil utilisateur
         # non pris en compte
-        self.profil = QPushButton(u"User profile", self.ResumeBox)
-        self.profil.setObjectName("profil")
-        self.barreResume.addWidget(self.profil)
-        self.profil.setEnabled(False)
+        #self.profil = QPushButton(u"User profile", self.ResumeBox)
+        #self.profil.setObjectName("profil")
+        #self.barreResume.addWidget(self.profil)
+        #self.profil.setEnabled(False)
         # une ligne de séparation horizontale
         self.line1 = QFrame(self.ResumeBox)
         self.line1.setFrameShape(QFrame.HLine)
@@ -213,7 +225,7 @@ class WelcomeInterf(object):
         self.screenLayout = QWidget(self.Dialog)
         self.screenLayout.setGeometry(QtCore.QRect(230, 60, 671, 501))
         self.screenLayout.setObjectName("screenLayout")
-        self.myscreen=HomeScreen(self.screenLayout)
+        self.myscreen=HomeScreen(self.screenLayout, self.editlanguage.currentText())
 
         ## gestion des slots et des signaux
         self.createInterf=None
@@ -234,8 +246,24 @@ class WelcomeInterf(object):
         self.know1.clicked.connect(self.know1.open)
         self.know2.clicked.connect(self.know2.open)
         self.know3.clicked.connect(self.know3.open)
+        self.editlanguage.activated.connect(self.changeLanguage)
         self.myscreen.dragAndDropSignal.connect(self.openDragAndDrop)
-
+        
+    def changeLanguage(self):
+        self.Table=self.editlanguage.currentText()
+        self.getCards()
+        self.myscreen.language=self.Table
+        self.myscreen.MesJeux.language=self.Table
+        self.learn1.changeCardList(self.cardsToLearn)
+        self.learn2.changeCardList(self.cardsToLearn)
+        self.learn3.changeCardList(self.cardsToLearn)
+        self.over1.changeCardList(self.cardsToGoOver)
+        self.over2.changeCardList(self.cardsToGoOver)
+        self.over3.changeCardList(self.cardsToGoOver)
+        self.know1.changeCardList(self.cardsKnown)
+        self.know2.changeCardList(self.cardsKnown)
+        self.know3.changeCardList(self.cardsKnown)
+        
     def getCards(self):
         self.cardsToLearn=database.getCardsToLearn(self.Table,0,4)
         self.cardsToGoOver=database.getCardsToLearn(self.Table,5,9)
@@ -267,7 +295,7 @@ class WelcomeInterf(object):
         self.modifInterf.deleted.connect(self.displayHomeScreen)
     def openDragAndDrop(self):
         self.currentScreen.close()
-        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn('anglais',0,10))
+        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
         self.DDInterf.show()
         self.currentScreen=self.DDInterf
         self.DDInterf.leave.connect(self.displayHomeScreen)
@@ -279,6 +307,7 @@ class WelcomeInterf(object):
     def displayHomeScreen(self):
         self.getCards()
         self.myscreen.setVisible(True)
+        self.currentScreen=self.myscreen
     def search(self):
         self.searchInterf = rechercheInterf.Recherche()
         tosearch=self.searchBar.text()

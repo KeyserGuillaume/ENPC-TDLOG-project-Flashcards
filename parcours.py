@@ -110,8 +110,9 @@ class parcoursChosenCards(object):
         self.Dialog.show()
 
 class parcoursIconsGame(QWidget):
-    def __init__(self, width, height):
+    def __init__(self, width, height, language):
         super(parcoursIconsGame, self).__init__()
+        self.language=language
         self.setObjectName("SelectGame")
         self.setWindowTitle("Our Game selection")
         #self.resize(663, 406)
@@ -170,16 +171,16 @@ class parcoursIconsGame(QWidget):
     def show(self):
         # ouverture de la fenetre
         self.show()
-
+"""
     def openDD(self):
         # ouverture de l'interface de jeu
     #a remplacer qd on aura vire les dimensions absolues
         self.w = QWidget()
         self.w.resize(853, 554)
-        self.DDInterf = dragAndDrop.dragDropGame(self.w, database.getCardsToLearn('anglais',0,10))
+        self.DDInterf = dragAndDrop.dragDropGame(self.w, database.getCardsToLearn(self.language,0,10))
         self.w.show()
         self.DDInterf.show()
-
+"""
 def main():
     args = sys.argv
     a = QApplication(args)

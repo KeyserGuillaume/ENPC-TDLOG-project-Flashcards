@@ -8,9 +8,9 @@ from random import randrange
 
 
 #### match (meme carte) entre mot et trad dans cet ordre
-def match(text1,text2):
+def match(text1, text2, language):
     answer=False
-    matching=database.getCompleteCardsWithAttribute('anglais', 'mot', text1)
+    matching=database.getCompleteCardsWithAttribute(language, 'mot', text1)
     for card in matching:
         answer = answer or (text2==card.trad)
     return answer
@@ -25,6 +25,7 @@ def downgradeLevel(card):
 class ButtonToDrag(QPushButton):
     def __init__(self, card, type, place, depot):
         self.lacarte=card
+        self.language=card.tablename
         if type=='mot':
             super(ButtonToDrag, self).__init__(card.word, place)
         else: #pour l'instant que 2 types donc trad
@@ -72,7 +73,7 @@ class ButtonToDrag(QPushButton):
                 event.ignore()
                 e.source().setDown(False)
                 return
-            if match(cardSource.text(),self.text()) or match(self.text(),cardSource.text()) :
+            if match(cardSource.text(),self.text(), self.language) or match(self.text(),cardSource.text(), self.language) :
                 event.acceptProposedAction()
                 #self.move(event.pos())
                 #cardSource.move(event.pos())                
@@ -173,10 +174,15 @@ class dragDropGame(QWidget):
     def __init__(self, givenWindow, cardsPlayed):
         super(dragDropGame, self).__init__(givenWindow)
         self.resize(givenWindow.frameSize())
-        self.cartesJouees=cardsPlayed
+        self.cartesJouables=cardsPlayed
         self.init()
     leave=QtCore.pyqtSignal()
     def init(self):
+        self.cartesJouees=[]
+        while (len(self.cartesJouees)<10):
+            i=randrange(0, len(self.cartesJouables))
+            if (self.cartesJouables[i] not in self.cartesJouees):
+                self.cartesJouees.append(self.cartesJouables[i])
         self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
         self.game=dragDropGameWindow(self.window.gameArea, self.cartesJouees)
         self.window.show()

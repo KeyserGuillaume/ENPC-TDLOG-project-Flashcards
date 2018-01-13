@@ -24,16 +24,23 @@ class LangageButton(QPushButton):
         self.setStyleSheet("background-image: url(:/icons/dossier.png);\n" "font: 75 14pt \"Arial\";")
         self.setObjectName(langue)
         self.CardInterf = None
+        self.clicked.connect(self.openChosenLanguage)
+    openLanguageSignal=QtCore.pyqtSignal(str)
 
-    def openChosenCard(self):
+    def openChosenLanguage(self):
         # ouverture de l interface de parcours de cartes
-        self.CardInterf = parcoursChosenCards(self.langue)
-        self.CardInterf.show()
+        self.openLanguageSignal.emit(self.langue)
+        #self.w=QWidget()
+        #self.w.resize(800, 430)
+        #self.CardInterf = parcoursChosenCards(self.w, self.langue)
+        #self.w.show()
 
-class parcoursLanguesFolder(object):
-    def __init__(self, Dialog):
-        Dialog.resize(685, 430)
-        self.gridWidget = QWidget(Dialog)
+class parcoursLanguesFolder(QWidget):
+    def __init__(self, parentWindow):
+        super(parcoursLanguesFolder, self).__init__(parentWindow)
+        parentWindow.resize(685, 430)
+        self.resize(parentWindow.frameSize())
+        self.gridWidget = QWidget(self)
         self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
         self.gridWidget.setObjectName("grille de placement")
         self.folderGrid = QGridLayout(self.gridWidget)
@@ -48,46 +55,52 @@ class parcoursLanguesFolder(object):
             self.folderGrid.addWidget(self.myfolders[i], row, column, 1, 1)
 
         for i, langue in enumerate(AllLangages):
-            self.myfolders[i].clicked.connect(self.myfolders[i].openChosenCard)
+            self.myfolders[i].openLanguageSignal.connect(self.openLanguageSignal.emit)
+    openLanguageSignal=QtCore.pyqtSignal(str)
+    
 
 class CardButton(QPushButton):
-    def __init__(self, card, rank, cardslist, place):
+    def __init__(self, card, rank, cardslist, place, width):
         self.allcards=cardslist
         self.lacarte=card
         self.lerang=rank
         super(CardButton, self).__init__(card.word, place)
-        self.setMinimumSize(QtCore.QSize(151, 111))
-        self.setMaximumSize(QtCore.QSize(151, 111))
+        self.setMinimumSize(QtCore.QSize(width, 0.66*width))
+        self.setMaximumSize(QtCore.QSize(width, 0.66*width))
         #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "background-color: rgba(255, 255, 255, 0);\n" "font: 75 18pt \"Arial\";")
-        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75 18pt \"Arial\";")
+        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75  \"Arial\";")
         self.setObjectName(card.word)
         self.CardInterf = None
+    openCardSignal=QtCore.pyqtSignal(str, int)
 
     def openChosenCard(self):
         # ouverture de l interface de parcours de cartes
         #self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
         # ne marche plus car certains noms ne sont plus attribués dans anglais (2,4,5,7,8,12,13)
         # donc plus de lien direct entre rang et nom
-        self.w=QWidget()
-        self.CardInterf = viewCard.viewDialog(self.w, self.lerang, self.allcards)
-        self.w.show()
+        self.openCardSignal.emit(self.lacarte.tablename, self.lerang)
+        #self.w=QWidget()
+        #self.CardInterf = viewCard.viewDialog(self.w, self.lerang, self.allcards)
+        #self.w.show()
 
-class parcoursChosenCards(object):
-    def __init__(self, langue):
+class parcoursChosenCards(QScrollArea):
+    def __init__(self, parentWindow, langue):
+        super(parcoursChosenCards, self).__init__(parentWindow)
         self.cardslist=database.getAllCards(langue)
         ### il faudrait rajouter une barre de scrolling
         # et la possibilité de déplacement vertical
-        self.Dialog = QScrollArea()  #QWidget()
-        self.Dialog.setObjectName("SelectCard")
-        self.Dialog.setWindowTitle("Your Card selection")
-        self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
-        self.Dialog.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.Dialog.setWidgetResizable(True)
-        self.gridWidget = QWidget(self.Dialog)
-        self.gridWidget.setGeometry(QtCore.QRect(0, 0, 760, 131*ceil(len(self.cardslist)/5)))
+        self.setObjectName("SelectCard")
+        self.setWindowTitle("Your Card selection")
+        self.resize(parentWindow.frameSize())
+        #self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        #self.setWidgetResizable(True)
+        self.gridWidget = QWidget(self)
+        self.n=ceil(len(self.cardslist)/5)
+        self.gridWidget.setGeometry(QtCore.QRect(0, 0, self.frameSize().width()-20, ((self.n+1)/36+self.n*0.11)*self.frameSize().width()))
         self.gridWidget.setObjectName("grille de placement")
-        self.gridWidget.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
-        self.Dialog.setWidget(self.gridWidget)
+        self.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
+        self.setWidget(self.gridWidget)
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(20, 20, 20, 20)
         self.folderGrid.setObjectName("folderGrid")
@@ -96,7 +109,7 @@ class parcoursChosenCards(object):
         #print([x.name for x in self.cardslist])
         #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget)
+            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget, self.width()/6)
             # 5 cartes par ligne
             row = i/5
             column = i%5
@@ -104,10 +117,8 @@ class parcoursChosenCards(object):
 
         for i, carte in enumerate(self.cardslist):
             self.mycards[i].clicked.connect(self.mycards[i].openChosenCard)
-
-    def show(self):
-        # ouverture de la fenetre
-        self.Dialog.show()
+            self.mycards[i].openCardSignal.connect(self.openCardSignal)
+    openCardSignal=QtCore.pyqtSignal(str, int)
 
 class parcoursIconsGame(QWidget):
     def __init__(self, width, height, language):
@@ -184,8 +195,11 @@ class parcoursIconsGame(QWidget):
 def main():
     args = sys.argv
     a = QApplication(args)
-    mf = parcoursChosenCards('anglais')
-    mf.show()
+    w=QWidget()
+    #w.resize(800, 430)
+    w.resize(600, 350)
+    mf = parcoursChosenCards(w, 'anglais')
+    w.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)
 

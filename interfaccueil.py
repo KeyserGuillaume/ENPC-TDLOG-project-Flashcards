@@ -1,6 +1,6 @@
 #interface global à afficher à l'ouverture
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
 import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop
@@ -63,7 +63,8 @@ class HomeScreen(QToolBox):
         self.MesCartes.setFixedSize(649, 401)
         #self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
         self.MesCartes.setObjectName("MesCartes")
-        folders = parcours.parcoursLanguesFolder(self.MesCartes)
+        self.folders = parcours.parcoursLanguesFolder(self.MesCartes)
+        self.folders.openLanguageSignal.connect(self.openLanguageSignal.emit)
         self.addItem(self.MesCartes, "")
         self.setItemText(self.indexOf(self.MesCartes),"Mes Cartes")
         # onglet 2
@@ -82,6 +83,9 @@ class HomeScreen(QToolBox):
         self.setItemText(self.indexOf(self.MesParties), "Mes Parties")
         # selection de l'onglet principal
         self.setCurrentIndex(0)
+        self.closeShortcut=QShortcut(QtGui.QKeySequence('Ctrl+c'), self)
+        self.closeShortcut.activated.connect(self.close)
+    openLanguageSignal=QtCore.pyqtSignal(str)
     dragAndDropSignal=QtCore.pyqtSignal()    
     memorySignal=QtCore.pyqtSignal()
     hotAndColdSignal=QtCore.pyqtSignal()
@@ -211,7 +215,7 @@ class WelcomeInterf(object):
         self.line2.setFrameShadow(QFrame.Sunken)
         self.line2.setObjectName("separation line n2")
         self.barreResume.addWidget(self.line2)
-        # le bouton d'aide
+        # le bouton d'aideopenCardSignal=QtCore.pyqtSignal(str, int)
         self.helpButton = QPushButton(u"Help", self.ResumeBox)
         self.helpButton.setObjectName("helpButton")
         self.barreResume.addWidget(self.helpButton)
@@ -227,6 +231,9 @@ class WelcomeInterf(object):
         self.screenLayout.setObjectName("screenLayout")
         self.myscreen=HomeScreen(self.screenLayout, self.editlanguage.currentText())
 
+        #raccourcis
+        self.closeShortcut=QShortcut(QtGui.QKeySequence('Ctrl+c'), self.Dialog)
+        
         ## gestion des slots et des signaux
         self.createInterf=None
         self.newButton.clicked.connect(self.createnew)
@@ -246,8 +253,10 @@ class WelcomeInterf(object):
         self.know1.clicked.connect(self.know1.open)
         self.know2.clicked.connect(self.know2.open)
         self.know3.clicked.connect(self.know3.open)
+        self.closeShortcut.activated.connect(self.Dialog.close)
         self.editlanguage.activated.connect(self.changeLanguage)
         self.myscreen.dragAndDropSignal.connect(self.openDragAndDrop)
+        self.myscreen.openLanguageSignal.connect(self.openParcours)
         
     def changeLanguage(self):
         self.Table=self.editlanguage.currentText()
@@ -293,6 +302,14 @@ class WelcomeInterf(object):
         self.modifInterf.show()
         self.modifInterf.modified.connect(self.displayHomeScreen)
         self.modifInterf.deleted.connect(self.displayHomeScreen)
+    def openParcours(self, language):
+        self.currentScreen.close()
+        self.parcoursInterf=parcours.parcoursChosenCards(self.screenLayout, language)
+        self.currentScreen=self.parcoursInterf
+        self.currentScreen.show()
+        self.parcoursInterf.openCardSignal.connect(self.openCard)
+    def openCard(self,language, rank):
+        self.openViewCards(rank, database.getAllCards(language))
     def openDragAndDrop(self):
         self.currentScreen.close()
         self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))

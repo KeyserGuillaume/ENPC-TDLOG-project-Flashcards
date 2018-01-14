@@ -72,6 +72,7 @@ class HomeScreen(QToolBox):
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
+        self.MesJeux.rightWrongSignal.connect(self.rightWrongSignal.emit)
         #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
         self.addItem(self.MesJeux, "")
         self.setItemText(self.indexOf(self.MesJeux), "Mes Jeux")
@@ -319,7 +320,7 @@ class WelcomeInterf(object):
         self.DDInterf.leave.connect(self.displayHomeScreen)
     def openVraiOuFaux(self):
         self.currentScreen.close()
-        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn('anglais',0,10))
+        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
         self.VFInterf.show()
         self.currentScreen = self.VFInterf
         self.VFInterf.leave.connect(self.displayHomeScreen) 

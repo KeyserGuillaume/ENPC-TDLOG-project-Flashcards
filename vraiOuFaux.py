@@ -17,6 +17,7 @@ def match(text1,text2):
         answer = answer or (text2==card.trad)
     return answer
 
+
 def getMotTradRandom(CardsPlayed):
     result = []
     i=random.randint(0,1)

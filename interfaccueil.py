@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame
 
 
 ### traitement des listes d'apprentissage
@@ -72,6 +72,7 @@ class HomeScreen(QToolBox):
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
+        self.MesJeux.hotAndColdSignal.connect(self.hotAndColdSignal.emit)
         self.MesJeux.rightWrongSignal.connect(self.rightWrongSignal.emit)
         #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
         self.addItem(self.MesJeux, "")
@@ -257,6 +258,7 @@ class WelcomeInterf(object):
         self.closeShortcut.activated.connect(self.Dialog.close)
         self.editlanguage.activated.connect(self.changeLanguage)
         self.myscreen.dragAndDropSignal.connect(self.openDragAndDrop)
+        self.myscreen.hotAndColdSignal.connect(self.openHotAndCold)
         self.myscreen.openLanguageSignal.connect(self.openParcours)
         self.myscreen.rightWrongSignal.connect(self.openVraiOuFaux)
         
@@ -318,6 +320,12 @@ class WelcomeInterf(object):
         self.DDInterf.show()
         self.currentScreen=self.DDInterf
         self.DDInterf.leave.connect(self.displayHomeScreen)
+    def openHotAndCold(self):
+        self.currentScreen.close()
+        self.HCInterf = hotColdGame.hotColdGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
+        self.HCInterf.show()
+        self.currentScreen=self.HCInterf
+        self.HCInterf.leave.connect(self.displayHomeScreen)
     def openVraiOuFaux(self):
         self.currentScreen.close()
         self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))

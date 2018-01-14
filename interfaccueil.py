@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux
 
 
 ### traitement des listes d'apprentissage
@@ -257,6 +257,7 @@ class WelcomeInterf(object):
         self.editlanguage.activated.connect(self.changeLanguage)
         self.myscreen.dragAndDropSignal.connect(self.openDragAndDrop)
         self.myscreen.openLanguageSignal.connect(self.openParcours)
+        self.myscreen.rightWrongSignal.connect(self.openVraiOuFaux)
         
     def changeLanguage(self):
         self.Table=self.editlanguage.currentText()
@@ -316,6 +317,12 @@ class WelcomeInterf(object):
         self.DDInterf.show()
         self.currentScreen=self.DDInterf
         self.DDInterf.leave.connect(self.displayHomeScreen)
+    def openVraiOuFaux(self):
+        self.currentScreen.close()
+        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn('anglais',0,10))
+        self.VFInterf.show()
+        self.currentScreen = self.VFInterf
+        self.VFInterf.leave.connect(self.displayHomeScreen) 
     def openViewCards(self, rank, cardlist):
         self.currentScreen.close()
         self.linkedInterf = viewCard.viewDialog(self.screenLayout, rank, cardlist)

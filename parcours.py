@@ -211,6 +211,7 @@ class parcoursIconsGame(QWidget):
         ## signaux et slots : ouverture de la fenetre de jeux
         self.DDInterf = None
         self.DDButton.clicked.connect(self.dragAndDropSignal.emit)
+        self.RWButton.clicked.connect(self.rightWrongSignal.emit)
     dragAndDropSignal=QtCore.pyqtSignal()
     memorySignal=QtCore.pyqtSignal()
     hotAndColdSignal=QtCore.pyqtSignal()

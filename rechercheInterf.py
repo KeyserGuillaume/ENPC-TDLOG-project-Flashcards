@@ -1,6 +1,6 @@
 ############# definition de l'interface de recherche
 
-import rechercheFonct, database, flashcard
+import rechercheFonct, database, flashcard, parcours, viewCard
 
 #from PyQt4.QtGui import QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
 #from PyQt4 import QtCore
@@ -8,17 +8,38 @@ import rechercheFonct, database, flashcard
 langues = database.giveAllLanguages()
 langues.insert(0, 'TOUTES')
 
-from PyQt5 import QtCore, QtWidgets 
-from PyQt5.QtWidgets import QTextBrowser, QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog
-
+from PyQt5 import QtCore, QtWidgets, QtGui 
+from PyQt5.QtWidgets import QTextBrowser, QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog, QToolBox
+from PyQt5.QtGui import QPalette, QColor
 import sys
+
+
+class welcomeScreen(QWidget):
+    def __init__(self, givenLayout):
+        super(welcomeScreen, self).__init__(givenLayout)
+        self.setFixedSize(givenLayout.frameSize())
+        self.lb_welcome = QtWidgets.QLabel(u"Bienvenue!", self)
+        self.lb_welcome.setGeometry(QtCore.QRect(10, 10, 100, 19))
+        self.lb_welcome.setObjectName("lb_welcome")
+    def close(self):
+        self.setVisible(False)
+
+class tipScreen(QWidget):
+    def __init__(self, givenLayout):
+        super(tipScreen, self).__init__(givenLayout)
+        self.setFixedSize(givenLayout.frameSize())
+        self.lb_tip = QtWidgets.QLabel(u"Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots.", self)
+        self.lb_tip.setObjectName("lb_tip")
+    def close(self):
+        self.setVisible(False)
+
 
 class Recherche(object):
     def __init__(self):
         ## La fenetre
         self.rechercheDialog=QWidget()
         self.rechercheDialog.setObjectName("Recherche")
-        self.rechercheDialog.setFixedSize(894, 593)
+        self.rechercheDialog.setFixedSize(894, 640)
         ## Layout en haut
         self.hautWidget = QtWidgets.QWidget(self.rechercheDialog)
         self.hautWidget.setGeometry(QtCore.QRect(30, 10, 841, 51))
@@ -96,16 +117,25 @@ class Recherche(object):
         self.btn_effacer.clicked.connect(self.click_btn_effacer)
         self.basLayout.addWidget(self.btn_effacer)        
         ## Textbrower pour afficher les resultats de recherche
-        self.textBrowser_resultat = QtWidgets.QTextBrowser(self.rechercheDialog)
-        self.textBrowser_resultat.setGeometry(QtCore.QRect(20, 200, 851, 371))
-        self.textBrowser_resultat.setObjectName("textBrowser_resultat")   
+        ##self.textBrowser_resultat = QtWidgets.QTextBrowser(self.rechercheDialog)
+        ##self.textBrowser_resultat.setGeometry(QtCore.QRect(20, 200, 851, 371))
+        ##self.textBrowser_resultat.setObjectName("textBrowser_resultat")
+        self.resultLayout = QWidget(self.rechercheDialog)
+        self.resultLayout.setGeometry(QtCore.QRect(20, 200, 851, 430))
+        self.resultLayout.setObjectName("resultLayout")
+        self.welcome = welcomeScreen(self.resultLayout)
+        self.welcome.show()
+        self.currentScreen = self.welcome
     def show(self):
         # ouverture de la fenetre
         self.rechercheDialog.show()
     def active_text(self):
         self.btn_effacer.setEnabled(True)
     def click_btn_effacer(self):
-        self.textBrowser_resultat.clear()
+        #self.textBrowser_resultat.clear()
+        self.currentScreen.close()
+        self.welcome.show()
+        self.currentScreen = self.welcome
         self.comboB_langue.setCurrentIndex(0)
         self.lineE_mot.clear()
         self.lineE_theme.clear()
@@ -114,14 +144,30 @@ class Recherche(object):
         self.checkB_floue.setChecked(False)
         self.btn_effacer.setEnabled(False)
     def click_btn_lancer(self):
-        self.textBrowser_resultat.clear()
+        #self.textBrowser_resultat.clear()
+        self.currentScreen.close()
         self.btn_effacer.setEnabled(True)
         result = rechercheFonct.recherche(str(self.comboB_langue.currentText()), str(self.lineE_mot.text()), str(self.lineE_theme.text()), str(self.lineE_tra.text()), str(self.lineE_phrase.text()), self.checkB_floue.isChecked())
         if len(result) == 0:
-            self.textBrowser_resultat.append("Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots")
+            #self.textBrowser_resultat.append("Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots")
+            self.tip = tipScreen(self.resultLayout)
+            self.tip.show()
+            self.currentScreen = self.tip
         else:
-            for item in result:
-                self.textBrowser_resultat.append('ID: {}   MOT: {}   THEME: {} \nTRADUCTION: {} \nEXEMPLE: {} \n\n'.format(item.name, item.word, item.thema, item.trad, item.exemple))
+            self.cards = parcours.parcoursGivenCards(self.resultLayout, result)
+            self.cards.openCardSignal.connect(self.openCard)
+            self.cards.show()
+            self.currentScreen = self.cards
+            
+            #for item in result:
+                #self.textBrowser_resultat.append('ID: {}   MOT: {}   THEME: {} \nTRADUCTION: {} \nEXEMPLE: {} \n\n'.format(item.name, item.word, item.thema, item.trad, item.exemple))
+    def openCard(self,language, rank):
+        self.openViewCards(rank, database.getAllCards(language))
+    def openViewCards(self, rank, cardlist):
+        self.currentScreen.close()
+        self.linkedInterf = viewCard.viewDialog(self.resultLayout, rank, cardlist)
+        self.linkedInterf.show()
+        self.currentScreen=self.linkedInterf
     def close(self):
         self.rechercheDialog.close()   
 

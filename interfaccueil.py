@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame, memory
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame, memory, pointToCard
 
 
 ### traitement des listes d'apprentissage
@@ -75,6 +75,7 @@ class HomeScreen(QToolBox):
         self.MesJeux.memorySignal.connect(self.memorySignal.emit)
         self.MesJeux.hotAndColdSignal.connect(self.hotAndColdSignal.emit)
         self.MesJeux.rightWrongSignal.connect(self.rightWrongSignal.emit)
+        self.MesJeux.pointSignal.connect(self.pointSignal.emit)
         #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
         self.addItem(self.MesJeux, "")
         self.setItemText(self.indexOf(self.MesJeux), "Mes Jeux")
@@ -263,6 +264,7 @@ class WelcomeInterf(object):
         self.myscreen.openLanguageSignal.connect(self.openParcours)
         self.myscreen.rightWrongSignal.connect(self.openVraiOuFaux)
         self.myscreen.memorySignal.connect(self.openMemory)
+        self.myscreen.pointSignal.connect(self.openPointTo)
         
     def changeLanguage(self):
         self.Table=self.editlanguage.currentText()
@@ -345,6 +347,12 @@ class WelcomeInterf(object):
         self.MemoryInterf.show()
         self.currentScreen=self.MemoryInterf
         self.MemoryInterf.leave.connect(self.displayHomeScreen)
+    def openPointTo(self):
+        self.currentScreen.close()
+        self.PointToInterf = pointToCard.pointToCardGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:20])
+        self.PointToInterf.show()
+        self.currentScreen=self.PointToInterf
+        self.PointToInterf.leave.connect(self.displayHomeScreen)
     def displayHomeScreen(self):
         self.getCards()
         self.myscreen.setVisible(True)

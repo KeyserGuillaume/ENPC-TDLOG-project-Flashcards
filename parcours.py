@@ -214,6 +214,7 @@ class parcoursIconsGame(QWidget):
         self.RWButton.clicked.connect(self.rightWrongSignal.emit)
         self.HCButton.clicked.connect(self.hotAndColdSignal.emit)
         self.MemoryButton.clicked.connect(self.memorySignal.emit)
+        self.pointButton.clicked.connect(self.pointSignal.emit)
 
     dragAndDropSignal=QtCore.pyqtSignal()
     memorySignal=QtCore.pyqtSignal()

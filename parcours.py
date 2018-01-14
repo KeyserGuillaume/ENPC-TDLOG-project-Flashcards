@@ -120,6 +120,43 @@ class parcoursChosenCards(QScrollArea):
             self.mycards[i].openCardSignal.connect(self.openCardSignal)
     openCardSignal=QtCore.pyqtSignal(str, int)
 
+class parcoursGivenCards(QScrollArea):
+    def __init__(self, givenLayout, cardslist):
+        super(parcoursGivenCards, self).__init__(givenLayout)
+        self.cardslist=cardslist
+        self.resize(givenLayout.frameSize())
+        self.setObjectName("SelectCard")
+        #self.Dialog = QScrollArea()  #QWidget()
+        #self.Dialog.setObjectName("SelectCard")
+        #self.Dialog.setWindowTitle("Your Card selection")
+        #self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        #self.setWidgetResizable(True)
+        self.gridWidget = QWidget(self)
+        self.n=ceil(len(self.cardslist)/5)
+        self.gridWidget.setGeometry(QtCore.QRect(0, 0, self.frameSize().width()-20, ((self.n+1)/36+self.n*0.11)*self.frameSize().width()))
+        self.gridWidget.setObjectName("grille de placement")
+        self.gridWidget.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
+        self.setWidget(self.gridWidget)
+        self.folderGrid = QGridLayout(self.gridWidget)
+        self.folderGrid.setContentsMargins(20, 20, 20, 20)
+        self.folderGrid.setObjectName("folderGrid")
+        self.mycards = self.cardslist.copy()
+        #print([x.word for x in self.cardslist])
+        #print([x.name for x in self.cardslist])
+        #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
+        for i, carte in enumerate(self.cardslist):
+            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget, self.width()/6)
+            # 5 cartes par ligne
+            row = i/5
+            column = i%5
+            self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
+
+        for i, carte in enumerate(self.cardslist):
+            self.mycards[i].clicked.connect(self.mycards[i].openChosenCard)
+            self.mycards[i].openCardSignal.connect(self.openCardSignal)
+    openCardSignal=QtCore.pyqtSignal(str, int)
+
 class parcoursIconsGame(QWidget):
     def __init__(self, width, height, language):
         super(parcoursIconsGame, self).__init__()

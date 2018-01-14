@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame, memory
 
 
 ### traitement des listes d'apprentissage
@@ -72,6 +72,7 @@ class HomeScreen(QToolBox):
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
         self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
+        self.MesJeux.memorySignal.connect(self.memorySignal.emit)
         self.MesJeux.hotAndColdSignal.connect(self.hotAndColdSignal.emit)
         self.MesJeux.rightWrongSignal.connect(self.rightWrongSignal.emit)
         #iconesJeux = parcours.parcoursIconsGame(self.MesJeux)
@@ -261,6 +262,7 @@ class WelcomeInterf(object):
         self.myscreen.hotAndColdSignal.connect(self.openHotAndCold)
         self.myscreen.openLanguageSignal.connect(self.openParcours)
         self.myscreen.rightWrongSignal.connect(self.openVraiOuFaux)
+        self.myscreen.memorySignal.connect(self.openMemory)
         
     def changeLanguage(self):
         self.Table=self.editlanguage.currentText()
@@ -316,19 +318,19 @@ class WelcomeInterf(object):
         self.openViewCards(rank, database.getAllCards(language))
     def openDragAndDrop(self):
         self.currentScreen.close()
-        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
+        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:16])
         self.DDInterf.show()
         self.currentScreen=self.DDInterf
         self.DDInterf.leave.connect(self.displayHomeScreen)
     def openHotAndCold(self):
         self.currentScreen.close()
-        self.HCInterf = hotColdGame.hotColdGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
+        self.HCInterf = hotColdGame.hotColdGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:20])
         self.HCInterf.show()
         self.currentScreen=self.HCInterf
         self.HCInterf.leave.connect(self.displayHomeScreen)
     def openVraiOuFaux(self):
         self.currentScreen.close()
-        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10))
+        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:25])
         self.VFInterf.show()
         self.currentScreen = self.VFInterf
         self.VFInterf.leave.connect(self.displayHomeScreen) 
@@ -337,6 +339,12 @@ class WelcomeInterf(object):
         self.linkedInterf = viewCard.viewDialog(self.screenLayout, rank, cardlist)
         self.linkedInterf.show()
         self.currentScreen=self.linkedInterf
+    def openMemory(self):
+        self.currentScreen.close()
+        self.MemoryInterf = memory.MemoryGameWindow(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:12])
+        self.MemoryInterf.show()
+        self.currentScreen=self.MemoryInterf
+        self.MemoryInterf.leave.connect(self.displayHomeScreen)
     def displayHomeScreen(self):
         self.getCards()
         self.myscreen.setVisible(True)

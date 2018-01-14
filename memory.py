@@ -1,12 +1,12 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QGridLayout, QPushButton, QLabel
 import sys
 import database
 
 from math import ceil
 from random import shuffle
 
-#import dragAndDrop
+import gameWindow
 
 from icons import icons
 
@@ -26,7 +26,6 @@ def matchingCards():
             return False
     else:
         return False
-
 
 
 class PlayingCard(QPushButton):
@@ -66,7 +65,7 @@ class PlayingCard(QPushButton):
                 matchedcard.setEnabled(False)
             yellowcards = []
 
-### le widget de jeu (carte qur un plateau qui se retournent
+### le widget de jeu (carte sur un plateau qui se retournent)
 class MemoryGame(QScrollArea):
     def __init__(self,bigWindow, CardsPlayed, width, height):
         ## les flashcards en jeu
@@ -79,6 +78,7 @@ class MemoryGame(QScrollArea):
         self.setStyleSheet("background-image: url(:/fond/wood.jpg);")
         self.setWidgetResizable(True)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.plateau = QWidget(self)
         self.plateau.setGeometry(QtCore.QRect(20, 20, 670, 120*ceil(2*len(self.cardslist)/5)))
         self.plateau.setObjectName("plateau de jeu")
@@ -105,20 +105,93 @@ class MemoryGame(QScrollArea):
         # nombre et donnes des cartes retournees (au max 2 donc 0 ou 1 ou 2)
         global yellowcards
         yellowcards = []
+
+        # le message de victoire
+        self.victoryWidget = QWidget(self)
+        self.victoryWidget.resize(300, 200)
+        qr = self.victoryWidget.frameGeometry()
+        qr.moveCenter(self.rect().center())
+        self.victoryWidget.move(qr.topLeft())
+        self.label = QLabel(self.victoryWidget)
+        path = "icons/victory.png"
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.load(path)
+        self.label.setPixmap(self.pixmap)
+        self.label.setScaledContents(True)
+        self.victoryWidget.setVisible(False)
+
+        # le message de defaite
+        self.defeatWidget = QWidget(self)
+        self.defeatWidget.resize(300, 200)
+        qr = self.defeatWidget.frameGeometry()
+        qr.moveCenter(self.rect().center())
+        self.defeatWidget.move(qr.topLeft())
+        self.label = QLabel(self.defeatWidget)
+        path = "icons/gameOver.png"
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.load(path)
+        self.label.setPixmap(self.pixmap)
+        self.label.setScaledContents(True)
+        self.defeatWidget.setVisible(False)
+
         # connection slots et signaux
         for i in range(len(self.mycards)):
             self.mycards[i].clicked.connect(self.mycards[i].flip)
+            self.mycards[i].clicked.connect(self.checkAnswer)
 
+    running = QtCore.pyqtSignal()
+    success = QtCore.pyqtSignal()
+    def checkAnswer(self):
+        allassociated = True
+        for i in range(len(self.mycards)):
+            allassociated = allassociated and not(self.mycards[i].isEnabled())
+        if allassociated :
+            self.success.emit()
+        else:
+            self.running.emit()
+    def onVictory(self):
+        self.victoryWidget.show()
+    def onDefeat(self):
+        self.defeatWidget.show()
+
+
+class MemoryGameWindow(QWidget):
+    def __init__(self, givenWindow, cardsPlayed):
+        super(MemoryGameWindow, self).__init__(givenWindow)
+        self.resize(givenWindow.frameSize())
+        self.cardslist = cardsPlayed
+        self.nbCharsDisplayed = 0
+        self.window = gameWindow.GameWindow(self, len(self.cardslist))
+        self.game = MemoryGame(self.window.gameArea, self.cardslist, self.window.gameArea.width(), self.window.gameArea.height())
+        self.window.show()
+
+        self.window.resetSignal.connect(self.reset)
+        self.window.leaveSignal.connect(self.endOfGame)
+        self.game.success.connect(self.game.onVictory)
+        self.window.timeIsOut.connect(self.game.onDefeat)
+
+    leave = QtCore.pyqtSignal()
+
+    def reset(self):
+        self.game.close()
+        self.window.timeIsOut.disconnect()
+        self.window.close()
+        self.init()
+
+    def endOfGame(self):
+        self.leave.emit()
+        self.close()
 
 if __name__ == "__main__":
     Table='anglais'
     ### cartes concernées par le jeu
-    CartesEnJeu=database.getCardsToLearn(Table,0,9)
+    CartesEnJeu=database.getCardsToLearn(Table,0,9)[0:10]
     args = sys.argv
     b = QApplication(args)
     #mf = GameWindow(CartesEnJeu)
     window = QWidget()
-    mf = MemoryGame(window,CartesEnJeu, 700, 440)
+    #mf = MemoryGame(window,CartesEnJeu, 700, 440)
+    mf = MemoryGameWindow(window, CartesEnJeu)
     window.show()
     b.exec_()
     b.lastWindowClosed.connect(b.quit)

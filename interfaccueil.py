@@ -27,6 +27,7 @@ class ConnectedButton(QCommandLinkButton):
     def __init__(self, cardlist, rank, place, name, openFunction):
         self.cardlist=cardlist
         self.rank=rank
+        self.rank_orig=self.rank
         super(ConnectedButton, self).__init__(place)
         self.setObjectName(name)
         self.openInterfFunction=openFunction
@@ -49,6 +50,7 @@ class ConnectedButton(QCommandLinkButton):
             self.openInterfFunction(self.rank, self.cardlist)
     def changeCardList(self, cardlist):
         self.cardlist=cardlist
+        self.rank=self.rank_orig
         self.init()
 
 ## l'ecran d'accueil interne avec des onglets
@@ -284,6 +286,7 @@ class WelcomeInterf(object):
     def getCards(self):
         self.cardsToLearn=database.getCardsToLearn(self.Table,0,4)
         self.cardsToGoOver=database.getCardsToLearn(self.Table,5,9)
+        print([x.word for x in self.cardsToGoOver])
         self.cardsKnown=database.getCardsToLearn(self.Table,10,10)
     def show(self):
         # ouverture de la fenetre

@@ -41,16 +41,17 @@ def readSettings(Tag_xpath):
 def getAllSettings():
     defaultLangage = readSettings("/user/default/langage")
     username = readSettings("/user/default/username")
-    nbCards = readSettings("/user/game/nbCards")
-    timerChrono = readSettings("/user/game/chrono")
+    allGameNames = ["dragdrop","memory","hotcold","pointto","rightwrong"]
+    nbCards = [readSettings("/user/game/nbCards[affected="+gamename+"]") for gamename in allGameNames]
+    timerChrono = [readSettings("/user/game/chrono[affected="+gamename+"]") for gamename in allGameNames]
     return [defaultLangage,username,nbCards,timerChrono]
 
 ### modifications specifiques
-def changeNbCards(newdata):
-    changeSettings("/user/game/nbCards", newdata)
-def changeChrono(newdata):
-    changeSettings("/user/game/chrono", newdata)
 def changeUser(newdata):
     changeSettings("/user/default/username", newdata)
 def changeLangage(newdata):
     changeSettings("/user/default/langage", newdata)
+def changeNbCards(newdata,gamename):
+    changeSettings("/user/game/nbCards[affected="+gamename+"]", newdata)
+def changeChrono(newdata,gamename):
+    changeSettings("/user/game/chrono[affected="+gamename+"]", newdata)

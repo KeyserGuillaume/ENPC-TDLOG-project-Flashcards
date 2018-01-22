@@ -1,10 +1,5 @@
 ############# definition de l'interface de creation de flash cards
 
-## reste a gerer les boutons choisir
-## il faut aussi ameliorer la gestion de la progression
-## comment imporeter graphiquement une adresse de fichier ?
-## inserer un appel a la fonction permettant de sauvegarder les cartes crees  --> ecriture dans un fichier ?
-
 import flashcard, database
 
 ## a aller récupérer dans une base de donnée plus tard

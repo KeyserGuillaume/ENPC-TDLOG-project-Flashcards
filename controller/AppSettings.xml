@@ -1,0 +1,10 @@
+<user>
+    <default>
+        <langage>Anglais</langage>
+        <username>Camille</username>
+    </default>
+    <game affected="all">
+        <nbCards>14</nbCards>
+        <chrono>60</chrono>
+    </game>
+</user>

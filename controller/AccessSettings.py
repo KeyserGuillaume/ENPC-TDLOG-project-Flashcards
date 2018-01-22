@@ -37,11 +37,14 @@ def readSettings(Tag_xpath):
 
 ################################## chargement du fichier XML
 
+def getAllGameNames():
+    return ["dragdrop","memory","hotcold","pointto","rightwrong"]
+
 ### acces a une liste de tous les settings
 def getAllSettings():
     defaultLangage = readSettings("/user/default/langage")
     username = readSettings("/user/default/username")
-    allGameNames = ["dragdrop","memory","hotcold","pointto","rightwrong"]
+    allGameNames = getAllGameNames()
     nbCards = [readSettings("/user/game/nbCards[affected="+gamename+"]") for gamename in allGameNames]
     timerChrono = [readSettings("/user/game/chrono[affected="+gamename+"]") for gamename in allGameNames]
     return [defaultLangage,username,nbCards,timerChrono]

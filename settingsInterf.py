@@ -25,22 +25,43 @@ class mySettings(QWidget):
 
         # ligne 1 : langue par défaut
         self.langue = QLabel(self.gridWidget)
-        self.answergrid.addWidget(self.langue, 1, 0, 1, 1)
+        self.answergrid.addWidget(self.langue, 1, 0, 1, 3)
         self.langue.setText(" Le language par défault :")
         self.editlangue = QLineEdit(self.gridWidget)
-        self.answergrid.addWidget(self.editlangue, 1, 1, 1, 1)
+        self.answergrid.addWidget(self.editlangue, 1, 1, 1, 3)
         self.editlangue.setText(currentSettings[0])
 
         # ligne 2 : user par défaut
         self.user = QLabel(self.gridWidget)
-        self.answergrid.addWidget(self.user, 2, 0, 1, 1)
+        self.answergrid.addWidget(self.user, 2, 0, 1, 3)
         self.user.setText(" L'utilisateur en cours est : ")
         self.edituser = QLineEdit(self.gridWidget)
-        self.answergrid.addWidget(self.edituser, 2, 1, 1, 1)
+        self.answergrid.addWidget(self.edituser, 2, 1, 1, 3)
         self.edituser.setText(currentSettings[1])
 
-        # ligne 3 à 12
-        # insérer un tableau
+        # tableau 2x5 sur un bloc 3x6 pour les parametre des jeux
+        # les caractéristiques
+        self.nbcards = QLabel(self.gridWidget)
+        self.answergrid.addWidget(self.nbcards, 4, 0, 1, 1)
+        self.nbcards.setText("Nombre de cartes à jouer ")
+        self.chrono = QLabel(self.gridWidget)
+        self.answergrid.addWidget(self.chrono, 5, 0, 1, 1)
+        self.chrono.setText("Temps de jeu")
+        # les jeux
+        allGameNames = AccessSettings.getAllGameNames()
+        self.gamelabel= allGameNames.copy()
+        self.nbcardsEdit = allGameNames.copy()
+        self.chronoEdit = allGameNames.copy()
+        for rank,GameName in enumerate(allGameNames):
+            self.gamelabel[rank] = QLabel(self.gridWidget)
+            self.answergrid.addWidget(self.gamelabel[rank], 3, rank+1, 1, 1)
+            self.gamelabel[rank].setText(GameName)
+            self.nbcardsEdit[rank] = QLineEdit(self.gridWidget)
+            self.answergrid.addWidget(self.nbcardsEdit[rank], 4, rank+1, 1, 1)
+            self.nbcardsEdit[rank].setText(currentSettings[2][rank])
+            self.chronoEdit[rank] = QLineEdit(self.gridWidget)
+            self.answergrid.addWidget(self.chronoEdit[rank], 5, rank+1, 1, 1)
+            self.chronoEdit[rank].setText(currentSettings[3][rank])
 
         ## le layout du haut
         self.whatWidget = QWidget(self)
@@ -67,60 +88,10 @@ class mySettings(QWidget):
         self.updateButton.addWidget(self.updateButton)
 
         ## gestion des slots et signaux
-        self.updateButton.clicked.connect(self.commit)
+        self.updateButton.clicked.connect(self.update)
 
     updatedSettings =QtCore.pyqtSignal()
 
-    def languageChosen(self):
-        langue = str(self.editlanguage.currentText())
-        if (langue == "Other"):
-            self.setLanguage.setEnabled(True)
-            return
-        self.setname.setText(str(database.giveNewCardName(langue)))
-
-    def newLanguage(self):
-        self.setname.setText("1")
-
-
-#renamed it because it's used both for creating and modifying
-    def commit(self):
-        name = str(self.setname.text())
-        mot = str(self.editword.text())
-        traduction = str(self.edittrad.text())
-        phrase = str(self.editexample.text())
-        theme = str(self.editthema.text())
-        difficulte = str(round(self.editdifficult.value() / 10))
-        maitrise = str(round(self.editproficiency.value() / 10))
-        illustrationpath = self.image
-        soundpath = self.sound
-        nature = str(self.editnature.currentText())
-        langue = str(self.editlanguage.currentText())
-        if mot=="":
-            self.myword.setText(" Entrez votre mot : (Non facultatif !)")
-            return
-        if traduction=="":
-            self.mytrad.setText(" Entrez sa traduction : (Non facultatif !)")
-            return
-        if langue == "Other":
-            langue = str(self.setLanguage.text())
-            if (not (database.existsLanguage(langue))):
-                database.addLanguage(langue)
-        mycard = flashcard.FlashCards(str(database.giveNewCardName(langue)), mot, traduction, phrase, theme, difficulte,
-                                      maitrise, illustrationpath, soundpath, nature, langue)
-        if database.getNextId(langue) <= int(name):
-            database.register(mycard)
-            self.created.emit()
-        else:  # nom deja existant dans la table
-            database.modifyCard(langue, name, traduction, phrase, theme, difficulte, maitrise, illustrationpath,
-                                soundpath, nature)
-            self.modified.emit()
-        if (not database.existeSameCard(langue, mot, traduction)):
-            database.register(mycard)
-        else:
-            #l'utilisateur a entre une carte pour un mot deja entre
-            #il faudrait lui demander s'il souhaite ecrire par dessus 
-            #la carte deja existante, en lui affichant cette carte si possible
-            self.close()
+    def update(self):
+        allGameNames = AccessSettings.getAllGameNames()
         self.close()
-        ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
-        # return mycard

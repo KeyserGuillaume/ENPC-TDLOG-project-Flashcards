@@ -88,7 +88,6 @@ class mySettings(QWidget):
         self.quitButton.clicked.connect(self.quit)
 
     updated = QtCore.pyqtSignal()
-    notUpdated = QtCore.pyqtSignal()
 
     def update(self):
         allGameNames = AccessSettings.getAllGameNames()
@@ -102,7 +101,7 @@ class mySettings(QWidget):
         self.close()
 
     def quit(self):
-        self.notUpdated.emit()
+        self.updated.emit()
         self.close()
 
 if __name__ == "__main__":
@@ -112,7 +111,6 @@ if __name__ == "__main__":
     w.resize(497, 492)
     mf = mySettings(w)
     mf.updated.connect(w.close)
-    mf.notUpdated.connect(w.close)
     w.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)

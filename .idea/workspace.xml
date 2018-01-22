@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ccb47de5-fd0e-4410-82e3-618cdc33bf5b" name="Default" comment="&quot;insertion d'une fonction register appelee lors de la creation affichant la carte a changer plus tard en une ecriture dans la base de donnee&quot;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/interfaccueil.py" afterPath="$PROJECT_DIR$/interfaccueil.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settingsInterf.py" afterPath="$PROJECT_DIR$/settingsInterf.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,42 +18,23 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="interfaccueil.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="interfaccueil.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/interfaccueil.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="270" column="39" lean-forward="false" selection-start-line="270" selection-start-column="39" selection-end-line="270" selection-end-column="39" />
+            <state relative-caret-position="255">
+              <caret line="293" column="34" lean-forward="true" selection-start-line="293" selection-start-column="34" selection-end-line="293" selection-end-column="34" />
               <folding>
                 <element signature="e#43#85#0" expanded="true" />
-                <marker date="1516636345690" expanded="true" signature="10138:11767" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="10138:16506" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="11806:12450" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="12483:12737" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="12757:12818" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="12847:12956" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="12981:13287" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="13313:13876" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="13914:14182" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="14221:14286" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="14317:14599" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="14629:14910" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="14940:15223" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="15269:15465" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="15491:15788" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="15815:16120" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="16153:16257" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="16279:16506" ph="..." />
-                <marker date="1516636345690" expanded="true" signature="16534:16699" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settingsInterf.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="settingsInterf.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/settingsInterf.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="115" column="12" lean-forward="true" selection-start-line="115" selection-start-column="12" selection-end-line="115" selection-end-column="12" />
+            <state relative-caret-position="316">
+              <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
               <folding>
                 <element signature="e#68#110#0" expanded="true" />
               </folding>
@@ -104,8 +86,9 @@
       <find>editword</find>
       <find>mytrad</find>
       <find>nameWidget</find>
-      <find>created</find>
       <find>createButton</find>
+      <find>created</find>
+      <find>setting</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -124,12 +107,12 @@
         <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/DragDrop.py" />
         <option value="$PROJECT_DIR$/parcours.py" />
-        <option value="$PROJECT_DIR$/interfaccueil.py" />
         <option value="$PROJECT_DIR$/memory.py" />
         <option value="$PROJECT_DIR$/createcardsInterf.py" />
         <option value="$PROJECT_DIR$/controller/AppSettings.xml" />
         <option value="$PROJECT_DIR$/controller/AccessSettings.py" />
         <option value="$PROJECT_DIR$/settingsInterf.py" />
+        <option value="$PROJECT_DIR$/interfaccueil.py" />
       </list>
     </option>
   </component>
@@ -541,25 +524,6 @@
           <caret line="8" column="12" lean-forward="false" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="33" />
           <folding>
             <element signature="e#43#85#0" expanded="true" />
-            <marker date="1516636345690" expanded="true" signature="10138:11767" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="10138:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="11806:12450" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12483:12737" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12757:12818" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12847:12956" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12981:13287" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13313:13876" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13914:14182" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14221:14286" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14317:14599" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14629:14910" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14940:15223" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15269:15465" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15491:15788" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15815:16120" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16153:16257" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16279:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16534:16699" ph="..." />
           </folding>
         </state>
       </provider>
@@ -598,25 +562,6 @@
           <caret line="14" column="10" lean-forward="true" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
           <folding>
             <element signature="e#43#85#0" expanded="true" />
-            <marker date="1516636345690" expanded="true" signature="10138:11767" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="10138:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="11806:12450" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12483:12737" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12757:12818" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12847:12956" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12981:13287" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13313:13876" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13914:14182" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14221:14286" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14317:14599" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14629:14910" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14940:15223" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15269:15465" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15491:15788" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15815:16120" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16153:16257" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16279:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16534:16699" ph="..." />
           </folding>
         </state>
       </provider>
@@ -843,35 +788,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/interfaccueil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="270" column="39" lean-forward="false" selection-start-line="270" selection-start-column="39" selection-end-line="270" selection-end-column="39" />
-          <folding>
-            <element signature="e#43#85#0" expanded="true" />
-            <marker date="1516636345690" expanded="true" signature="10138:11767" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="10138:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="11806:12450" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12483:12737" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12757:12818" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12847:12956" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="12981:13287" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13313:13876" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="13914:14182" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14221:14286" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14317:14599" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14629:14910" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="14940:15223" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15269:15465" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15491:15788" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="15815:16120" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16153:16257" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16279:16506" ph="..." />
-            <marker date="1516636345690" expanded="true" signature="16534:16699" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/parcours.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="367">
@@ -908,10 +824,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/settingsInterf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="115" column="12" lean-forward="true" selection-start-line="115" selection-start-column="12" selection-end-line="115" selection-end-column="12" />
+        <state relative-caret-position="316">
+          <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
           <folding>
             <element signature="e#68#110#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaccueil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="293" column="34" lean-forward="true" selection-start-line="293" selection-start-column="34" selection-end-line="293" selection-end-column="34" />
+          <folding>
+            <element signature="e#43#85#0" expanded="true" />
           </folding>
         </state>
       </provider>

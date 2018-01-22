@@ -6,7 +6,7 @@
     <game>
         <name>dragdrop</name>
         <nbCards>22</nbCards>
-        <chrono>60</chrono>
+        <chrono>62</chrono>
     </game>
     <game>
         <name>memory</name>

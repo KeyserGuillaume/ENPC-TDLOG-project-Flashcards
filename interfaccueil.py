@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QSpacerItem, QSizePolicy, QGroupBox, QVBoxLayout, QCommandLinkButton, QLabel, QFrame, QToolBox, QComboBox,QShortcut 
 import sys
 
-import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame, memory, pointToCard
+import createcardsInterf, database, flashcard, rechercheInterf, parcours, viewCard, dragAndDrop, vraiOuFaux, hotColdGame, memory, pointToCard, settingsInterf
 
 
 ### traitement des listes d'apprentissage
@@ -131,10 +131,8 @@ class WelcomeInterf(object):
         self.newButton = QtWidgets.QPushButton(u"New Card",self.ligneFixeWidget)
         self.ligneFixe.addWidget(self.newButton)
         # le bouton des réglages de l'application
-        # pas encore pris en compte
         self.settingsButton = QtWidgets.QPushButton(u"Settings", self.ligneFixeWidget)
         self.ligneFixe.addWidget(self.settingsButton)
-        self.settingsButton.setEnabled(False)
 
         # la barre de resume sur le cote
         self.ResumeBox = QGroupBox(self.Dialog)
@@ -218,6 +216,8 @@ class WelcomeInterf(object):
         self.modifInterf=None
         self.modifyButton.clicked.connect(self.modifycard)
         self.searchInterf = None
+        self.settingsButton.clicked.connect(self.changeMySettings)
+        self.SettingsInterf = None
         self.currentScreen=self.myscreen
         self.searchButton.clicked.connect(self.search)
         self.learn1.clicked.connect(self.learn1.open)
@@ -283,6 +283,13 @@ class WelcomeInterf(object):
         self.modifInterf.show()
         self.modifInterf.modified.connect(self.displayHomeScreen)
         self.modifInterf.deleted.connect(self.displayHomeScreen)
+    def changeMySettings(self):
+        # ouverture de l'interface de creation
+        self.currentScreen.close()
+        self.SettingsInterf = settingsInterf.mySettings(self.screenLayout)
+        self.currentScreen = self.SettingsInterf
+        self.SettingsInterf.show()
+        self.SettingsInterf.updated.connect(self.displayHomeScreen)
     def openParcours(self, language):
         self.currentScreen.close()
         self.parcoursInterf=parcours.parcoursChosenCards(self.screenLayout, language)

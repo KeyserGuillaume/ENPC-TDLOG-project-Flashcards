@@ -29,7 +29,6 @@ class ConnectedButton(QCommandLinkButton):
         self.rank=rank
         self.rank_orig=self.rank
         super(ConnectedButton, self).__init__(place)
-        self.setObjectName(name)
         self.openInterfFunction=openFunction
         self.init()
     def init(self):
@@ -59,12 +58,10 @@ class HomeScreen(QToolBox):
         super(HomeScreen, self).__init__(givenLayout)
         self.language=language
         self.setFixedSize(givenLayout.frameSize())
-        self.setObjectName("ongletsAccueil")
         # onglet 1
         self.MesCartes = QWidget()
         self.MesCartes.setFixedSize(649, 401)
         #self.MesCartes.setGeometry(QtCore.QRect(0, 0, 689, 431))
-        self.MesCartes.setObjectName("MesCartes")
         self.folders = parcours.parcoursLanguesFolder(self.MesCartes)
         self.folders.openLanguageSignal.connect(self.openLanguageSignal.emit)
         self.addItem(self.MesCartes, "")
@@ -72,7 +69,6 @@ class HomeScreen(QToolBox):
         # onglet 2
         self.MesJeux = parcours.parcoursIconsGame(663, 406, self.language)
         self.MesJeux.setGeometry(QtCore.QRect(0, 0, 669, 431))
-        self.MesJeux.setObjectName("MesJeux")
         self.MesJeux.dragAndDropSignal.connect(self.dragAndDropSignal.emit)
         self.MesJeux.memorySignal.connect(self.memorySignal.emit)
         self.MesJeux.hotAndColdSignal.connect(self.hotAndColdSignal.emit)
@@ -84,7 +80,6 @@ class HomeScreen(QToolBox):
         # onglet 3
         self.MesParties = QWidget()
         self.MesParties.setGeometry(QtCore.QRect(0, 0, 649, 431))
-        self.MesParties.setObjectName("MesParties")
         self.addItem(self.MesParties, "")
         self.setItemText(self.indexOf(self.MesParties), "Mes Parties")
         # selection de l'onglet principal
@@ -108,22 +103,17 @@ class WelcomeInterf(object):
     def __init__(self):
         # la fenetre
         self.Dialog = QWidget()
-        self.Dialog.setObjectName("Welcome")
         self.Dialog.setWindowTitle("Welcome on our FlashCard program")
         self.Dialog.resize(936, 582)
         # le layout de la bande du haute
         self.ligneFixeWidget = QWidget(self.Dialog)
         self.ligneFixeWidget.setGeometry(QtCore.QRect(10, 10, 891, 41))
-        self.ligneFixeWidget.setObjectName("ligneFixeWidget")
         self.ligneFixe = QHBoxLayout(self.ligneFixeWidget)
         self.ligneFixe.setContentsMargins(0, 0, 0, 0)
-        self.ligneFixe.setObjectName("ligneFixe")
         # la barre et le bouton de recherche
         self.searchBar = QLineEdit(self.ligneFixeWidget)
-        self.searchBar.setObjectName("searchBar")
         self.ligneFixe.addWidget(self.searchBar)
         self.searchButton = QPushButton(u"Search", self.ligneFixeWidget)
-        self.searchButton.setObjectName("searchButton")
         self.ligneFixe.addWidget(self.searchButton)
         # un espace (futur nom + logo ?)
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -131,35 +121,28 @@ class WelcomeInterf(object):
         # le bouton de modification
         # ne peut pas ouvrir directement l'interface de modification car il faut sélectioner une carte
         self.modifyButton = QPushButton(u"Modify", self.ligneFixeWidget)
-        self.modifyButton.setObjectName("modifyButton")
         self.ligneFixe.addWidget(self.modifyButton)
         # le bouton d'mportation / exportation
         # pas encore gere non plus ; a venir ?
         self.importButton = QtWidgets.QPushButton(u"Import",self.ligneFixeWidget)
-        self.importButton.setObjectName("importButton")
         self.ligneFixe.addWidget(self.importButton)
         self.importButton.setEnabled(False)
         # le bouton de creation d'une nouvelle carte
         self.newButton = QtWidgets.QPushButton(u"New Card",self.ligneFixeWidget)
-        self.newButton.setObjectName("newButton")
         self.ligneFixe.addWidget(self.newButton)
         # le bouton des réglages de l'application
         # pas encore pris en compte
         self.settingsButton = QtWidgets.QPushButton(u"Settings", self.ligneFixeWidget)
-        self.settingsButton.setObjectName("settingsButton")
         self.ligneFixe.addWidget(self.settingsButton)
         self.settingsButton.setEnabled(False)
 
         # la barre de resume sur le cote
         self.ResumeBox = QGroupBox(self.Dialog)
         self.ResumeBox.setGeometry(QtCore.QRect(10, 60, 211, 501))
-        self.ResumeBox.setObjectName("ResumeBox")
         self.barreResume = QVBoxLayout(self.ResumeBox)
-        self.barreResume.setObjectName("barreResume")
         # bouton d'accueil
         # determiner quel affichage
         self.accueil = QPushButton(u"Accueil", self.ResumeBox)
-        self.accueil.setObjectName("accueil")
         self.barreResume.addWidget(self.accueil)
         self.accueil.setEnabled(True)
         #bouton de language
@@ -173,18 +156,15 @@ class WelcomeInterf(object):
         # bouton de profil utilisateur
         # non pris en compte
         #self.profil = QPushButton(u"User profile", self.ResumeBox)
-        #self.profil.setObjectName("profil")
         #self.barreResume.addWidget(self.profil)
         #self.profil.setEnabled(False)
         # une ligne de séparation horizontale
         self.line1 = QFrame(self.ResumeBox)
         self.line1.setFrameShape(QFrame.HLine)
         self.line1.setFrameShadow(QFrame.Sunken)
-        self.line1.setObjectName("separation line n1")
         self.barreResume.addWidget(self.line1)
         # label cartes a apprendre et les 3 boutons carte associés
         self.learnlabel = QLabel(self.ResumeBox)
-        self.learnlabel.setObjectName("learnlabel")
         self.learnlabel.setText("  Cards to learn")
         self.barreResume.addWidget(self.learnlabel)
         self.learn1 = ConnectedButton(self.cardsToLearn, 0, self.ResumeBox, "learn1", self.openViewCards)
@@ -195,7 +175,6 @@ class WelcomeInterf(object):
         self.barreResume.addWidget(self.learn3)
         # label cartes a revoir et les 3 boutons carte associés
         self.overlabel = QLabel(self.ResumeBox)
-        self.overlabel.setObjectName("overlabel")
         self.overlabel.setText("  Cards to go over")
         self.barreResume.addWidget(self.overlabel)
         self.over1 = ConnectedButton(self.cardsToGoOver, 0, self.ResumeBox, "over1", self.openViewCards)
@@ -206,7 +185,6 @@ class WelcomeInterf(object):
         self.barreResume.addWidget(self.over3)
         # label cartes bien connues et les 3 boutons carte associés
         self.knowledgelabel = QLabel(self.ResumeBox)
-        self.knowledgelabel.setObjectName("knowledgelabel")
         self.knowledgelabel.setText("  Cards known")
         self.barreResume.addWidget(self.knowledgelabel)
         self.know1 = ConnectedButton(self.cardsKnown, 0, self.ResumeBox, "know1", self.openViewCards)
@@ -219,11 +197,9 @@ class WelcomeInterf(object):
         self.line2 = QFrame(self.ResumeBox)
         self.line2.setFrameShape(QFrame.HLine)
         self.line2.setFrameShadow(QFrame.Sunken)
-        self.line2.setObjectName("separation line n2")
         self.barreResume.addWidget(self.line2)
         # le bouton d'aideopenCardSignal=QtCore.pyqtSignal(str, int)
         self.helpButton = QPushButton(u"Help", self.ResumeBox)
-        self.helpButton.setObjectName("helpButton")
         self.barreResume.addWidget(self.helpButton)
         self.helpButton.setEnabled(False)
 
@@ -234,7 +210,6 @@ class WelcomeInterf(object):
         ### le layout central avec les onglets
         self.screenLayout = QWidget(self.Dialog)
         self.screenLayout.setGeometry(QtCore.QRect(230, 60, 671, 501))
-        self.screenLayout.setObjectName("screenLayout")
         self.myscreen=HomeScreen(self.screenLayout, self.editlanguage.currentText())
 
         #raccourcis

@@ -53,31 +53,24 @@ class pointToCardGameWindow(QWidget):
         ## la fenetre de jeux
         super(pointToCardGameWindow, self).__init__(bigWindow)
         self.cartesJouees=CardsPlayed
-        self.setObjectName("PointToCard")
         self.setWindowTitle("Point To Card")
         self.resize(bigWindow.frameSize())
         self.width=self.frameSize().width()
         self.height=self.frameSize().height()
         self.MotWidget = QtWidgets.QWidget(self)
         self.MotWidget.setGeometry(QtCore.QRect(1/3*self.width+40, 1/3*self.height, 581, 61))
-        self.MotWidget.setObjectName("MotWidget")
         #formLayout pour afficher le mot et la traduction
         self.formLayoutMot = QtWidgets.QFormLayout(self.MotWidget)
         self.formLayoutMot.setContentsMargins(0, 0, 0, 0)
-        self.formLayoutMot.setObjectName("formLayoutMot")
         #deux labels de traduction
         self.labMot = QtWidgets.QLabel(u"Mot:", self.MotWidget)
-        self.labMot.setObjectName("labMot")
         self.formLayoutMot.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labMot)
         self.labMotAns = QtWidgets.QLabel(self.MotWidget)
-        self.labMotAns.setObjectName("labMotAns")
         self.formLayoutMot.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.labMotAns)
         #deux labels de Traduction
         #self.labTra = QtWidgets.QLabel(u"Traduction:", self.MotWidget)
-        #self.labTra.setObjectName("labTra")
         #self.formLayoutMot.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labTra)
         #self.labTraAns = QtWidgets.QLabel("", self.MotWidget)
-        #self.labTraAns.setObjectName("labTraAns")
         #self.formLayoutMot.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.labTraAns)
         sujet = getMotTradRandom(self.cartesJouees)
         self.labMotAns.setText(sujet[0])
@@ -86,34 +79,27 @@ class pointToCardGameWindow(QWidget):
         self.lab1 = QtWidgets.QLabel(u"Choisir la bonne traduction", self)
         self.lab1.setGeometry(QtCore.QRect(1/4*self.width+20, 1/3*self.height-40, 418, 19))
         self.lab1.setFont(QFont("Roman times", 8, QFont.Bold))
-        self.lab1.setObjectName("lab1")
         self.choiceWidget = QtWidgets.QWidget(self)
         self.choiceWidget.setGeometry(QtCore.QRect(1/3*self.width-40, 1/2*self.height, 321, 71))
-        self.choiceWidget.setObjectName("choiceWidget")
         #horizontalLayout pour les boutons vrai et faux
         self.horLayoutVraiFaux = QtWidgets.QHBoxLayout(self.choiceWidget)
         self.horLayoutVraiFaux.setContentsMargins(0, 0, 0, 0)
-        self.horLayoutVraiFaux.setObjectName("horLayoutVraiFaux")
         #bouton 1
         self.btn1 = QtWidgets.QPushButton(sujet[1], self.choiceWidget)
-        self.btn1.setObjectName("btn1")
         self.btn1.clicked.connect(self.click_checkbtn1)
         self.horLayoutVraiFaux.addWidget(self.btn1)
         #bouton 1
         self.btn2 = QtWidgets.QPushButton(sujet[2], self.choiceWidget)
-        self.btn2.setObjectName("btn2")
         self.btn2.clicked.connect(self.click_checkbtn2)
         self.horLayoutVraiFaux.addWidget(self.btn2)
         #bouton 1
         self.btn3 = QtWidgets.QPushButton(sujet[3], self.choiceWidget)
-        self.btn3.setObjectName("btn3")
         self.btn3.clicked.connect(self.click_checkbtn3)
         self.horLayoutVraiFaux.addWidget(self.btn3)
         #spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         #self.horLayoutVraiFaux.addItem(spacerItem)
         #bouton faux
         #self.btnFaux = QtWidgets.QPushButton(u"Faux", self.choiceWidget)
-        #self.btnFaux.setObjectName("btnFaux")
         #self.btnFaux.clicked.connect(self.click_faux)
         #self.horLayoutVraiFaux.addWidget(self.btnFaux)
         #le message de victoire

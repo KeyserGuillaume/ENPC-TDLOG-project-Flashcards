@@ -80,7 +80,6 @@ class ButtonToDrag(QPushButton):
                 self.success.emit()
                 horizontalLayout = QHBoxLayout()
                 horizontalLayout.setAlignment(QtCore.Qt.AlignTop)
-                horizontalLayout.setObjectName("Mon coup")
                 horizontalLayout.addWidget(cardSource)
                 horizontalLayout.addWidget(self)
                 self.jouees.addLayout(horizontalLayout)
@@ -103,7 +102,6 @@ class dragDropGameWindow(QWidget):
     def __init__(self,bigWindow, CardsPlayed):
         ## la fenetre de jeux
         super(dragDropGameWindow, self).__init__(bigWindow)
-        self.setObjectName("Jeu de reliage")
         self.setWindowTitle("Drag and Drop")
         self.resize(bigWindow.frameSize())
         self.width=self.frameSize().width()
@@ -117,10 +115,8 @@ class dragDropGameWindow(QWidget):
         self.doneWidget = QWidget(self)
         self.doneWidget.setGeometry(QtCore.QRect(3/4*self.width-10, 10, 1/4*self.width, self.height))
         #self.doneWidget.setGeometry(QtCore.QRect(590, 10, 228, 401))
-        self.doneWidget.setObjectName("Bien joué")
         self.Welldone = QVBoxLayout(self.doneWidget)
         self.Welldone.setAlignment(QtCore.Qt.AlignTop)
-        self.Welldone.setObjectName("Welldone")
         ## l'ajout de tous les boutons concernés (maitrise < ...)
         for i,carte in enumerate(CardsPlayed) :
             self.myCards.append(ButtonToDrag(carte,'mot', self, self.Welldone))

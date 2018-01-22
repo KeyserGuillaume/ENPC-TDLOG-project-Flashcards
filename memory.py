@@ -72,7 +72,6 @@ class MemoryGame(QScrollArea):
         self.cardslist = CardsPlayed
         ## la fenetre ( widget avec scroll bar)
         super(MemoryGame, self).__init__(bigWindow)
-        self.setObjectName("Jeu de memoire")
         bigWindow.setWindowTitle("Memory")
         self.setGeometry(QtCore.QRect(0, 0, width, height))
         self.setStyleSheet("background-image: url(:/fond/wood.jpg);")
@@ -81,11 +80,9 @@ class MemoryGame(QScrollArea):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.plateau = QWidget(self)
         self.plateau.setGeometry(QtCore.QRect(20, 20, 670, 120*ceil(2*len(self.cardslist)/5)))
-        self.plateau.setObjectName("plateau de jeu")
         self.plateau.setStyleSheet("background-image: url(:/fond/wood.jpg);")
         self.gridLayout = QGridLayout(self.plateau)
         self.gridLayout.setContentsMargins(20, 20, 20, 20)
-        self.gridLayout.setObjectName("gridLayout")
         # creation des cartes de jeu a raison de 2 par flashcard en jeu
         self.mycards = list(range(2 * len(self.cardslist) ))
         for i, carte in enumerate(self.cardslist):

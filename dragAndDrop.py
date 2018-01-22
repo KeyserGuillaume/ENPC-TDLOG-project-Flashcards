@@ -71,12 +71,10 @@ class ButtonToDrag(QPushButton):
             # bouge les 2 cartes dans le layout sur le cote si elles coincident
             if self.text()=="GAME OVER" or self.text()=="TIME IS OUT":
                 event.ignore()
-                e.source().setDown(False)
+                event.source().setDown(False)
                 return
             if match(cardSource.text(),self.text(), self.language) or match(self.text(),cardSource.text(), self.language) :
-                event.acceptProposedAction()
-                #self.move(event.pos())
-                #cardSource.move(event.pos())                
+                event.acceptProposedAction()            
                 self.success.emit()
                 horizontalLayout = QHBoxLayout()
                 horizontalLayout.setAlignment(QtCore.Qt.AlignTop)

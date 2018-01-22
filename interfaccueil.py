@@ -153,11 +153,6 @@ class WelcomeInterf(object):
         self.barreResume.addWidget(self.editlanguage)
         self.Table=self.editlanguage.currentText()
         self.getCards()
-        # bouton de profil utilisateur
-        # non pris en compte
-        #self.profil = QPushButton(u"User profile", self.ResumeBox)
-        #self.barreResume.addWidget(self.profil)
-        #self.profil.setEnabled(False)
         # une ligne de séparation horizontale
         self.line1 = QFrame(self.ResumeBox)
         self.line1.setFrameShape(QFrame.HLine)

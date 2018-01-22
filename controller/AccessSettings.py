@@ -8,7 +8,8 @@ def getXmlTree(path):
     return etree.parse(path)
 
 ### chargement du xmk de settings
-filename = "AppSettings.xml"
+#filename = "AppSettings.xml"
+filename = "controller/AppSettings.xml"
 tree = getXmlTree(filename)
 
 ################################## fonctions d'acces generales
@@ -45,8 +46,8 @@ def getAllSettings():
     defaultLangage = readSettings("/user/default/langage")
     username = readSettings("/user/default/username")
     allGameNames = getAllGameNames()
-    nbCards = [readSettings("/user/game/nbCards[affected="+gamename+"]") for gamename in allGameNames]
-    timerChrono = [readSettings("/user/game/chrono[affected="+gamename+"]") for gamename in allGameNames]
+    nbCards = [readSettings("/user/game[name='"+gamename+"']/nbCards") for gamename in allGameNames]
+    timerChrono = [readSettings("/user/game[name='"+gamename+"']/chrono") for gamename in allGameNames]
     return [defaultLangage,username,nbCards,timerChrono]
 
 ### modifications specifiques
@@ -55,6 +56,6 @@ def changeUser(newdata):
 def changeLangage(newdata):
     changeSettings("/user/default/langage", newdata)
 def changeNbCards(newdata,gamename):
-    changeSettings("/user/game/nbCards[affected="+gamename+"]", newdata)
+    changeSettings("/user/game[name='"+gamename+"']/nbCards", newdata)
 def changeChrono(newdata,gamename):
-    changeSettings("/user/game/chrono[affected="+gamename+"]", newdata)
+    changeSettings("/user/game[name='"+gamename+"']/chrono", newdata)

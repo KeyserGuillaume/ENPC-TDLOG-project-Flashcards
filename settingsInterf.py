@@ -66,10 +66,8 @@ class mySettings(QWidget):
         ## le layout du haut
         self.whatWidget = QWidget(self)
         self.whatWidget.setGeometry(QtCore.QRect(10, 10, 451, 31))
-        self.whatWidget.setObjectName("whatWidget")
         self.togivename = QHBoxLayout(self.whatWidget)
         self.togivename.setContentsMargins(0, 0, 0, 0)
-        self.togivename.setObjectName("togivename")
         self.explain = QLabel(self.whatWidget)
         self.explain.setObjectName("explain")
         self.explain.setText(" Vous pouvez mettre à jous les paramètres de l'application ci-dessous :")
@@ -78,14 +76,11 @@ class mySettings(QWidget):
         ## le layout du bas
         self.bottomWidget = QWidget(self)
         self.bottomWidget.setGeometry(QtCore.QRect(10, 400, 451, 32))
-        self.bottomWidget.setObjectName("bottomWidget")
         self.toUpdate = QHBoxLayout(self.bottomWidget)
         self.toUpdate.setContentsMargins(0, 0, 0, 0)
-        self.toUpdate.setObjectName("toUpdate")
         # bouton de mise a jour
         self.updateButton = QPushButton(u"Update", self.bottomWidget)
-        self.updateButton.setObjectName("updateButton")
-        self.updateButton.addWidget(self.updateButton)
+        self.toUpdate.addWidget(self.updateButton)
 
         ## gestion des slots et signaux
         self.updateButton.clicked.connect(self.update)
@@ -95,3 +90,15 @@ class mySettings(QWidget):
     def update(self):
         allGameNames = AccessSettings.getAllGameNames()
         self.close()
+
+if __name__ == "__main__":
+    args = sys.argv
+    a = QApplication(args)
+    w = QWidget()
+    w.resize(497, 492)
+    mf = mySettings(w)
+    mf.updatedSettings.connect(w.close)
+    w.show()
+    a.exec_()
+    a.lastWindowClosed.connect(a.quit)
+

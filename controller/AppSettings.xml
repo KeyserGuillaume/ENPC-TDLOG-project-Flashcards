@@ -4,15 +4,28 @@
         <username>Camille</username>
     </default>
     <game>
-        <nbCards affected="dragdrop">14</nbCards>
-        <nbCards affected="memory">14</nbCards>
-        <nbCards affected="hotcold">14</nbCards>
-        <nbCards affected="pointto">14</nbCards>
-        <nbCards affected="rightwrong">14</nbCards>
-        <chrono affected="dragdrop">60</chrono>
-        <chrono affected="memory">60</chrono>
-        <chrono affected="hotcold">60</chrono>
-        <chrono affected="pointto">60</chrono>
-        <chrono affected="rightwrong">60</chrono>
+        <name>dragdrop</name>
+        <nbCards>20</nbCards>
+        <chrono>60</chrono>
+    </game>
+    <game>
+        <name>memory</name>
+        <nbCards>16</nbCards>
+        <chrono>80</chrono>
+    </game>
+    <game>
+        <name>hotcold</name>
+        <nbCards>24</nbCards>
+        <chrono>70</chrono>
+    </game>
+    <game>
+        <name>pointto</name>
+        <nbCards>24</nbCards>
+        <chrono>30</chrono>
+    </game>
+    <game>
+        <name>rightwrong</name>
+        <nbCards>26</nbCards>
+        <chrono>30</chrono>
     </game>
 </user>

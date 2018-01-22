@@ -5,7 +5,7 @@
     </default>
     <game>
         <name>dragdrop</name>
-        <nbCards>20</nbCards>
+        <nbCards>22</nbCards>
         <chrono>60</chrono>
     </game>
     <game>

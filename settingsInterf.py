@@ -78,21 +78,17 @@ class mySettings(QWidget):
             self.chronoEdit[rank].setText(currentSettings[3][rank])
 
         ## le bouton du bas
-
-        #self.bottomWidget = QWidget(self)
-        #self.bottomWidget.setGeometry(QtCore.QRect(10, 400, 451, 32))
-        #self.toUpdate = QHBoxLayout(self.bottomWidget)
-        #self.toUpdate.setContentsMargins(0, 0, 0, 0)
-        #self.updateButton = QPushButton(u"Update", self.bottomWidget)
-        #self.toUpdate.addWidget(self.updateButton)
-        # bouton de mise a jour
         self.updateButton = QPushButton(u"Update", self.gridWidget)
-        self.answergrid.addWidget(self.updateButton, 6, 0, 1, 6)
+        self.quitButton = QPushButton(u"Quit", self.gridWidget)
+        self.answergrid.addWidget(self.updateButton, 6, 0, 1, 3)
+        self.answergrid.addWidget(self.quitButton, 6, 3, 1, 3)
 
         ## gestion des slots et signaux
         self.updateButton.clicked.connect(self.update)
+        self.quitButton.clicked.connect(self.quit)
 
     updated = QtCore.pyqtSignal()
+    notUpdated = QtCore.pyqtSignal()
 
     def update(self):
         allGameNames = AccessSettings.getAllGameNames()
@@ -105,6 +101,10 @@ class mySettings(QWidget):
         self.updated.emit()
         self.close()
 
+    def quit(self):
+        self.notUpdated.emit()
+        self.close()
+
 if __name__ == "__main__":
     args = sys.argv
     a = QApplication(args)
@@ -112,6 +112,7 @@ if __name__ == "__main__":
     w.resize(497, 492)
     mf = mySettings(w)
     mf.updated.connect(w.close)
+    mf.notUpdated.connect(w.close)
     w.show()
     a.exec_()
     a.lastWindowClosed.connect(a.quit)

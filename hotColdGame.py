@@ -30,7 +30,6 @@ class hotColdGameWindow(QWidget):
         #l'echelle : un degrade bleu -rouge
         self.degradeWidget=QLabel(self)
         self.degradeWidget=self.degradeWidget
-        #self.degradeWidget.resize(self.frameSize().width()*0.5, self.frameSize().height()-180)
         self.degradeWidget.resize(self.frameSize().width()*0.5, 35)
         self.pixmap=QtGui.QPixmap()
         path="icons/gradient.jpg"

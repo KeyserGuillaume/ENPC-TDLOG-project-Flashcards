@@ -1,53 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccb47de5-fd0e-4410-82e3-618cdc33bf5b" name="Default" comment="&quot;insertion d'une fonction register appelee lors de la creation affichant la carte a changer plus tard en une ecriture dans la base de donnee&quot;">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/connDB.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/createcards.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/createcardsInterf.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dragAndDrop.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/flashcard.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gameWindow.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hotColdGame.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/blackboard.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/dossier.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/dragdrop.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/edit.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/fcard.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/fleche.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/flip.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/gameOver.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/gradient.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/green.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/hotcold.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/icons.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/logo.qrc" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/memory.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/next.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/notebook.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/picture.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/pointTo.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/previous.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/rightWrong.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/silver.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/speaker.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/victory.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/wood.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icons/yellow.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/interfaccueil.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/memory.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/parcours.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/pointToCard.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rechercheFonct.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rechercheInterf.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/settingsInterf.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/sqlite3.exe" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/viewCard.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vraiOuFaux.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FlashCards.db" afterPath="$PROJECT_DIR$/FlashCards.db" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="ccb47de5-fd0e-4410-82e3-618cdc33bf5b" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -348,6 +302,14 @@
       <option name="presentableId" value="Default" />
       <updated>1510578471880</updated>
     </task>
+    <task id="LOCAL-00001" summary="&quot;rangement selon model - view - controller&quot;">
+      <created>1517348512834</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1517348512834</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -378,7 +340,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="&quot;insertion d'une fonction register appelee lors de la creation affichant la carte a changer plus tard en une ecriture dans la base de donnee&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;insertion d'une fonction register appelee lors de la creation affichant la carte a changer plus tard en une ecriture dans la base de donnee&quot;" />
+    <MESSAGE value="&quot;rangement selon model - view - controller&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;rangement selon model - view - controller&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

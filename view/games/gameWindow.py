@@ -10,19 +10,19 @@ from time import time, strftime,localtime
 #nbSuccessRequired defines how many good answers you need to get before winning
 #parentWindow is the QWidget inside which you want the gameWindow to appear
 class GameWindow (QWidget):
-    def __init__(self, parentWindow, nbSuccessRequired):
+    def __init__(self, parentWindow, nbSuccessRequired, chosenChrono):
         super(QWidget, self).__init__(parentWindow)
         self.nbSuccessRequired=nbSuccessRequired
-        self.initGame()
+        self.initGame(chosenChrono)
     resetSignal=QtCore.pyqtSignal()
     timeIsOut=QtCore.pyqtSignal()
     gameWon=QtCore.pyqtSignal()
     leaveSignal=QtCore.pyqtSignal()
-    def initGame(self):
+    def initGame(self, chosenChrono):
         self.nberreurs=0
         self.nbSucces=0
         self.t0=time()
-        self.timeGiven=60
+        self.timeGiven=chosenChrono
         ## la fenetre
         self.setWindowTitle("Drag and Drop")
         #self.setFixedSize(853, 554)

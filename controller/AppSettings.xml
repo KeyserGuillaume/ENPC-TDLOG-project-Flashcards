@@ -10,8 +10,8 @@
     </game>
     <game>
         <name>memory</name>
-        <nbCards>16</nbCards>
-        <chrono>80</chrono>
+        <nbCards>7</nbCards>
+        <chrono>70</chrono>
     </game>
     <game>
         <name>hotcold</name>

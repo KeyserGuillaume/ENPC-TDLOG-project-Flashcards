@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ccb47de5-fd0e-4410-82e3-618cdc33bf5b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/AccessSettings.py" afterPath="$PROJECT_DIR$/controller/AccessSettings.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/AppSettings.xml" afterPath="$PROJECT_DIR$/controller/AppSettings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/gameWindow.py" afterPath="$PROJECT_DIR$/view/games/gameWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/memory.py" afterPath="$PROJECT_DIR$/view/games/memory.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/icons/icons.py" afterPath="$PROJECT_DIR$/view/icons/icons.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/dragAndDrop.py" afterPath="$PROJECT_DIR$/view/games/dragAndDrop.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/hotColdGame.py" afterPath="$PROJECT_DIR$/view/games/hotColdGame.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/pointToCard.py" afterPath="$PROJECT_DIR$/view/games/pointToCard.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/games/vraiOuFaux.py" afterPath="$PROJECT_DIR$/view/games/vraiOuFaux.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/interfaccueil.py" afterPath="$PROJECT_DIR$/view/interfaccueil.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,21 +25,9 @@
       <file leaf-file-name="AccessSettings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/AccessSettings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="55" column="33" lean-forward="false" selection-start-line="55" selection-start-column="33" selection-end-line="55" selection-end-column="33" />
+            <state relative-caret-position="106">
+              <caret line="47" column="36" lean-forward="true" selection-start-line="47" selection-start-column="36" selection-end-line="47" selection-end-column="36" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="memory.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/view/games/memory.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="137" column="24" lean-forward="true" selection-start-line="137" selection-start-column="24" selection-end-line="137" selection-end-column="24" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -47,8 +35,8 @@
       <file leaf-file-name="dragAndDrop.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/view/games/dragAndDrop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="118">
-              <caret line="202" column="20" lean-forward="true" selection-start-line="202" selection-start-column="20" selection-end-line="202" selection-end-column="20" />
+            <state relative-caret-position="162">
+              <caret line="177" column="22" lean-forward="false" selection-start-line="177" selection-start-column="13" selection-end-line="177" selection-end-column="22" />
               <folding>
                 <element signature="e#24#55#0" expanded="true" />
               </folding>
@@ -56,11 +44,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="hotColdGame.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="hotColdGame.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/view/games/hotColdGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="189" column="18" lean-forward="false" selection-start-line="189" selection-start-column="18" selection-end-line="189" selection-end-column="18" />
+            <state relative-caret-position="166">
+              <caret line="143" column="69" lean-forward="true" selection-start-line="143" selection-start-column="69" selection-end-line="143" selection-end-column="69" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -71,11 +59,9 @@
       <file leaf-file-name="pointToCard.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/view/games/pointToCard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="198" column="50" lean-forward="true" selection-start-line="198" selection-start-column="50" selection-end-line="198" selection-end-column="50" />
-              <folding>
-                <element signature="e#25#67#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="120">
+              <caret line="8" column="37" lean-forward="false" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -83,8 +69,8 @@
       <file leaf-file-name="vraiOuFaux.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/view/games/vraiOuFaux.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="170" column="17" lean-forward="true" selection-start-line="170" selection-start-column="17" selection-end-line="170" selection-end-column="17" />
+            <state relative-caret-position="439">
+              <caret line="132" column="44" lean-forward="true" selection-start-line="132" selection-start-column="44" selection-end-line="132" selection-end-column="44" />
               <folding>
                 <element signature="e#25#67#0" expanded="true" />
               </folding>
@@ -103,7 +89,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>print</find>
       <find>cardsToLearn</find>
       <find>cardsToGoOver</find>
       <find>cardsKnown</find>
@@ -125,9 +110,10 @@
       <find>flashcard</find>
       <find>timeGiven</find>
       <find>defeatWidget</find>
-      <find>GameWindow</find>
       <find>self.setting</find>
       <find>victoryWidget</find>
+      <find>print</find>
+      <find>GameWindow</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,17 +143,17 @@
         <option value="$PROJECT_DIR$/view/viewCard.py" />
         <option value="$PROJECT_DIR$/view/parcours.py" />
         <option value="$PROJECT_DIR$/view/createcardsInterf.py" />
-        <option value="$PROJECT_DIR$/view/interfaccueil.py" />
-        <option value="$PROJECT_DIR$/view/games/dragAndDrop.py" />
-        <option value="$PROJECT_DIR$/view/games/hotColdGame.py" />
-        <option value="$PROJECT_DIR$/view/games/pointToCard.py" />
-        <option value="$PROJECT_DIR$/view/games/vraiOuFaux.py" />
         <option value="$PROJECT_DIR$/model/database.py" />
         <option value="$PROJECT_DIR$/model/flashcard.py" />
         <option value="$PROJECT_DIR$/model/rechercheFonct.py" />
         <option value="$PROJECT_DIR$/view/games/gameWindow.py" />
         <option value="$PROJECT_DIR$/controller/AccessSettings.py" />
         <option value="$PROJECT_DIR$/view/games/memory.py" />
+        <option value="$PROJECT_DIR$/view/games/pointToCard.py" />
+        <option value="$PROJECT_DIR$/view/games/vraiOuFaux.py" />
+        <option value="$PROJECT_DIR$/view/interfaccueil.py" />
+        <option value="$PROJECT_DIR$/view/games/dragAndDrop.py" />
+        <option value="$PROJECT_DIR$/view/games/hotColdGame.py" />
       </list>
     </option>
   </component>
@@ -215,24 +201,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ENPC-TDLOG-project-Flashcards" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ENPC-TDLOG-project-Flashcards" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="games" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -560,13 +528,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/view/interfaccueil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="26" lean-forward="true" selection-start-line="7" selection-start-column="26" selection-end-line="7" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -608,58 +569,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/view/games/hotColdGame.py">
+    <entry file="file://$PROJECT_DIR$/view/games/vraiOuFaux.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="189" column="18" lean-forward="false" selection-start-line="189" selection-start-column="18" selection-end-line="189" selection-end-column="18" />
+        <state relative-caret-position="439">
+          <caret line="132" column="44" lean-forward="true" selection-start-line="132" selection-start-column="44" selection-end-line="132" selection-end-column="44" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#25#67#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/view/games/pointToCard.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="198" column="50" lean-forward="true" selection-start-line="198" selection-start-column="50" selection-end-line="198" selection-end-column="50" />
+        <state relative-caret-position="120">
+          <caret line="8" column="37" lean-forward="false" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/interfaccueil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="345" column="0" lean-forward="true" selection-start-line="345" selection-start-column="0" selection-end-line="345" selection-end-column="0" />
           <folding>
-            <element signature="e#25#67#0" expanded="true" />
+            <element signature="e#43#85#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/view/games/vraiOuFaux.py">
+    <entry file="file://$PROJECT_DIR$/view/games/memory.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="170" column="17" lean-forward="true" selection-start-line="170" selection-start-column="17" selection-end-line="170" selection-end-column="17" />
+        <state relative-caret-position="79">
+          <caret line="63" column="43" lean-forward="false" selection-start-line="63" selection-start-column="43" selection-end-line="63" selection-end-column="43" />
           <folding>
-            <element signature="e#25#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/view/games/dragAndDrop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="202" column="20" lean-forward="true" selection-start-line="202" selection-start-column="20" selection-end-line="202" selection-end-column="20" />
-          <folding>
-            <element signature="e#24#55#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controller/AccessSettings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="55" column="33" lean-forward="false" selection-start-line="55" selection-start-column="33" selection-end-line="55" selection-end-column="33" />
+        <state relative-caret-position="106">
+          <caret line="47" column="36" lean-forward="true" selection-start-line="47" selection-start-column="36" selection-end-line="47" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/view/games/memory.py">
+    <entry file="file://$PROJECT_DIR$/view/games/dragAndDrop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="137" column="24" lean-forward="true" selection-start-line="137" selection-start-column="24" selection-end-line="137" selection-end-column="24" />
+        <state relative-caret-position="162">
+          <caret line="177" column="22" lean-forward="false" selection-start-line="177" selection-start-column="13" selection-end-line="177" selection-end-column="22" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/games/hotColdGame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="143" column="69" lean-forward="true" selection-start-line="143" selection-start-column="69" selection-end-line="143" selection-end-column="69" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>

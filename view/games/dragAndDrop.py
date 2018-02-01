@@ -5,6 +5,7 @@ import sys
 from model import database
 from view.games import gameWindow
 from random import randrange
+from controller import AccessSettings
 
 
 #### match (meme carte) entre mot et trad dans cet ordre
@@ -173,11 +174,13 @@ class dragDropGame(QWidget):
     leave=QtCore.pyqtSignal()
     def init(self):
         self.cartesJouees=[]
-        while (len(self.cartesJouees)<10):
+        self.settingtime = AccessSettings.getGameSettings("dragdrop", 1)
+        self.settingnb = AccessSettings.getGameSettings("dragdrop", 0)
+        while (len(self.cartesJouees)<self.settingnb):
             i=randrange(0, len(self.cartesJouables))
             if (self.cartesJouables[i] not in self.cartesJouees):
                 self.cartesJouees.append(self.cartesJouables[i])
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
+        self.window=gameWindow.GameWindow(self, len(self.cartesJouees), self.settingtime)
         self.game=dragDropGameWindow(self.window.gameArea, self.cartesJouees)
         self.window.show()
         

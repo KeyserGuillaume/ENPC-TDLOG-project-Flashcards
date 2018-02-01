@@ -5,6 +5,8 @@ from model import database, rechercheFonct
 from view.games import gameWindow, dragAndDrop
 from view import parcours
 from random import randrange
+from controller import AccessSettings
+
 
 class hotColdGameWindow(QWidget):
     def __init__(self, parentWindow, cardPlayed):
@@ -33,7 +35,7 @@ class hotColdGameWindow(QWidget):
         self.degradeWidget=self.degradeWidget
         self.degradeWidget.resize(self.frameSize().width()*0.5, 35)
         self.pixmap=QtGui.QPixmap()
-        path="icons/gradient.jpg"
+        path="view/icons/gradient.jpg"
         self.pixmap.load(path)
         self.pixmap=self.pixmap.scaled(self.degradeWidget.frameSize().width(), self.degradeWidget.frameSize().height()-30, QtCore.Qt.KeepAspectRatio)
         self.degradeWidget.setPixmap(self.pixmap)
@@ -51,7 +53,7 @@ class hotColdGameWindow(QWidget):
         self.pointeurWidget=self.pointeurWidget
         self.pointeurWidget.resize(45, 56)
         self.pixmap=QtGui.QPixmap()
-        path="icons/fleche.png"
+        path="view/icons/fleche.png"
         self.pixmap.load(path)
         self.pointeurWidget.setPixmap(self.pixmap)
         #position initiale du pointeur
@@ -76,7 +78,7 @@ class hotColdGameWindow(QWidget):
         qr.moveCenter(self.rect().center())
         self.victoryWidget.move(qr.topLeft())
         self.label=QLabel(self.victoryWidget)
-        path="icons/victory.png"
+        path="view/icons/victory.png"
         self.pixmap=QtGui.QPixmap()
         self.pixmap.load(path)
         self.label.setPixmap(self.pixmap)
@@ -90,7 +92,7 @@ class hotColdGameWindow(QWidget):
         qr.moveCenter(self.rect().center())
         self.defeatWidget.move(qr.topLeft())
         self.label=QLabel(self.defeatWidget)
-        path="icons/gameOver.png"
+        path="view/icons/gameOver.png"
         self.pixmap=QtGui.QPixmap()
         self.pixmap.load(path)
         self.label.setPixmap(self.pixmap)
@@ -138,11 +140,13 @@ class hotColdGame(QWidget):
     leave=QtCore.pyqtSignal()
     def init(self):
         self.cartesJouees=[]
-        while (len(self.cartesJouees)<10 and not len(self.cartesJouees)==len(self.cartesJouables)):
+        self.settingtime = AccessSettings.getGameSettings("hotcold", 1)
+        self.settingnb = AccessSettings.getGameSettings("hotcold", 0)
+        while (len(self.cartesJouees)<self.settingnb and not len(self.cartesJouees)==len(self.cartesJouables)):
             i=randrange(0, len(self.cartesJouables))
             if (self.cartesJouables[i] not in self.cartesJouees):
                 self.cartesJouees.append(self.cartesJouables[i])
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
+        self.window=gameWindow.GameWindow(self, len(self.cartesJouees), self.settingtime)
         self.game=hotColdGameWindow(self.window.gameArea, self.cartesJouees[0])
         self.currentCardNb=0;
         self.window.show()

@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 import sys
 from model import database
 from view.games import gameWindow
+from controller import AccessSettings
 import random
 from random import randint
 
@@ -134,7 +135,8 @@ class vraiFauxGame(QWidget):
         self.init()
     leave=QtCore.pyqtSignal()
     def init(self):
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
+        self.setting = AccessSettings.getGameSettings("rightwrong", 1)
+        self.window=gameWindow.GameWindow(self, len(self.cartesJouees), self.setting)
         self.game=vraiFauxGameWindow(self.window.gameArea, self.cartesJouees)
         self.window.show()
         

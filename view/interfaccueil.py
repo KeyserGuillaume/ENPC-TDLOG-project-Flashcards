@@ -257,7 +257,6 @@ class WelcomeInterf(object):
     def getCards(self):
         self.cardsToLearn=database.getCardsToLearn(self.Table,0,4)
         self.cardsToGoOver=database.getCardsToLearn(self.Table,5,9)
-        print([x.word for x in self.cardsToGoOver])
         self.cardsKnown=database.getCardsToLearn(self.Table,10,10)
     def show(self):
         # ouverture de la fenetre
@@ -301,19 +300,19 @@ class WelcomeInterf(object):
         self.openViewCards(rank, database.getAllCards(language))
     def openDragAndDrop(self):
         self.currentScreen.close()
-        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:16])
+        self.DDInterf = dragAndDrop.dragDropGame(self.screenLayout, database.getCardsToLearn(self.Table, 0, 9))
         self.DDInterf.show()
         self.currentScreen=self.DDInterf
         self.DDInterf.leave.connect(self.displayHomeScreen)
     def openHotAndCold(self):
         self.currentScreen.close()
-        self.HCInterf = hotColdGame.hotColdGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:20])
+        self.HCInterf = hotColdGame.hotColdGame(self.screenLayout, database.getCardsToLearn(self.Table, 0, 9))
         self.HCInterf.show()
         self.currentScreen=self.HCInterf
         self.HCInterf.leave.connect(self.displayHomeScreen)
     def openVraiOuFaux(self):
         self.currentScreen.close()
-        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:25])
+        self.VFInterf = vraiOuFaux.vraiFauxGame(self.screenLayout, database.getCardsToLearn(self.Table, 0, 9))
         self.VFInterf.show()
         self.currentScreen = self.VFInterf
         self.VFInterf.leave.connect(self.displayHomeScreen) 
@@ -324,13 +323,13 @@ class WelcomeInterf(object):
         self.currentScreen=self.linkedInterf
     def openMemory(self):
         self.currentScreen.close()
-        self.MemoryInterf = memory.MemoryGameWindow(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:12])
+        self.MemoryInterf = memory.MemoryGameWindow(self.screenLayout, database.getCardsToLearn(self.Table, 0, 9))
         self.MemoryInterf.show()
         self.currentScreen=self.MemoryInterf
         self.MemoryInterf.leave.connect(self.displayHomeScreen)
     def openPointTo(self):
         self.currentScreen.close()
-        self.PointToInterf = pointToCard.pointToCardGame(self.screenLayout, database.getCardsToLearn(self.Table,0,10)[0:20])
+        self.PointToInterf = pointToCard.pointToCardGame(self.screenLayout, database.getCardsToLearn(self.Table, 0, 9))
         self.PointToInterf.show()
         self.currentScreen=self.PointToInterf
         self.PointToInterf.leave.connect(self.displayHomeScreen)

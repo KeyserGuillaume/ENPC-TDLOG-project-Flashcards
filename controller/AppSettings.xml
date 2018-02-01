@@ -20,12 +20,12 @@
     </game>
     <game>
         <name>pointto</name>
-        <nbCards>24</nbCards>
+        <nbCards>2</nbCards>
         <chrono>42</chrono>
     </game>
     <game>
         <name>rightwrong</name>
-        <nbCards>26</nbCards>
+        <nbCards>1</nbCards>
         <chrono>42</chrono>
     </game>
 </user>

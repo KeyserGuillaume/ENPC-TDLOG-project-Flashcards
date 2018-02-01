@@ -10,6 +10,7 @@ from controller import AccessSettings
 import random
 from random import randint
 
+
 #### match (meme carte) entre mot et trad dans cet ordre
 def match(text1,text2):
     answer=False
@@ -135,9 +136,11 @@ class vraiFauxGame(QWidget):
         self.init()
     leave=QtCore.pyqtSignal()
     def init(self):
-        self.setting = AccessSettings.getGameSettings("rightwrong", 1)
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees), self.setting)
-        self.game=vraiFauxGameWindow(self.window.gameArea, self.cartesJouees)
+        self.settingtime = AccessSettings.getGameSettings("rightwrong", 1)
+        self.settingnb = AccessSettings.getGameSettings("rightwrong", 0)
+        print(self.settingnb)
+        self.window=gameWindow.GameWindow(self, self.settingnb, self.settingtime)
+        self.game=vraiFauxGameWindow(self.window.gameArea, self.cartesJouees[0:self.settingnb])
         self.window.show()
         
         self.window.resetSignal.connect(self.reset)

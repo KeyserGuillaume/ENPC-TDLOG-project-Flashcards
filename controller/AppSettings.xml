@@ -10,22 +10,22 @@
     </game>
     <game>
         <name>memory</name>
-        <nbCards>7</nbCards>
-        <chrono>70</chrono>
+        <nbCards>12</nbCards>
+        <chrono>84</chrono>
     </game>
     <game>
         <name>hotcold</name>
-        <nbCards>2</nbCards>
+        <nbCards>24</nbCards>
         <chrono>42</chrono>
     </game>
     <game>
         <name>pointto</name>
         <nbCards>24</nbCards>
-        <chrono>30</chrono>
+        <chrono>42</chrono>
     </game>
     <game>
         <name>rightwrong</name>
         <nbCards>26</nbCards>
-        <chrono>30</chrono>
+        <chrono>42</chrono>
     </game>
 </user>

@@ -146,7 +146,16 @@ class dragDropGameWindow(QWidget):
         self.pixmap.load(path)
         self.label.setPixmap(self.pixmap)
         self.label.setScaledContents(True) 
-        self.victoryWidget.setVisible(False) 
+        self.victoryWidget.setVisible(False)
+
+        # le message de defaite
+        self.defeatButton = QPushButton(self)
+        self.defeatButton.setGeometry(QtCore.QRect(230, 130, 221, 221))
+        self.defeatButton.setStyleSheet(
+            "background-image: url(:/icons/gameover2.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        self.defeatButton.setVisible(False)
+
+
     error=QtCore.pyqtSignal()
     success=QtCore.pyqtSignal()
     
@@ -201,6 +210,7 @@ class dragDropGame(QWidget):
             carte.setText('TIME IS OUT')
         for carte in self.game.myTrads:
             carte.setText('GAME OVER')
+        self.game.defeatButton.show()
     def endOfGame(self):
         self.leave.emit()
         self.close()

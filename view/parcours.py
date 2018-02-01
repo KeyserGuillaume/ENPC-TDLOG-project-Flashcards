@@ -76,6 +76,23 @@ class CardButton(QPushButton):
         #self.CardInterf = viewCard.viewDialog(self.w, self.lerang, self.allcards)
         #self.w.show()
 
+class CardButtonInRecherche(QPushButton):
+    def __init__(self, card, rank, cardslist, place, width):
+        self.allcards=cardslist
+        self.lacarte=card
+        self.lerang=rank
+        super(CardButtonInRecherche, self).__init__(card.word, place)
+        self.setMinimumSize(QtCore.QSize(width, 0.66*width))
+        self.setMaximumSize(QtCore.QSize(width, 0.66*width))
+        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "background-color: rgba(255, 255, 255, 0);\n" "font: 75 18pt \"Arial\";")
+        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75  \"Arial\";")
+        self.CardInterf = None
+    openCardSignal=QtCore.pyqtSignal(list, int)
+
+    def openGivenCard(self):
+        self.openCardSignal.emit(self.allcards, self.lerang)
+
+
 class parcoursChosenCards(QScrollArea):
     def __init__(self, parentWindow, langue):
         super(parcoursChosenCards, self).__init__(parentWindow)
@@ -123,7 +140,7 @@ class parcoursGivenCards(QScrollArea):
         self.gridWidget = QWidget(self)
         self.n=ceil(len(self.cardslist)/5)
         self.gridWidget.setGeometry(QtCore.QRect(0, 0, self.frameSize().width()-20, ((self.n+1)/36+self.n*0.11)*self.frameSize().width()))
-        self.gridWidget.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
+        self.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         self.setWidget(self.gridWidget)
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(20, 20, 20, 20)
@@ -132,16 +149,16 @@ class parcoursGivenCards(QScrollArea):
         #print([x.name for x in self.cardslist])
         #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget, self.width()/6)
+            self.mycards[i] = CardButtonInRecherche(carte, i, self.cardslist, self.gridWidget, self.width()/6)
             # 5 cartes par ligne
             row = i/5
             column = i%5
             self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
 
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i].clicked.connect(self.mycards[i].openChosenCard)
+            self.mycards[i].clicked.connect(self.mycards[i].openGivenCard)
             self.mycards[i].openCardSignal.connect(self.openCardSignal)
-    openCardSignal=QtCore.pyqtSignal(str, int)
+    openCardSignal=QtCore.pyqtSignal(list, int)
 
 class parcoursIconsGame(QWidget):
     def __init__(self, width, height, language):

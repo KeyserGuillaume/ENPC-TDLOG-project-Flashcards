@@ -3,6 +3,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, QSc
 import sys
 from model import database
 
+from view import editCardsInterf, rechercheInterf, viewCard, settingsInterf
+from view.games import dragAndDrop, vraiOuFaux, hotCold, memory, pointToCard
+
 from view.icons import icons
 # permet l'accès aux images des icones
 
@@ -10,7 +13,7 @@ from math import ceil
 
 AllLangages = database.giveAllLanguages()
 
-_root = QtCore.QFileInfo(__file__).absolutePath()
+#_root = QtCore.QFileInfo(__file__).absolutePath()
 
 class LangageButton(QPushButton):
     def __init__(self, langue, place):
@@ -40,9 +43,10 @@ class parcoursLanguesFolder(QWidget):
         self.gridWidget.setGeometry(QtCore.QRect(10, 10, 641, 361))
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(0, 0, 0, 0)
-        self.myfolders = AllLangages.copy()
+        AllLanguages=database.giveAllLanguages()
+        self.myfolders = []
         for i, langue in enumerate(AllLangages):
-            self.myfolders[i] = LangageButton(langue, self.gridWidget)
+            self.myfolders.append(LangageButton(langue, self.gridWidget))
             # 4 dossiers par ligne
             row = i/4
             column = i%4
@@ -54,27 +58,17 @@ class parcoursLanguesFolder(QWidget):
     
 
 class CardButton(QPushButton):
-    def __init__(self, card, rank, cardslist, place, width):
-        self.allcards=cardslist
+    def __init__(self, card, place, width):
         self.lacarte=card
-        self.lerang=rank
         super(CardButton, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(width, 0.66*width))
         self.setMaximumSize(QtCore.QSize(width, 0.66*width))
-        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "background-color: rgba(255, 255, 255, 0);\n" "font: 75 18pt \"Arial\";")
         self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75  \"Arial\";")
-        self.CardInterf = None
-    openCardSignal=QtCore.pyqtSignal(str, int)
+        self.clicked.connect(self.openChosenCard)
+    openCardSignal=QtCore.pyqtSignal(str, str)
 
     def openChosenCard(self):
-        # ouverture de l interface de parcours de cartes
-        #self.CardInterf = viewCard.ViewDialog(self.lacarte.name-1, self.allcards)
-        # ne marche plus car certains noms ne sont plus attribués dans anglais (2,4,5,7,8,12,13)
-        # donc plus de lien direct entre rang et nom
-        self.openCardSignal.emit(self.lacarte.tablename, self.lerang)
-        #self.w=QWidget()
-        #self.CardInterf = viewCard.viewDialog(self.w, self.lerang, self.allcards)
-        #self.w.show()
+        self.openCardSignal.emit(self.lacarte.tablename, self.lacarte.word)
 
 class CardButtonInRecherche(QPushButton):
     def __init__(self, card, rank, cardslist, place, width):
@@ -84,7 +78,6 @@ class CardButtonInRecherche(QPushButton):
         super(CardButtonInRecherche, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(width, 0.66*width))
         self.setMaximumSize(QtCore.QSize(width, 0.66*width))
-        #self.setStyleSheet("background-image: url(:/icons/fcard.png);\n" "background-color: rgba(255, 255, 255, 0);\n" "font: 75 18pt \"Arial\";")
         self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75  \"Arial\";")
         self.CardInterf = None
     openCardSignal=QtCore.pyqtSignal(list, int)
@@ -93,15 +86,27 @@ class CardButtonInRecherche(QPushButton):
         self.openCardSignal.emit(self.allcards, self.lerang)
 
 
-class parcoursChosenCards(QScrollArea):
-    def __init__(self, parentWindow, langue):
-        super(parcoursChosenCards, self).__init__(parentWindow)
-        self.cardslist=database.getAllCards(langue)
+class CardsOverview(QScrollArea):
+    """
+    A compact view of cards. Cards may be found quickly in here.
+    The givenCards argument may be "anglais" or another language, standing for
+    all the cards of that language.
+    """
+    def __init__(self, parentWindow, givenCards):
+        self.parentWindow = parentWindow
+        self.cardslist=givenCards
+        self.nextDisplay="abort"
+    def stealTheLimelight(self):
+        super(CardsOverview, self).__init__(self.parentWindow)
+        languages = database.giveAllLanguages()
+        if self.cardslist in languages:
+            self.cardslist = database.getAllCards(self.cardslist)
+        else:
+            self.cardslist=database.updateCards(self.cardslist)
         ### il faudrait rajouter une barre de scrolling
-        # et la possibilité de déplacement vertical
+        # et la possibilite de déplacement vertical
         self.setWindowTitle("Your Card selection")
-        self.resize(parentWindow.frameSize())
-        #self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
+        self.resize(self.parentWindow.frameSize())
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         #self.setWidgetResizable(True)
         self.gridWidget = QWidget(self)
@@ -111,54 +116,24 @@ class parcoursChosenCards(QScrollArea):
         self.setWidget(self.gridWidget)
         self.folderGrid = QGridLayout(self.gridWidget)
         self.folderGrid.setContentsMargins(20, 20, 20, 20)
-        self.mycards = self.cardslist.copy()
-        #print([x.word for x in self.cardslist])
-        #print([x.name for x in self.cardslist])
-        #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
+        self.cardButtons = []
         for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButton(carte, i, self.cardslist, self.gridWidget, self.width()/6)
+            self.cardButtons.append(CardButton(carte, self.gridWidget, self.width()/6))
             # 5 cartes par ligne
             row = i/5
             column = i%5
-            self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
+            self.folderGrid.addWidget(self.cardButtons[i], row, column, 1, 1)
 
-        for i, carte in enumerate(self.cardslist):
-            self.mycards[i].clicked.connect(self.mycards[i].openChosenCard)
-            self.mycards[i].openCardSignal.connect(self.openCardSignal)
-    openCardSignal=QtCore.pyqtSignal(str, int)
-
-class parcoursGivenCards(QScrollArea):
-    def __init__(self, givenLayout, cardslist):
-        super(parcoursGivenCards, self).__init__(givenLayout)
-        self.cardslist=cardslist
-        self.resize(givenLayout.frameSize())
-        #self.Dialog = QScrollArea()  #QWidget()
-        #self.Dialog.setWindowTitle("Your Card selection")
-        #self.Dialog.setGeometry(QtCore.QRect(0, 0, 800, 430))
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        #self.setWidgetResizable(True)
-        self.gridWidget = QWidget(self)
-        self.n=ceil(len(self.cardslist)/5)
-        self.gridWidget.setGeometry(QtCore.QRect(0, 0, self.frameSize().width()-20, ((self.n+1)/36+self.n*0.11)*self.frameSize().width()))
-        self.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
-        self.setWidget(self.gridWidget)
-        self.folderGrid = QGridLayout(self.gridWidget)
-        self.folderGrid.setContentsMargins(20, 20, 20, 20)
-        self.mycards = self.cardslist.copy()
-        #print([x.word for x in self.cardslist])
-        #print([x.name for x in self.cardslist])
-        #### certains noms ne sont pas attribués dans anglais (2,4,5,7,8,12,13)
-        for i, carte in enumerate(self.cardslist):
-            self.mycards[i] = CardButtonInRecherche(carte, i, self.cardslist, self.gridWidget, self.width()/6)
-            # 5 cartes par ligne
-            row = i/5
-            column = i%5
-            self.folderGrid.addWidget(self.mycards[i], row, column, 1, 1)
-
-        for i, carte in enumerate(self.cardslist):
-            self.mycards[i].clicked.connect(self.mycards[i].openGivenCard)
-            self.mycards[i].openCardSignal.connect(self.openCardSignal)
-    openCardSignal=QtCore.pyqtSignal(list, int)
+        for i in range(len(self.cardslist)):
+            self.cardButtons[i].openCardSignal.connect(self.openCardLauncher)
+        
+        self.show()
+    redirect=QtCore.pyqtSignal()
+    def openCardLauncher(self, language, word):
+        self.nextDisplay = viewCard.viewWindow(self.parentWindow, self.cardslist, word)
+        self.redirect.emit()
+    def toTheShadows(self):
+        self.close()
 
 class parcoursIconsGame(QWidget):
     def __init__(self, width, height, language):
@@ -196,12 +171,14 @@ class parcoursIconsGame(QWidget):
         self.pointButton.setMaximumSize(QtCore.QSize(131, 101))
         self.pointButton.setStyleSheet("background-image: url(:/icons/pointTo.png);")
         self.gameGrid.addWidget(self.pointButton, 0, 3, 1, 1)
+        self.pointButton.setEnabled(False)
         # the right wrong game
         self.RWButton = QPushButton(u" ", self.gridWidget)
         self.RWButton.setMinimumSize(QtCore.QSize(101, 101))
         self.RWButton.setMaximumSize(QtCore.QSize(101, 101))
         self.RWButton.setStyleSheet("background-image: url(:/icons/rightWrong.png);")
         self.gameGrid.addWidget(self.RWButton, 0, 4, 1, 1)
+        self.RWButton.setEnabled(False)
 
         ## signaux et slots : ouverture de la fenetre de jeux
         self.DDInterf = None
@@ -216,20 +193,17 @@ class parcoursIconsGame(QWidget):
     hotAndColdSignal=QtCore.pyqtSignal()
     pointSignal=QtCore.pyqtSignal()
     rightWrongSignal=QtCore.pyqtSignal()
-    def show(self):
-        # ouverture de la fenetre
-        self.show()
 
-def main():
-    args = sys.argv
-    a = QApplication(args)
-    w=QWidget()
-    #w.resize(800, 430)
-    w.resize(600, 350)
-    mf = parcoursChosenCards(w, 'anglais')
-    w.show()
-    a.exec_()
-    a.lastWindowClosed.connect(a.quit)
-
-if __name__ == "__main__":
-    main()
+#def main():
+#    args = sys.argv
+#    a = QApplication(args)
+#    w=QWidget()
+#    #w.resize(800, 430)
+#    w.resize(600, 350)
+#    mf = parcoursChosenCards(w, 'anglais')
+#    w.show()
+#    a.exec_()
+#    a.lastWindowClosed.connect(a.quit)
+#
+#if __name__ == "__main__":
+#    main()

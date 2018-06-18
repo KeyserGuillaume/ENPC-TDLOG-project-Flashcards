@@ -1,0 +1,31 @@
+<user>
+    <default>
+        <langage>Arabe</langage>
+        <username>Guillaume</username>
+    </default>
+    <game>
+        <name>dragdrop</name>
+        <nbCards>10</nbCards>
+        <chrono>60</chrono>
+    </game>
+    <game>
+        <name>memory</name>
+        <nbCards>10</nbCards>
+        <chrono>84</chrono>
+    </game>
+    <game>
+        <name>hotcold</name>
+        <nbCards>15</nbCards>
+        <chrono>60</chrono>
+    </game>
+    <game>
+        <name>pointto</name>
+        <nbCards>2</nbCards>
+        <chrono>42</chrono>
+    </game>
+    <game>
+        <name>rightwrong</name>
+        <nbCards>1</nbCards>
+        <chrono>42</chrono>
+    </game>
+</user>

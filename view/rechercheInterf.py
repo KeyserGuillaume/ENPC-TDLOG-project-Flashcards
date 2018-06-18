@@ -3,14 +3,13 @@
 from model import rechercheFonct, database
 from view import parcours, viewCard
 
-langues = database.giveAllLanguages()
-langues.insert(0, 'TOUTES')
+#langues = database.giveAllLanguages()
+#langues.insert(0, 'TOUTES')
 
 from PyQt5 import QtCore, QtWidgets, QtGui 
 from PyQt5.QtWidgets import QTextBrowser, QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog, QToolBox
 from PyQt5.QtGui import QPalette, QColor, QFont
 import sys
-
 
 class welcomeScreen(QWidget):
     def __init__(self, givenLayout):
@@ -32,7 +31,7 @@ class tipScreen(QWidget):
         self.background = QWidget(self)
         self.background.resize(self.frameSize())
         self.background.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
-        self.lb_tip = QtWidgets.QLabel(u"Aucun document ne correspond aux termes de recherche spécifiés.", self)
+        self.lb_tip = QtWidgets.QLabel("Aucun document ne correspond aux termes de recherche spécifiés.", self)
         self.lb_tip.setGeometry(QtCore.QRect(20, 20, 855, 19))
         self.lb_tip.setFont(QFont("Roman times", 8, QFont.Bold))
         self.lb_tip1 = QtWidgets.QLabel(u"Vous pouvez essayer d'autres mots.", self)
@@ -40,7 +39,6 @@ class tipScreen(QWidget):
         self.lb_tip1.setFont(QFont("Roman times", 8, QFont.Bold))
     def close(self):
         self.setVisible(False)
-
 
 class Recherche(object):
     def __init__(self):
@@ -133,7 +131,12 @@ class Recherche(object):
         #self.textBrowser_resultat.clear()
         self.currentScreen.close()
         self.btn_effacer.setEnabled(True)
-        result = rechercheFonct.recherche(str(self.comboB_langue.currentText()), str(self.lineE_mot.text()), str(self.lineE_theme.text()), str(self.lineE_tra.text()), str(self.lineE_phrase.text()), self.checkB_floue.isChecked())
+        result = rechercheFonct.recherche(str(self.comboB_langue.currentText()),
+                                          str(self.lineE_mot.text()),
+                                          str(self.lineE_theme.text()),
+                                          str(self.lineE_tra.text()),
+                                          str(self.lineE_phrase.text()),
+                                          self.checkB_floue.isChecked())
         if len(result) == 0:
             #self.textBrowser_resultat.append("Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots")
             self.tip = tipScreen(self.resultLayout)
@@ -165,15 +168,15 @@ def DoSearch():
     a.exec_()
     a.lastWindowClosed.connect(a.quit)
 
-'''
-if __name__ == "__main__":
-    args=sys.argv
-    a = QApplication(args)
-    re = Recherche()
-    re.show()
-    a.exec_()
-    a.lastWindowClosed.connect(a.quit)
-'''
+
+#if __name__ == "__main__":
+#    args=sys.argv
+#    a = QApplication(args)
+#    re = Recherche()
+#    re.show()
+#    a.exec_()
+#    a.lastWindowClosed.connect(a.quit)
+
 
 
     

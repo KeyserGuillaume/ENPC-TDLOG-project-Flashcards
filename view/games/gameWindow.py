@@ -4,119 +4,154 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 import sys
 from model import database
 from random import randrange
+from view import parcours
 
 from time import time, strftime,localtime
 
 #nbSuccessRequired defines how many good answers you need to get before winning
-#parentWindow is the QWidget inside which you want the gameWindow to appear
 class GameWindow (QWidget):
     def __init__(self, parentWindow, nbSuccessRequired, chosenChrono):
+        """
+        The common component of all games
+        parentWindow : the widget in which this window is displayed
+        nbSuccessRequired : the nb of successes required for clearing the game
+        chosenChrono : the time available to clear the game
+        """
         super(QWidget, self).__init__(parentWindow)
-        self.nbSuccessRequired=nbSuccessRequired
-        self.initGame(chosenChrono)
-    resetSignal=QtCore.pyqtSignal()
-    timeIsOut=QtCore.pyqtSignal()
-    gameWon=QtCore.pyqtSignal()
-    leaveSignal=QtCore.pyqtSignal()
-    def initGame(self, chosenChrono):
-        self.nberreurs=0
-        self.nbSucces=0
-        self.t0=time()
-        self.timeGiven=chosenChrono
-        ## la fenetre
+        self.timeGiven = chosenChrono
+        self.nbSuccessRequired = nbSuccessRequired
+        self.cartesJouees = None
         self.setWindowTitle("Drag and Drop")
-        #self.setFixedSize(853, 554)
-        self.resize(self.parent().frameSize())
-        ## le jeu comme defini ci dessus
+        self.resize(self.parent().frameSize())## le jeu comme defini ci dessus
         self.layout=QVBoxLayout(self)
-        #self.layout.setContentsMargins(0, 0, 0, 0)
         self.gameArea=QWidget(self)
         self.gameArea.setFixedSize(self.frameSize().width(), self.frameSize().height()-65)
         self.layout.addWidget(self.gameArea)
-        #self.gameArea.resize(833, 423)
-        #self.theGame=DragDropGame(self, self.myCards)
         ## la barre de boutons/compteurs du bas
         self.BottomWidget = QWidget(self)
         self.BottomWidget.resize(self.frameSize().width()-20, 61)
-        #self.BottomWidget.setGeometry(QtCore.QRect(10, 440, 731, 61))
         self.layout.addWidget(self.BottomWidget)
         self.GameBox = QHBoxLayout(self.BottomWidget)
         self.GameBox.setContentsMargins(0, 0, 0, 0)
         # les boutons de gestion de partie
-        self.newButton = QPushButton(u"New Round",self.BottomWidget)
-        self.GameBox.addWidget(self.newButton)
-        self.saveButton = QPushButton(u"Save Round", self.BottomWidget)
-        self.GameBox.addWidget(self.saveButton)
+        self.viewButton = QPushButton(u"View Cards", self.BottomWidget)
+        self.viewButton.clicked.connect(self.redirect.emit)
+        self.GameBox.addWidget(self.viewButton)
         self.resetButton = QPushButton(u"Reset",self.BottomWidget)
         self.resetButton.clicked.connect(self.resetSignal.emit)
         self.GameBox.addWidget(self.resetButton)
+        self.newButton = QPushButton(u"New Round",self.BottomWidget)
+        self.newButton.clicked.connect(self.newSignal.emit)
+        self.GameBox.addWidget(self.newButton)
         # compteur chrono
         self.chrono = QLCDNumber(self.BottomWidget)
         self.chrono.setDigitCount(2)
         self.GameBox.addWidget(self.chrono)
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.Time)
-        self.timer.start(10)
+        self.nberreurs=0
+        self.nbSucces=0        
+        self.t0=time()
         # bouton pour afficher ses erreurs
-        self.mistakesButton = QPushButton(u"See mistakes",self.BottomWidget)
+        self.mistakesButton = QPushButton("See mistakes",self.BottomWidget)
         self.GameBox.addWidget(self.mistakesButton)
+        self.mistakesButton.setEnabled(False)
         # compteur d'erreurs
         self.failure = QLCDNumber(self.BottomWidget)
         self.failure.setStyleSheet("color: rgb(252, 0, 6);\n" "border-color: rgb(0, 0, 0);\n" "")
         self.failure.setDigitCount(5)
-        self.timer2 = QtCore.QTimer(self)
-        self.timer2.timeout.connect(self.Mistake)
-        self.timer2.start(10)
         self.GameBox.addWidget(self.failure)
-        #bouton pour quitter        
-        #self.leaveButton = QPushButton("quitter",self.BottomWidget)
-        #self.GameBox.addWidget(self.leaveButton)
-        #self.leaveButton.clicked.connect(self.leave)
+        #le message de victoire
+#        self.victoryButton=QWidget(self.gameArea)
+#        self.victoryButton.resize(300, 200)
+#        qr=self.victoryButton.frameGeometry()
+#        qr.moveCenter(self.gameArea.rect().center())
+#        self.victoryButton.move(qr.topLeft())
+#        self.label=QLabel(self.victoryButton)
+#        path="view/icons/victory.png"
+#        self.pixmap=QtGui.QPixmap()
+#        self.pixmap.load(path)
+#        self.label.setPixmap(self.pixmap)
+#        self.label.setScaledContents(True) 
+#        self.victoryButton.setVisible(False)
+        self.victoryButton = QPushButton(self)
+        self.victoryButton.setGeometry(QtCore.QRect(230, 130, 251, 221))
+        self.victoryButton.setStyleSheet("background-image: url(:/icons/win.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        self.victoryButton.setVisible(False)
+        qr=self.victoryButton.frameGeometry()
+        qr.moveCenter(self.gameArea.rect().center())
+        self.victoryButton.move(qr.topLeft())
+        # le message de defaite
+        self.defeatButton = QPushButton(self)
+        self.defeatButton.setGeometry(QtCore.QRect(230, 130, 221, 221))
+        self.defeatButton.setStyleSheet(
+            "background-image: url(:/icons/gameover2.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        self.defeatButton.setVisible(False)
+        qr=self.defeatButton.frameGeometry()
+        qr.moveCenter(self.gameArea.rect().center())
+        self.defeatButton.move(qr.topLeft())
+        
+        self.mistakesButton.setEnabled(False)        
+        
+    resetSignal = QtCore.pyqtSignal()
+    newSignal = QtCore.pyqtSignal()
+    viewSignal = QtCore.pyqtSignal()
+    redirect = QtCore.pyqtSignal()
         
     def incrementSuccessCount(self):
         self.nbSucces+=1;
         if (self.nbSucces==self.nbSuccessRequired):
-            self.gameWon.emit()
-        
+            self.gameWon()
     def incrementErrorCount(self):
         self.nberreurs+=1
     def Time(self):
-        if (self.nbSucces==self.nbSuccessRequired):
+        if self.nbSucces==self.nbSuccessRequired:
             return
-        #currenttime = time()-t0
-        # affiche l'heure
-        # regarder doc de time pour changer en un chrono descendant
-        timeLeft=self.timeGiven-(time()-self.t0)//1
-        if (timeLeft<0) :
-            self.timeIsOut.emit()
+        self.timeLeft=self.timeGiven-(time()-self.t0)//1
+        if self.timeLeft < 0:
+            self.timeIsOut()
             return
-        self.chrono.display(timeLeft)
-        #self.chrono.display(strftime("%H" + ":" + "%M" + ":" + "%S", localtime()))
-
-#    def reset(self):
-#        self.theGame.close()
-#        self.BottomWidget.close()
-#        self.initGame()
-#        self.resetSignal.emit()
-#        self.theGame.show()
-#        self.BottomWidget.show()
-#        self.theGame.victoryWidget.setVisible(False)
-    def Mistake(self):
+        self.chrono.display(self.timeLeft)
         self.failure.display(self.nberreurs)
-    def leave(self):
-        self.leaveSignal.emit()
+    def initGame(self):
+        self.nberreurs=0
+        self.nbSucces=0
+        self.t0=time()
+        self.timer.start(10)
+    def timeIsOut(self):
+        self.defeatButton.show()
+        self.timer.stop()
+    def gameWon(self):
+        self.victoryButton.show()
+    def clean(self):        
+        self.victoryButton.hide()
+        self.defeatButton.hide()
+    def toTheShadows(self):
+        self.clean()
         self.close()
+    def chooseCards(self):
+        languages = database.giveAllLanguages()
+        if self.cartesJouables in languages:
+            self.cartesJouables = database.getAllCards(self.cartesJouables)
+        if self.nbSuccessRequired > len(self.cartesJouables):
+            self.nbSuccessRequired = len(self.cartesJouables)
+        self.cartesJouees=[]
+        while (len(self.cartesJouees) < self.nbSuccessRequired):
+            i=randrange(0, len(self.cartesJouables))
+            if self.cartesJouables[i] not in self.cartesJouees:
+                j=randrange(0, 13)
+                if self.cartesJouables[i].level < j:
+                    self.cartesJouees.append(self.cartesJouables[i])
+        self.nextDisplay = parcours.CardsOverview(self.parentWindow, self.cartesJouees)
 
 
-'''
-if __name__ == "__main__":
-    Table='anglais'
-    ### cartes concernées par le jeu
-    CartesEnJeu=database.getCardsToLearn(Table,0,9)
-    args = sys.argv
-    b = QApplication(args)
-    mf = GameWindow(CartesEnJeu)
-    mf.show()
-    b.exec_()
-    b.lastWindowClosed.connect(b.quit)
-'''
+#if __name__ == "__main__":
+#    Table='anglais'
+#    ### cartes concernées par le jeu
+#    CartesEnJeu=database.getCardsToLearn(Table,0,9)
+#    args = sys.argv
+#    b = QApplication(args)
+#    mf = GameWindow(CartesEnJeu)
+#    mf.show()
+#    b.exec_()
+#    b.lastWindowClosed.connect(b.quit)

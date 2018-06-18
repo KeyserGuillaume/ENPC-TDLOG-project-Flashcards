@@ -32,7 +32,6 @@ _Les fichiers clés de ce projet sont à ce jour _ :
 
 _Nous indiquons ici les développements potentiels que nous avons identifié _ :
 
-* access du son et des images depuis la lecture
 * recherche de son et images sur internet sur don du mot ou de la traduction voire d'un attibut moins déterminant (example)
 * recherche dans des batabases extérieures de tous les composants d'une nouvelle carte d'après le mot (ou un attibut moins déterminant)
 

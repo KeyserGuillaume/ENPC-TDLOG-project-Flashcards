@@ -3,19 +3,33 @@
 ## il faut encore gerer quand les objects sont multiples (liste de traduction par exemple)
 
 class FlashCards:
-    ''' definition des flashcards'''
-    def __init__(self, name, mot,traduction, phrase, theme, difficulte, maitrise, illustrationpath, soundpath, nature, langue):
-        self._name=name  #nombre genere automatiquement ; cle primaire
-        self._word=mot   #chaine de caractere
-        self._trad=traduction   #chaine de caractere
-        self._exemple=phrase   #chaine de caractere
-        self._thema=theme    #chaine de caractere
-        self._howhard=difficulte   #nombre entre 0 et 9
-        self._level=maitrise     #nombre entre 0 et 9
-        self._image=illustrationpath   #chaine de caractere
-        self._pronounciation=soundpath   #chaine de caractere
-        self._nature=nature     #chaine de caractere
-        self._tablename=langue #langue de la traduction  #chaine de caractere
+    """
+    defining flashcards
+    name : nombre genere automatiquement ; cle primaire
+    word : chaine de caractere
+    trad : chaine de caractere
+    exemple : chaine de caractere
+    thema : chaine de caractere
+    howhard : nombre entre 0 et 9
+    level : nombre entre 0 et 9
+    image : chaine de caractere
+    pronounciation : chaine de caractere
+    nature : chaine de caractere
+    tablename : langue de la traduction (chaine de caractere)
+    """
+    def __init__(self, name="", mot="",traduction="", phrase="", theme="", difficulte=0,
+                 maitrise=0, illustrationpath="", soundfile="", nature="", langue=""):
+        self._name = name
+        self._word = mot
+        self._trad = traduction
+        self._exemple = phrase
+        self._thema = theme
+        self._howhard = difficulte
+        self._level = maitrise
+        self._image = illustrationpath
+        self._pronounciation = soundfile
+        self._nature = nature
+        self._tablename = langue 
     @property
     def name(self):
         return self._name
@@ -41,7 +55,7 @@ class FlashCards:
     def image(self):
         return self._image
     @property
-    def prononciation(self):
+    def pronounciation(self):
         return self._pronounciation
     @property
     def nature(self):

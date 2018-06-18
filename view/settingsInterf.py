@@ -5,11 +5,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QLabe
 
 import sys
 
-from controller import AccessSettings
+from view import AccessSettings
 
 class mySettings(QWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, previousDisplay):
+        self.nextDisplay = previousDisplay
+        self.parentWindow=parent
+    def stealTheLimelight(self):
+        super().__init__(self.parentWindow)
         ## la fenetre
         self.setObjectName("Current Settings")
         self.setFixedSize(497, 492)
@@ -85,9 +88,10 @@ class mySettings(QWidget):
 
         ## gestion des slots et signaux
         self.updateButton.clicked.connect(self.update)
-        self.quitButton.clicked.connect(self.quit)
+        self.quitButton.clicked.connect(self.redirect.emit)
+        self.show()
 
-    updated = QtCore.pyqtSignal()
+    redirect = QtCore.pyqtSignal()
 
     def update(self):
         allGameNames = AccessSettings.getAllGameNames()
@@ -97,22 +101,20 @@ class mySettings(QWidget):
         for rank, GameName in enumerate(allGameNames):
             AccessSettings.changeNbCards(str(self.nbcardsEdit[rank].text()),GameName)
             AccessSettings.changeChrono(str(self.chronoEdit[rank].text()), GameName)
-        self.updated.emit()
+        self.redirect.emit()
+
+    def toTheShadows(self):
         self.close()
 
-    def quit(self):
-        self.updated.emit()
-        self.close()
 
-'''
-if __name__ == "__main__":
-    args = sys.argv
-    a = QApplication(args)
-    w = QWidget()
-    w.resize(497, 492)
-    mf = mySettings(w)
-    mf.updated.connect(w.close)
-    w.show()
-    a.exec_()
-    a.lastWindowClosed.connect(a.quit)
-'''
+#if __name__ == "__main__":
+#    args = sys.argv
+#    a = QApplication(args)
+#    w = QWidget()
+#    w.resize(497, 492)
+#    mf = mySettings(w)
+#    mf.updated.connect(w.close)
+#    w.show()
+#    a.exec_()
+#    a.lastWindowClosed.connect(a.quit)
+

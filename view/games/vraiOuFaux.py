@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 import sys, random
 from model import database
 from view.games import gameWindow
-from controller import AccessSettings
+from view import AccessSettings
 from random import randrange, randint
 
 #### match (meme carte) entre mot et trad dans cet ordre
@@ -180,7 +180,7 @@ class vraiFauxGameWindow(QWidget):
         
         
 
-class vraiFauxGame(QWidget):
+class VraiFauxGame(QWidget):
     def __init__(self, givenWindow, cardsPlayed):
         super(vraiFauxGame, self).__init__(givenWindow)
         self.resize(givenWindow.frameSize())
@@ -239,18 +239,18 @@ class vraiFauxGame(QWidget):
         self.close()
 
 
-'''
-if __name__ == "__main__":
-    Table='anglais'
-    ### cartes concernées par le jeu
-    CartesEnJeu=database.getCardsToLearn(Table,0,9)
-    args = sys.argv
-    b = QApplication(args)
-    w = QWidget()
-    #w.resize(853, 554)
-    w.resize(1000, 600)#on peut modifier
-    mf = vraiFauxGame(w, CartesEnJeu)
-    w.show()
-    b.exec_()
-    b.lastWindowClosed.connect(b.quit)
-'''
+
+#if __name__ == "__main__":
+#    Table='anglais'
+#    ### cartes concernées par le jeu
+#    CartesEnJeu=database.getCardsToLearn(Table,0,9)
+#    args = sys.argv
+#    b = QApplication(args)
+#    w = QWidget()
+#    #w.resize(853, 554)
+#    w.resize(1000, 600)#on peut modifier
+#    mf = vraiFauxGame(w, CartesEnJeu)
+#    w.show()
+#    b.exec_()
+#    b.lastWindowClosed.connect(b.quit)
+

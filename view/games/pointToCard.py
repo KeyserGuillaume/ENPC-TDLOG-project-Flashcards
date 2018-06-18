@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 import sys
 from model import database
 from view.games import gameWindow
-from controller import AccessSettings
+from view import AccessSettings
 import random
 from random import randint
 
@@ -168,7 +168,7 @@ class pointToCardGameWindow(QWidget):
         
         
 
-class pointToCardGame(QWidget):
+class PointToCardGame(QWidget):
     def __init__(self, givenWindow, cardsPlayed):
         super(pointToCardGame, self).__init__(givenWindow)
         self.resize(givenWindow.frameSize())
@@ -205,18 +205,17 @@ class pointToCardGame(QWidget):
         self.close()
 
 
-'''
-if __name__ == "__main__":
-    Table='anglais'
-    ### cartes concernées par le jeu
-    CartesEnJeu=database.getCardsToLearn(Table,0,9)
-    args = sys.argv
-    b = QApplication(args)
-    w = QWidget()
-    #w.resize(853, 554)
-    w.resize(1000, 600)#on peut modifier
-    mf = pointToCardGame(w, CartesEnJeu)
-    w.show()
-    b.exec_()
-    b.lastWindowClosed.connect(b.quit)
-'''
+
+#if __name__ == "__main__":
+#    Table='anglais'
+#    ### cartes concernées par le jeu
+#    CartesEnJeu=database.getCardsToLearn(Table,0,9)
+#    args = sys.argv
+#    b = QApplication(args)
+#    w = QWidget()
+#    #w.resize(853, 554)
+#    w.resize(1000, 600)#on peut modifier
+#    mf = pointToCardGame(w, CartesEnJeu)
+#    w.show()
+#    b.exec_()
+#    b.lastWindowClosed.connect(b.quit)

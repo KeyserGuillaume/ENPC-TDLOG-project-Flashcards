@@ -1,39 +1,38 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLCDNumber, QLabel
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 import sys
 from model import database
 from view.games import gameWindow
 from random import randrange
-from controller import AccessSettings
+from view import AccessSettings
 
 
-#### match (meme carte) entre mot et trad dans cet ordre
-def match(text1, text2, language):
-    answer=False
-    matching=database.getCompleteCardsWithAttribute(language, 'mot', text1)
-    for card in matching:
-        answer = answer or (text2==card.trad)
-    return answer
-
-## baisse de un la maitrise dans la carte et la base
-def downgradeLevel(card):
-    card._level -= 1
-    database.modifyCard(card.tablename, card.name, card.trad, card.exemple, card.thema, card.howhard, card.level, card.image, card.prononciation, card.nature)
-    #print("maitrise moins")
+## change la maitrise dans la carte et la base
+def modifyLevel(card, upgrade):
+    if upgrade == 0:
+        return
+    card._level += upgrade
+    if card._level < 0:
+        card._level = 0
+    if card._level > 10:
+        card._level = 10
+    database.modifyCard(card.tablename, card.name, card.trad, card.exemple, card.thema, card.howhard, card.level, card.image, card.pronounciation, card.nature)
 
 ### la classe de bouton qui se drop
 class ButtonToDrag(QPushButton):
-    def __init__(self, card, type, place, depot):
+    def __init__(self, card, myType, place, depotLayout):
         self.lacarte=card
         self.language=card.tablename
-        if type=='mot':
+        self.levelModification = -1
+        self.myType=myType
+        if myType=='mot':
             super(ButtonToDrag, self).__init__(card.word, place)
         else: #pour l'instant que 2 types donc trad
             super(ButtonToDrag, self).__init__(card.trad, place)
             self.setStyleSheet("background-color: rgb(122, 227, 255);\n" "border-color: rgb(0, 0, 0);\n" "font: 75 13pt \"Helvetica Neue\";")
         self.setAcceptDrops(True)
-        self.jouees=depot
+        self.doneLayout=depotLayout
     error=QtCore.pyqtSignal()
     success=QtCore.pyqtSignal()
 
@@ -54,114 +53,122 @@ class ButtonToDrag(QPushButton):
         drag.setPixmap(pixmap)
         drag.setHotSpot(event.pos())
         drag.exec_(QtCore.Qt.MoveAction)
-        #print("moving...")
 
     # event on a bougé la carte sur une autre carte
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
             event.setDropAction(QtCore.Qt.MoveAction)
             event.accept()
-            #print("dragging... ")
         else:
             event.ignore()
 
     def dropEvent(self, event):
         if event.mimeData().hasText():
             cardSource = event.source()
-            #print("droping...")
             # bouge les 2 cartes dans le layout sur le cote si elles coincident
-            if self.text()=="GAME OVER" or self.text()=="TIME IS OUT":
+            if self.text()=="GAME OVER" or self.text()=="TIME IS OUT" or self.myType==cardSource.myType:
                 event.ignore()
                 event.source().setDown(False)
                 return
-            if match(cardSource.text(),self.text(), self.language) or match(self.text(),cardSource.text(), self.language) :
+            if database.match(cardSource.text(),self.text(), self.language) or database.match(self.text(),cardSource.text(), self.language) :
                 event.acceptProposedAction()            
                 self.success.emit()
                 horizontalLayout = QHBoxLayout()
                 horizontalLayout.setAlignment(QtCore.Qt.AlignTop)
                 horizontalLayout.addWidget(cardSource)
                 horizontalLayout.addWidget(self)
-                self.jouees.addLayout(horizontalLayout)
+                self.doneLayout.addLayout(horizontalLayout)
+                self.show()
+                cardSource.show()
                 event.accept()
+                self.levelModification+=4
+                #modifyLevel(self.lacarte, +2)
             else:
                 # mise a jour de la maitrise des cartes
-                if self.lacarte.level >= 1:
-                    downgradeLevel(self.lacarte)
-                if cardSource.lacarte.level >= 1:
-                    downgradeLevel(cardSource.lacarte)
                 # mise a jour du decompte d'erreurs
-                global nberreurs
                 self.error.emit()
                 event.ignore()
+                self.levelModification-=5
+                cardSource.levelModification-=5
+                #modifyLevel(self.lacarte, -5)
+                #modifyLevel(cardSource.lacarte, -5)
         else:
             event.ignore()
-            
-### le widget de jeu (cartes aleatoires qui se droppent et layout de droppage)
-class dragDropGameWindow(QWidget):
-    def __init__(self,bigWindow, CardsPlayed):
-        ## la fenetre de jeux
-        super(dragDropGameWindow, self).__init__(bigWindow)
-        self.setWindowTitle("Drag and Drop")
-        self.resize(bigWindow.frameSize())
-        self.width=self.frameSize().width()
-        self.height=self.frameSize().height()
-        #self.resize(833, 423)
+
+class DragAndDropGame(gameWindow.GameWindow):
+    def __init__(self, parentWindow, cardsPlayed):
+        self.parentWindow = parentWindow
+        self.cartesJouables = cardsPlayed
+        self.nextDisplay = "abort"
+    redirect = QtCore.pyqtSignal()
+    def stealTheLimelight(self):
+        self.allotedTime = AccessSettings.getGameSettings("dragdrop", 1)
+        self.nbSuccessRequired = AccessSettings.getGameSettings("dragdrop", 0)
+        super().__init__(self.parentWindow, self.nbSuccessRequired, self.allotedTime)
+        self.width = self.gameArea.frameSize().width()
+        self.height = self.gameArea.frameSize().height()
+        #self.gameArea.setAcceptDrops(True)
         self.setAcceptDrops(True)
+        if self.cartesJouees is None:
+            self.chooseCards()
+        self.initGame()
+        self.resetSignal.connect(self.reset)
+        self.newSignal.connect(self.new)
+    def initGame(self):
+        super().initGame()
+        ## le layout pour mettre les cartes jouees
+        self.doneWidget = QWidget(self.gameArea)
+        self.doneWidget.setGeometry(QtCore.QRect(3/4*self.width-10, 10, 1/4*self.width, self.height))
+        self.doneLayout = QVBoxLayout(self.doneWidget)
+        self.doneLayout.setAlignment(QtCore.Qt.AlignTop)
+        self.doneWidget.show()
         ## les futures listes de boutons
         self.myCards = []
         self.myTrads = []
-        ## le layout pour mettre les cartes jouees
-        self.doneWidget = QWidget(self)
-        self.doneWidget.setGeometry(QtCore.QRect(3/4*self.width-10, 10, 1/4*self.width, self.height))
-        #self.doneWidget.setGeometry(QtCore.QRect(590, 10, 228, 401))
-        self.Welldone = QVBoxLayout(self.doneWidget)
-        self.Welldone.setAlignment(QtCore.Qt.AlignTop)
-        ## l'ajout de tous les boutons concernés (maitrise < ...)
-        for i,carte in enumerate(CardsPlayed) :
-            self.myCards.append(ButtonToDrag(carte,'mot', self, self.Welldone))
-            #myx=randrange(5,470,1)
+        ## l'ajout de tous les boutons concernes
+        for i,carte in enumerate(self.cartesJouees) :
+            self.myCards.append(ButtonToDrag(carte,'mot', self, self.doneLayout))
             myx=randrange(5, int(3/4*self.width-150), 1)
-            #myy=randrange(5,390,1)
             myy=randrange(5, int(3/4*self.height), 1)
             self.myCards[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
-            self.myCards[i].error.connect(self.error.emit)
-            self.myCards[i].success.connect(self.success.emit)
-            self.myTrads.append(ButtonToDrag(carte,'trad', self, self.Welldone))
-            #myx = randrange(5, 520, 1)
+            self.myCards[i].error.connect(self.incrementErrorCount)
+            self.myCards[i].success.connect(self.incrementSuccessCount)
+            self.myCards[i].show()
+            self.myTrads.append(ButtonToDrag(carte,'trad', self, self.doneLayout))
             myx=randrange(5, int(3/4*self.width-115), 1)
-            #myy = randrange(5, 380, 1)
             myy=randrange(5, int(3/4*self.height), 1)
             self.myTrads[i].setGeometry(QtCore.QRect(myx, myy, 113, 32))
-            self.myTrads[i].error.connect(self.error.emit)
-            self.myTrads[i].success.connect(self.success.emit)
-        #le message de victoire
-        self.victoryWidget=QWidget(self)
-        self.victoryWidget.resize(300, 200)
-        qr=self.victoryWidget.frameGeometry()
-        qr.moveCenter(self.rect().center())
-        self.victoryWidget.move(qr.topLeft())
-        self.label=QLabel(self.victoryWidget)
-        path="icons/victory.png"
-        self.pixmap=QtGui.QPixmap()
-        self.pixmap.load(path)
-        self.label.setPixmap(self.pixmap)
-        self.label.setScaledContents(True) 
-        self.victoryWidget.setVisible(False)
-
-        # le message de defaite
-        self.defeatButton = QPushButton(self)
-        self.defeatButton.setGeometry(QtCore.QRect(230, 130, 221, 221))
-        self.defeatButton.setStyleSheet(
-            "background-image: url(:/icons/gameover2.png);\n" "background-color: rgba(255, 255, 255, 0);")
-        self.defeatButton.setVisible(False)
-
-
-    error=QtCore.pyqtSignal()
-    success=QtCore.pyqtSignal()
-    
+            self.myTrads[i].error.connect(self.incrementErrorCount)
+            self.myTrads[i].success.connect(self.incrementSuccessCount)
+            self.myTrads[i].show()
+        self.show()
+    def clean(self):
+        super().clean()
+        if self.timeLeft > 25:
+            bonus = 2 # le jeu a ete remporte avec une grande aisance
+        else:
+            bonus = 1
+        if self.timeLeft > 0 and self.nbSucces < self.nbSuccessRequired:
+            bonus = 0 # le jeu n'a pas ete fini
+        for i in range(self.nbSuccessRequired):
+            modifyLevel(self.cartesJouees[i], bonus * (self.myCards[i].levelModification + self.myTrads[i].levelModification))
+            self.myCards[i].close()
+            self.myTrads[i].close()
+        self.doneWidget.close()
+    def reset(self):
+        self.clean()
+        self.initGame()
+    def new(self):
+        self.chooseCards()
+        self.reset()
+    def timeIsOut(self):
+        super().timeIsOut()
+        for carte in self.myCards:
+            carte.setText('TIME IS OUT')
+        for carte in self.myTrads:
+            carte.setText('GAME OVER')
     def dragEnterEvent(self, e):
         e.accept()
-        
     def dropEvent(self, e):
         mime = e.mimeData().text()
         mime = (mime.split(';'))[1]
@@ -170,63 +177,8 @@ class dragDropGameWindow(QWidget):
         e.setDropAction(QtCore.Qt.MoveAction)
         e.accept()
         e.source().setDown(False)
-
-    #### il faut bouger un bouton sur un autre
-    #### la classe ButtonToDrag gere les events
-
-class dragDropGame(QWidget):
-    def __init__(self, givenWindow, cardsPlayed):
-        super(dragDropGame, self).__init__(givenWindow)
-        self.resize(givenWindow.frameSize())
-        self.cartesJouables=cardsPlayed
-        self.init()
-    leave=QtCore.pyqtSignal()
-    def init(self):
-        self.cartesJouees=[]
-        self.settingtime = AccessSettings.getGameSettings("dragdrop", 1)
-        self.settingnb = AccessSettings.getGameSettings("dragdrop", 0)
-        while (len(self.cartesJouees)<self.settingnb):
-            i=randrange(0, len(self.cartesJouables))
-            if (self.cartesJouables[i] not in self.cartesJouees):
-                self.cartesJouees.append(self.cartesJouables[i])
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees), self.settingtime)
-        self.game=dragDropGameWindow(self.window.gameArea, self.cartesJouees)
-        self.window.show()
-        
-        self.window.resetSignal.connect(self.reset)
-        self.window.leaveSignal.connect(self.endOfGame)
-        self.game.error.connect(self.window.incrementErrorCount)
-        self.game.success.connect(self.window.incrementSuccessCount)
-        self.window.gameWon.connect(self.game.victoryWidget.show)
-        self.window.timeIsOut.connect(self.timeIsOut)
-    def reset(self):
-        self.game.close()
-        #la ligne suivante evite que la fenetre, meme fermee, envoie le signal timeIsOut
-        self.window.timeIsOut.disconnect()
-        self.window.close()
-        self.init()
-    def timeIsOut(self):
-        for carte in self.game.myCards:
-            carte.setText('TIME IS OUT')
-        for carte in self.game.myTrads:
-            carte.setText('GAME OVER')
-        self.game.defeatButton.show()
-    def endOfGame(self):
-        self.leave.emit()
-        self.close()
-
-'''
-if __name__ == "__main__":
-    Table='anglais'
-    ### cartes concernées par le jeu
-    CartesEnJeu=database.getCardsToLearn(Table,0,9)
-    args = sys.argv
-    b = QApplication(args)
-    w = QWidget()
-    #w.resize(853, 554)
-    w.resize(1000, 600)#on peut modifier
-    mf = dragDropGame(w, CartesEnJeu)
-    w.show()
-    b.exec_()
-    b.lastWindowClosed.connect(b.quit)
-'''
+            
+            
+            
+            
+            

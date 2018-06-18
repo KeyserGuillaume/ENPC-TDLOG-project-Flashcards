@@ -1,20 +1,15 @@
 ######### stockage en base de donnees. Our database is called FlashCards.db
  #Table existante : LANGUAGES
 
-import sqlite3
-import os
 from model import flashcard
 from random import randint
-from scipy.stats import expon
-from math import log, exp
+from model import soundAPI
 from model.connDB import connDB
 #creation de la base de donnees :
 #conn=sqlite3.connect('FlashCards.db')
 #conn.execute('''CREATE TABLE LANGUAGES
 #      (NAME TEXT PRIMARY KEY      NOT NULL);''')
 #conn.close()
-
-
 
 def getALLtables():
     conn=connDB()
@@ -42,10 +37,6 @@ def modifyCard(tableName, Id, trad, ex, theme, diff, level, image, sound, nature
     (trad, ex, theme, diff, level, image, sound, nature, Id))
     conn.commit()
     conn.close()
-#modifyCard('ANGLAIS', 7, 'salut', 'Hello World', 'communication', 0, 10, '', '', 'jsp')
-
-
-
 
 def getNextId(tableName):
     conn=connDB()
@@ -57,12 +48,7 @@ def getNextId(tableName):
     conn.close()
     return result
 
-
-# appelee dans createcardsInterf.py
-# appelee dans rechercheInterf.py
-## appelee dans rechercheFonct.py
 def giveAllLanguages():
-    #return ["anglais"]
     conn=connDB()
     cursor=conn.execute("SELECT name from LANGUAGES")
     result=[row[0] for row in cursor]
@@ -73,11 +59,17 @@ def existsLanguage(language):
     conn=connDB()
     cursor = conn.execute("select count(*) from LANGUAGES where name = '{}'".format(language.upper()))
     result = cursor.fetchone()[0]
-    conn.close()
     if result:
         return True
     else:
         return False
+
+def countLanguage(language):
+    conn=connDB()
+    cursor = conn.execute("select count(*) from '{}'".format(language.upper()))
+    result = cursor.fetchone()[0]
+    conn.close()
+    return result
 
 def addLanguage(language):
     conn=connDB()
@@ -100,6 +92,9 @@ def addLanguage(language):
 
 def removeLanguage(language):
     conn=connDB()
+    allCards=getAllCards(language)
+    for card in allCards:
+        soundAPI.deleteAudio(card.pronounciation)
     conn.execute("DELETE from LANGUAGES where name = '{}';".format(language.upper()))
     conn.execute('drop table if exists {}'.format(language.upper()))
     conn.commit()
@@ -114,18 +109,24 @@ def addCard(mot, trad, ex, theme, diff, level, image, sound, nature, langue):
     conn.commit()
     conn.close()
 
-#addFlashCard("1", "hello", "bonjour", "bonjour toi","salutations",0,10,"vide","vide","jsp","anglais")
-
 def register(flashcard):
-    addCard(flashcard.word, flashcard.trad, flashcard.exemple, flashcard.thema, flashcard.howhard, flashcard.level, flashcard.image, flashcard.prononciation, flashcard.nature, flashcard.tablename)
+    addCard(flashcard.word, flashcard.trad, flashcard.exemple, flashcard.thema, flashcard.howhard, flashcard.level, flashcard.image, flashcard.pronounciation, flashcard.nature, flashcard.tablename)
 
-## appelee dans rechercheFonct.py
+
 def getCardById(language, name):
     conn=connDB()
     cursor = conn.execute("SELECT * from {} where id = {}".format(language.upper(), name))
-    for row in cursor:                        #il ne devrait y avoir qu'une seule row dans cursor
-        return flashcard.FlashCards(*row )    #mais je ne sais pas comment le manipuler autrement qu'en le parcourant
+    for row in cursor:
+        return flashcard.FlashCards(*row )
     conn.close()
+    
+def updateCards(cardList):
+    newCardList=[]
+    for i in range(len(cardList)):
+        newCard=getCardById(cardList[i].tablename, cardList[i].name)
+        if newCard!=None:
+            newCardList.append(newCard)
+    return newCardList
 
 ## donne les cartes avec givenleveldown <= maitrise <= givenlevelup
 def getCardsToLearn(language, givenleveldown, givenlevelup):
@@ -139,6 +140,8 @@ def getCardsToLearn(language, givenleveldown, givenlevelup):
 
 def removeCard(language, name):
     conn=connDB()
+    myCard=getCardById(language, name)
+    soundAPI.deleteAudio(myCard.pronounciation)
     conn.execute("DELETE from {} where id = {};".format(language.upper(), name))
     conn.commit()
     conn.close()
@@ -159,7 +162,7 @@ def removeLastCard(language):
 #returns ids of all cards according to some attribute
 def getCardsWithAttribute(language, attributeName, attribute):
     conn=connDB()
-    cursor=conn.execute("SELECT id from {} where {} = '{}'".format(language.upper(), attributeName, attribute))
+    cursor=conn.execute("""SELECT id from {} where {} = "{}" """.format(language.upper(), attributeName, attribute))
     result=[row[0] for row in cursor]
     conn.close()
     return result
@@ -168,7 +171,7 @@ def getCardsWithAttribute(language, attributeName, attribute):
 def getCompleteCardsWithAttribute(language, attributeName, attribute):
     result = []
     conn=connDB()
-    cursor=conn.execute("SELECT * from {} where {} = '{}'".format(language.upper(), attributeName, attribute))
+    cursor=conn.execute("""SELECT * from {} where {} = "{}" """.format(language.upper(), attributeName, attribute))
     for row in cursor:
         result.append(flashcard.FlashCards(*row))
     conn.close()
@@ -180,8 +183,12 @@ def getCardsWithMot(language, mot):
 
 def getCardsWithTraduction(language, traduction):
     return getCardsWithAttribute(language, "traduction", traduction)
+    
+def getSoundFileName(language, cardId):
+    card = getCompleteCardWithAttribute(language, "ID", cardId)
+    return card.pronounciation
 
-def existeSameCard(language,mot,traduction):
+def existsSameCard(language,mot,traduction):
     conn=connDB()
     #sql = "select count(*) from {} where mot = '{}' and traduction = '{}';".format(language.upper(),mot,traduction)
     cursor = conn.execute("select count(*) from '{}' where mot = ? and traduction = ? ".format(language.upper()),(mot,traduction))
@@ -192,64 +199,41 @@ def existeSameCard(language,mot,traduction):
     else:
         return False #existe pas une carte meme
 
-#create a table of picture
-def create_picturetable():
-    conn=connDB()
-    sql = "create table IF NOT EXISTS PICTURES(p_id INTEGER PRIMARY KEY AUTOINCREMENT,picture BLOB,type TEXT,file_name TEXT);"
-    conn.execute(sql)
-    conn.close()
+#### match (meme carte) entre mot et trad dans cet ordre
+def match(text1, text2, language):
+    answer=False
+    matching=getCompleteCardsWithAttribute(language, 'mot', text1)
+    for card in matching:
+        answer = answer or (text2==card.trad)
+    return answer
 
-#insert into the table one picture with its name
-def insert_picture(picture_file):
-    with open(picture_file,'rb') as input_file:
-        ablob = input_file.read()
-        base = os.path.basename(picture_file)
-        afile,ext  = os.path.splitext(base)
-        sql = "INSERT INTO PICTURES(picture, type, file_name) VALUES(?, ?, ?);"
-        conn=connDB()
-        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
-        conn.commit()
-        conn.close()
-
-#extract a picture with its id, returns the name of the picture
-def extract_picture(p_id):
-    sql = "SELECT picture,type,file_name FROM PICTURES where p_id = :id;"
-    p_id = {'id':p_id}
-    conn=connDB()
-    pic = conn.execute(sql,p_id)
-    ablob, ext, afile = pic.fetchone()
-    filename = './PICTURES/' + afile + ext
-    with open(filename,'wb') as output_file:
-        output_file.write(ablob)
-    return filename
-
-#create a db of audio
-def create_audiotable():
-    conn=connDB()
-    sql = "create table IF NOT EXISTS AUDIOS(a_id INTEGER PRIMARY KEY AUTOINCREMENT,audio BLOB,type TEXT,file_name TEXT);"
-    conn.execute(sql)
-    conn.close()
-
-#insert into the table one audio with its name
-def insert_audio(audio_file):
-    with open(audio_file,'rb') as input_file:
-        ablob = input_file.read()
-        base = os.path.basename(audio_file)
-        afile,ext  = os.path.splitext(base)
-        sql = "INSERT INTO AUDIOS(audio, type, file_name) VALUES(?, ?, ?);"
-        conn=connDB()
-        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
-        conn.commit()
-        conn.close()
-
-#extract a picture with its id, returns the name of the picture
-def extract_audio(a_id):
-    sql = "SELECT audio,type,file_name FROM AUDIOS where a_id = :id;"
-    a_id = {'id':a_id}
-    conn=connDB()
-    aud = conn.execute(sql,a_id)
-    ablob, ext, afile = aud.fetchone()
-    filename = './AUDIOS/' + afile + ext
-    with open(filename,'wb') as output_file:
-        output_file.write(ablob)
-    return filename
+##create a table of picture
+#def create_picturetable():
+#    conn=connDB()
+#    sql = "create table IF NOT EXISTS PICTURES(p_id INTEGER PRIMARY KEY AUTOINCREMENT,picture BLOB,type TEXT,file_name TEXT);"
+#    conn.execute(sql)
+#    conn.close()
+#
+##insert into the table one picture with its name
+#def insert_picture(picture_file):
+#    with open(picture_file,'rb') as input_file:
+#        ablob = input_file.read()
+#        base = os.path.basename(picture_file)
+#        afile,ext  = os.path.splitext(base)
+#        sql = "INSERT INTO PICTURES(picture, type, file_name) VALUES(?, ?, ?);"
+#        conn=connDB()
+#        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
+#        conn.commit()
+#        conn.close()
+#
+##extract a picture with its id, returns the name of the picture
+#def extract_picture(p_id):
+#    sql = "SELECT picture,type,file_name FROM PICTURES where p_id = :id;"
+#    p_id = {'id':p_id}
+#    conn=connDB()
+#    pic = conn.execute(sql,p_id)
+#    ablob, ext, afile = pic.fetchone()
+#    filename = './PICTURES/' + afile + ext
+#    with open(filename,'wb') as output_file:
+#        output_file.write(ablob)
+#    return filename

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QVBoxLayout, QGridLayout, QShortcut
+from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QVBoxLayout, QGridLayout, QShortcut, QPushButton
 from view.games import gameWindow
 from model import database, rechercheFonct, flashcard
 from view import AccessSettings, parcours
@@ -8,14 +8,19 @@ from view import AccessSettings, parcours
 
 class HotAndColdGame(gameWindow.GameWindow):
     def __init__(self, parentWindow, cardsPlayed):
-        self.parentWindow=parentWindow
-        self.cartesJouables=cardsPlayed
-        self.nextDisplay="abort"
+        self.parentWindow = parentWindow
+        self.cartesJouables = cardsPlayed
+        self.nextDisplay = "abort"
+        self.mode = 0
     redirect=QtCore.pyqtSignal()
     def stealTheLimelight(self):
         self.allotedTime = AccessSettings.getGameSettings("hotcold", 1)
         self.nbSuccessRequired = AccessSettings.getGameSettings("hotcold", 0)
         super().__init__(self.parentWindow, self.nbSuccessRequired, self.allotedTime)
+        
+        self.switchModeButton = QPushButton(u"Switch Mode",self.BottomWidget)
+        self.switchModeButton.clicked.connect(self.switchMode)
+        self.GameBox.addWidget(self.switchModeButton)
         
         self.layout=QGridLayout(self.gameArea)
         self.gameArea.setStyleSheet("background-image: url(:/fond/silver.jpg);")
@@ -76,22 +81,37 @@ class HotAndColdGame(gameWindow.GameWindow):
         self.initGame()
         self.show()
     def definePointerTarget(self):
-        difference=rechercheFonct.DistanceDeDamerauLevenshtein(self.currentCard.trad, self.lineEdit.displayText())
-        percentCorrespond=difference/len(self.currentCard.trad)
-        self.currentPointerTarget=self.leftMostPos+max(len(self.currentCard.trad)-difference, 0)*self.degradeWidget.frameSize().width()/len(self.currentCard.trad)
+        if self.mode==0:
+            ref = self.currentCard.trad
+        else:
+            ref = self.currentCard.word
+        difference = rechercheFonct.DistanceDeDamerauLevenshtein(ref, self.lineEdit.displayText())
+        percentCorrespond = difference/len(ref)
+        self.currentPointerTarget = self.leftMostPos+max(len(ref)-difference, 0)*self.degradeWidget.frameSize().width()/len(ref)
     def movePointer(self):
         self.currentPointerSpeed=0.01*(self.currentPointerTarget-self.currentPointerPosition)
         self.currentPointerPosition+=self.currentPointerSpeed
         self.pointeurWidget.move(self.currentPointerPosition, self.gameArea.frameSize().height()*0.76)
     def checkAnswer(self):
-        if (database.match(self.currentCard.word, self.lineEdit.displayText(), self.currentCard.tablename)):
+        if self.mode==0:
+            disp = self.currentCard.word
+        else:
+            disp = self.currentCard.trad
+        if database.matchApprox(self.lineEdit.displayText(), disp, self.currentCard.tablename):
+        #if (database.match(disp, self.lineEdit.displayText(), self.currentCard.tablename) or database.match(self.lineEdit.displayText(), disp, self.currentCard.tablename)):
             self.onSuccess()
         else:
             self.onFailure()
     #initialization for each word
     def initDisplay(self):
-        self.display.setText(self.currentCard.word)
-        self.lineEdit.setText(self.currentCard.trad[0:self.nbCharsDisplayed])
+        if self.mode==0:
+            disp = self.currentCard.word
+            ref = self.currentCard.trad
+        else:
+            disp = self.currentCard.trad
+            ref = self.currentCard.word
+        self.display.setText(disp)
+        self.lineEdit.setText(ref[0:self.nbCharsDisplayed])
         #push the pointer to the leftmost position
         self.currentPointerPosition=self.leftMostPos
         self.currentPointerSpeed=0
@@ -132,3 +152,6 @@ class HotAndColdGame(gameWindow.GameWindow):
     def new(self):
         self.chooseCards()
         self.reset()
+    def switchMode(self):
+        self.mode = 1 - self.mode
+        self.new()

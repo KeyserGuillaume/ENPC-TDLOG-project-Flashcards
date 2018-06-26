@@ -75,7 +75,7 @@ class FlashCards:
             result+=partie1+"\n "+partie2
         else:
             result+=self.exemple
-        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)+"\n image : "+self.image+"\n son : "+self.prononciation+"\n nature : "+self.nature+"\n langue : "+self.tablename
+        result+="\n theme : "+self.thema+"\n difficulte : "+str(self.howhard)+"\n niveau de maitrise : "+str(self.level)+"\n image : "+self.image+"\n son : "+self.pronounciation+"\n nature : "+self.nature+"\n langue : "+self.tablename
         return result
         
     #l'affichage de la carte sans les chemins vers le fichier son et le fichier image

@@ -87,7 +87,7 @@ class HomeScreen(QToolBox):
         # selection de l'onglet principal
         self.setCurrentIndex(self.folderIndex)
         self.show()
-    #triggers the display of all cards in a given language
+    # triggers the display of all cards in a given language
     def overviewLanguageLauncher(self, language):
         self.nextDisplay = parcours.CardsOverview(self.parentWindow, language)
         self.redirect.emit()
@@ -116,8 +116,8 @@ class WelcomeInterf(QWidget):
     def __init__(self):
         # la fenetre
         super(WelcomeInterf, self).__init__()
-        self.defaultLanguage = AccessSettings.readSettings("/user/default/langage").upper()
-        self.username = AccessSettings.readSettings("/user/default/username")
+        self.defaultLanguage = AccessSettings.getDefaultLanguage().upper()
+        self.username = AccessSettings.getUserName()
         self.setWindowTitle("Welcome on our FlashCard program, " + self.username)
         self.setWindowIcon(QtGui.QIcon("view/icons/mole.png"))
         self.resize(936, 582)

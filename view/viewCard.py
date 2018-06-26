@@ -13,14 +13,14 @@ class viewWindow(QWidget):
     def __init__(self, parentWindow, givenCards, word=None, nextWord=None, view=0):
         #here, givenCards may be "anglais" ou une autre langue, pour signifier toutes les cartes de cette langue
         #basically, nextWord is the word to begin with if word was deleted
-        self.originalGivenCards=givenCards
-        self.word=word
-        self.nextWord=nextWord
-        self.parentWindow=parentWindow
+        self.originalGivenCards = givenCards
+        self.word = word
+        self.nextWord = nextWord
+        self.parentWindow = parentWindow
         self.currentview = view
+        self.previousview = 0
     def stealTheLimelight(self):
         super(QWidget, self).__init__(self.parentWindow)
-        self.setWindowTitle("Enjoy reading your FlashCard")
         self.resize(self.parentWindow.frameSize())
         # si givenCards est une langue, on les recupere toutes de cette langue
         languages = database.giveAllLanguages()
@@ -144,24 +144,23 @@ class viewWindow(QWidget):
         self.description.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n" "font: 87 11pt \"Arial Black\";")
         self.viewLayout1.addWidget(self.description)
         self.viewWidget1.setVisible(False)
-        #la face Image
-        path = 'images/image.jpg'
+        # la face Image
+        path = self.currentCard.image
         if path == '':
-            self.viewWidget2 = None  #pas d'image fournie
-        else:
-            self.viewWidget2=QLabel(self)
-            self.viewWidget2=self.viewWidget2
-            self.viewWidget2.resize(self.frameSize().width()-100, self.frameSize().height()-60)
-            self.pixmap=QtGui.QPixmap()
-            
-            self.pixmap.load(path)
-            self.pixmap = self.pixmap.scaled(self.viewWidget2.frameSize().width(),
-                                             self.viewWidget2.frameSize().height()-30,
-                                             QtCore.Qt.KeepAspectRatio)
-            self.viewWidget2.setPixmap(self.pixmap)
-            self.viewWidget2.setScaledContents(True)
-            self.viewWidget2.setVisible(False)
-        ## affichage de la bonne face
+            path = 'images/image.jpg'
+        self.viewWidget2 = QLabel(self)
+        self.viewWidget2.setAlignment(QtCore.Qt.AlignCenter)
+        self.viewWidget2.resize(self.cardWindow.frameSize().width()-100, self.cardWindow.frameSize().height()-60)
+        self.pixmap = QtGui.QPixmap()
+        
+        self.pixmap.load(path)
+        self.pixmap = self.pixmap.scaled(self.viewWidget2.frameSize().width(),
+                                         self.viewWidget2.frameSize().height(),
+                                         QtCore.Qt.KeepAspectRatio)
+        self.viewWidget2.setPixmap(self.pixmap)
+        #self.viewWidget2.setScaledContents(True)
+        self.viewWidget2.setVisible(False)
+        # affichage de la bonne face
         self.viewWidgets = [self.viewWidget0, self.viewWidget1, self.viewWidget2]
         self.viewNtools.addWidget(self.viewWidgets[self.currentview], 1, 1, 1, 1)
         self.viewWidgets[self.currentview].setVisible(True)
@@ -184,7 +183,7 @@ class viewWindow(QWidget):
         if self.currentview==2:
             (self.previousview, self.currentview)=(self.currentview, self.previousview)
         else:
-            self.previousview=self.currentview
+            self.previousview = self.currentview
             self.currentview = 2
         self.alternateViews()
         

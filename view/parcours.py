@@ -7,14 +7,11 @@ from view import editCardsInterf, rechercheInterf, viewCard, settingsInterf
 from view.games import dragAndDrop, vraiOuFaux, hotCold, memory, pointToCard
 
 from view.icons import icons
-# permet l'accès aux images des icones
+# permet l'acces aux images des icones
 
 from math import ceil
 
 AllLangages = database.giveAllLanguages()
-
-#_root = QtCore.QFileInfo(__file__).absolutePath()
-
 class LangageButton(QPushButton):
     def __init__(self, langue, place):
         self.langue=langue
@@ -55,15 +52,17 @@ class parcoursLanguesFolder(QWidget):
         for i, langue in enumerate(AllLangages):
             self.myfolders[i].openLanguageSignal.connect(self.openLanguageSignal.emit)
     openLanguageSignal=QtCore.pyqtSignal(str)
-    
 
 class CardButton(QPushButton):
-    def __init__(self, card, place, width):
+    def __init__(self, card, place, width, show_native = False, setStyleSheet = True):
         self.lacarte=card
-        super(CardButton, self).__init__(card.word, place)
+        if show_native:
+            super(CardButton, self).__init__(card.trad, place)
+        else:
+            super(CardButton, self).__init__(card.word, place)
         self.setMinimumSize(QtCore.QSize(width, 0.66*width))
         self.setMaximumSize(QtCore.QSize(width, 0.66*width))
-        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128);\n" "font: 75  \"Arial\";")
+        self.setStyleSheet("background-image: url(:/fond/notebook.jpg);\n" "background-color: rgba(255, 231, 172, 128)")#;\n" "font: 75  \"Arial\";")
         self.clicked.connect(self.openChosenCard)
     openCardSignal=QtCore.pyqtSignal(str, str)
 
@@ -171,7 +170,6 @@ class parcoursIconsGame(QWidget):
         self.pointButton.setMaximumSize(QtCore.QSize(131, 101))
         self.pointButton.setStyleSheet("background-image: url(:/icons/pointTo.png);")
         self.gameGrid.addWidget(self.pointButton, 0, 3, 1, 1)
-        self.pointButton.setEnabled(False)
         # the right wrong game
         self.RWButton = QPushButton(u" ", self.gridWidget)
         self.RWButton.setMinimumSize(QtCore.QSize(101, 101))
@@ -193,17 +191,3 @@ class parcoursIconsGame(QWidget):
     hotAndColdSignal=QtCore.pyqtSignal()
     pointSignal=QtCore.pyqtSignal()
     rightWrongSignal=QtCore.pyqtSignal()
-
-#def main():
-#    args = sys.argv
-#    a = QApplication(args)
-#    w=QWidget()
-#    #w.resize(800, 430)
-#    w.resize(600, 350)
-#    mf = parcoursChosenCards(w, 'anglais')
-#    w.show()
-#    a.exec_()
-#    a.lastWindowClosed.connect(a.quit)
-#
-#if __name__ == "__main__":
-#    main()

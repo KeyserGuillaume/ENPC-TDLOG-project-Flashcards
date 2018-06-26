@@ -22,7 +22,7 @@ class GameWindow (QWidget):
         self.nbSuccessRequired = nbSuccessRequired
         self.cartesJouees = None
         self.setWindowTitle("Drag and Drop")
-        self.resize(self.parent().frameSize())## le jeu comme defini ci dessus
+        self.resize(self.parent().frameSize())# le jeu comme defini ci dessus
         self.layout=QVBoxLayout(self)
         self.gameArea=QWidget(self)
         self.gameArea.setFixedSize(self.frameSize().width(), self.frameSize().height()-65)
@@ -62,18 +62,6 @@ class GameWindow (QWidget):
         self.failure.setDigitCount(5)
         self.GameBox.addWidget(self.failure)
         #le message de victoire
-#        self.victoryButton=QWidget(self.gameArea)
-#        self.victoryButton.resize(300, 200)
-#        qr=self.victoryButton.frameGeometry()
-#        qr.moveCenter(self.gameArea.rect().center())
-#        self.victoryButton.move(qr.topLeft())
-#        self.label=QLabel(self.victoryButton)
-#        path="view/icons/victory.png"
-#        self.pixmap=QtGui.QPixmap()
-#        self.pixmap.load(path)
-#        self.label.setPixmap(self.pixmap)
-#        self.label.setScaledContents(True) 
-#        self.victoryButton.setVisible(False)
         self.victoryButton = QPushButton(self)
         self.victoryButton.setGeometry(QtCore.QRect(230, 130, 251, 221))
         self.victoryButton.setStyleSheet("background-image: url(:/icons/win.png);\n" "background-color: rgba(255, 255, 255, 0);")
@@ -143,15 +131,3 @@ class GameWindow (QWidget):
                 if self.cartesJouables[i].level < j:
                     self.cartesJouees.append(self.cartesJouables[i])
         self.nextDisplay = parcours.CardsOverview(self.parentWindow, self.cartesJouees)
-
-
-#if __name__ == "__main__":
-#    Table='anglais'
-#    ### cartes concernées par le jeu
-#    CartesEnJeu=database.getCardsToLearn(Table,0,9)
-#    args = sys.argv
-#    b = QApplication(args)
-#    mf = GameWindow(CartesEnJeu)
-#    mf.show()
-#    b.exec_()
-#    b.lastWindowClosed.connect(b.quit)

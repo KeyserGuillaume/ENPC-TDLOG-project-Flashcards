@@ -1,15 +1,10 @@
 ######### stockage en base de donnees. Our database is called FlashCards.db
  #Table existante : LANGUAGES
 
-from model import flashcard
 from random import randint
-from model import soundAPI
+from model import flashcard, soundAPI, imageAPI
 from model.connDB import connDB
-#creation de la base de donnees :
-#conn=sqlite3.connect('FlashCards.db')
-#conn.execute('''CREATE TABLE LANGUAGES
-#      (NAME TEXT PRIMARY KEY      NOT NULL);''')
-#conn.close()
+from numpy import argmax
 
 def getALLtables():
     conn=connDB()
@@ -142,6 +137,7 @@ def removeCard(language, name):
     conn=connDB()
     myCard=getCardById(language, name)
     soundAPI.deleteAudio(myCard.pronounciation)
+    imageAPI.deleteImage(myCard.image)
     conn.execute("DELETE from {} where id = {};".format(language.upper(), name))
     conn.commit()
     conn.close()
@@ -153,7 +149,7 @@ def getRandomCard(language):
     cardList=getAllCards(language)
     n=len(cardList)
     a=randint(1,n-1)
-    return cardList[a].name
+    return cardList[a]
     
 def removeLastCard(language):
     removeCard(language, getNextId(language)-1)
@@ -201,39 +197,37 @@ def existsSameCard(language,mot,traduction):
 
 #### match (meme carte) entre mot et trad dans cet ordre
 def match(text1, text2, language):
-    answer=False
-    matching=getCompleteCardsWithAttribute(language, 'mot', text1)
+    answer = False
+    matching = getCompleteCardsWithAttribute(language, 'mot', text1)
     for card in matching:
         answer = answer or (text2==card.trad)
     return answer
 
-##create a table of picture
-#def create_picturetable():
-#    conn=connDB()
-#    sql = "create table IF NOT EXISTS PICTURES(p_id INTEGER PRIMARY KEY AUTOINCREMENT,picture BLOB,type TEXT,file_name TEXT);"
-#    conn.execute(sql)
-#    conn.close()
-#
-##insert into the table one picture with its name
-#def insert_picture(picture_file):
-#    with open(picture_file,'rb') as input_file:
-#        ablob = input_file.read()
-#        base = os.path.basename(picture_file)
-#        afile,ext  = os.path.splitext(base)
-#        sql = "INSERT INTO PICTURES(picture, type, file_name) VALUES(?, ?, ?);"
-#        conn=connDB()
-#        conn.execute(sql,[sqlite3.Binary(ablob),ext,afile])
-#        conn.commit()
-#        conn.close()
-#
-##extract a picture with its id, returns the name of the picture
-#def extract_picture(p_id):
-#    sql = "SELECT picture,type,file_name FROM PICTURES where p_id = :id;"
-#    p_id = {'id':p_id}
-#    conn=connDB()
-#    pic = conn.execute(sql,p_id)
-#    ablob, ext, afile = pic.fetchone()
-#    filename = './PICTURES/' + afile + ext
-#    with open(filename,'wb') as output_file:
-#        output_file.write(ablob)
-#    return filename
+def matchApprox(text1, text2, language):
+    """
+    We assume that text1 can be incomplete or incorrect whether text2 is either
+    a word or a trad in the database and we return True if text1 is approximately
+    the pendant of text2 (approx. in the sense "envoyer" is the same as
+    "envoyer (qq)").
+    So if text2 is " بعث"  and text1 is "envoyer", since "envoyer" is a good
+    enough approximation of "envoyer (qq)", we return True.
+    """
+    answer = False
+    matching_word = getCompleteCardsWithAttribute(language, 'mot', text2)
+    matching_trad = getCompleteCardsWithAttribute(language, 'traduction', text2)
+    text1 = ''.join(i for i in text1 if ord(i)<128)
+    # assumes text1 is ASCII, no accent... improve ?
+    # pb with l'époque -> l'poque
+    # remove accents and replace punctuation with " " ?
+    print(text1)
+    text1_bits = text1.split()
+    if len(text1_bits)==0:
+        return False
+    text1_main = text1_bits[argmax([len(bit) for bit in text1_bits])]
+    print(text1_main)
+    for card in matching_word:
+        answer = answer or (True in [(text1_main==''.join(i for i in bit if ord(i)<128)) for bit in card.trad.split() if len(bit) > 2])
+    for card in matching_trad:
+        answer = answer or (True in [(text1_main==''.join(i for i in bit if ord(i)<128)) for bit in card.word.split() if len(bit) > 2])
+    answer = answer or match(text1, text2, language) or match(text2, text1, language)
+    return answer

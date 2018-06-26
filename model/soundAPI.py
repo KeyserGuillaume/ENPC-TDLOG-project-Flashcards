@@ -9,37 +9,16 @@ CHANNELS = 2
 RATE = 44100
 RECORD_SECONDS = 5
 
-def playSoundFromFile(filename):
-    if (filename==""):
-        return
-    waveInputPath = "AUDIOS/" + filename
-    p = pyaudio.PyAudio()
-    wf = wave.open(waveInputPath, 'rb')
-    stream = p.open(format=FORMAT,
-                    channels=CHANNELS,
-                    rate=RATE,
-                    output=True)
-    data = wf.readframes(CHUNK)
-    while data:
-        stream.write(data)
-        data = wf.readframes(CHUNK)
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-    return
-    
 def getFrames(filename):
     if (filename==""):
         return []
-    frames=[]
+    frames = []
     waveInputPath = "AUDIOS/" + filename
-    p = pyaudio.PyAudio()
     wf = wave.open(waveInputPath, 'rb')
     data = wf.readframes(CHUNK)
     while data:
         frames.append(data)
         data = wf.readframes(CHUNK)
-    p.terminate()
     return frames
     
 def playSoundFromFrames(frames):
@@ -57,7 +36,10 @@ def playSoundFromFrames(frames):
     stream.close()
     p.terminate()
     return
-
+    
+def playSoundFromFile(filename):
+    playSoundFromFrames(getFrames(filename))
+    
 def recordSound():
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,

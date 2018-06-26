@@ -35,20 +35,28 @@ def readSettings(Tag_xpath):
     if chosenSetting:
         return chosenSetting[0].text
 
-
 ################################## chargement du fichier XML
+def getDefaultLanguage():
+    return readSettings("/user/default/language")
+    
+def getUserName():
+    return readSettings("/user/default/username")
+
+def getPixabayKey():
+    return readSettings("/user/default/pixabay_api_key")
 
 def getAllGameNames():
     return ["dragdrop","memory","hotcold","pointto","rightwrong"]
 
 ### acces a une liste de tous les settings
 def getAllSettings():
-    defaultLangage = readSettings("/user/default/langage")
+    defaultLangage = readSettings("/user/default/language")
     username = readSettings("/user/default/username")
+    pixabay_api_key = readSettings("/user/default/pixabay_api_key")
     allGameNames = getAllGameNames()
     nbCards = [readSettings("/user/game[name='"+gamename+"']/nbCards") for gamename in allGameNames]
     timerChrono = [readSettings("/user/game[name='"+gamename+"']/chrono") for gamename in allGameNames]
-    return [defaultLangage,username,nbCards,timerChrono]
+    return [defaultLangage, username, pixabay_api_key, nbCards, timerChrono]
 
 ### access aux parametres d'un jeux donné
 def getGameSettings(gamename,require):
@@ -63,7 +71,9 @@ def getGameSettings(gamename,require):
 def changeUser(newdata):
     changeSettings("/user/default/username", newdata)
 def changeLangage(newdata):
-    changeSettings("/user/default/langage", newdata)
+    changeSettings("/user/default/language", newdata)
+def changeKey(newdata):
+    changeSettings("/user/default/pixabay_api_key", newdata)
 def changeNbCards(newdata,gamename):
     changeSettings("/user/game[name='"+gamename+"']/nbCards", newdata)
 def changeChrono(newdata,gamename):

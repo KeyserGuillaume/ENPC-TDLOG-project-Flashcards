@@ -1,7 +1,8 @@
 <user>
     <default>
-        <langage>Arabe</langage>
+        <language>Arabe</language>
         <username>Guillaume</username>
+        <pixabay_api_key>9318401-33ce95875403ddcb5b74eec79</pixabay_api_key>
     </default>
     <game>
         <name>dragdrop</name>
@@ -20,8 +21,8 @@
     </game>
     <game>
         <name>pointto</name>
-        <nbCards>2</nbCards>
-        <chrono>42</chrono>
+        <nbCards>5</nbCards>
+        <chrono>60</chrono>
     </game>
     <game>
         <name>rightwrong</name>

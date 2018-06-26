@@ -1,4 +1,5 @@
-from model import flashcard, database, soundAPI
+from model import flashcard, database, soundAPI, imageAPI
+from view import viewImage
 
 ## a aller récupérer dans une base de donnée plus tard
 ## toutes les langues prises en charges
@@ -80,47 +81,45 @@ class CardCreation(QWidget):
         self.answergrid.addWidget(self.myword, 1, 0, 1, 1)
         self.myword.setText(" Entrez votre mot :")
         self.editword = QLineEdit(self.answergridWidget)
-        self.answergrid.addWidget(self.editword, 1, 1, 1, 1)
+        self.answergrid.addWidget(self.editword, 1, 1, 1, 2)
         # ligne 2 : entrer la traduction
         self.mytrad = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.mytrad, 2, 0, 1, 1)
         self.mytrad.setText(" Entrez sa traduction : ")
         self.edittrad = QLineEdit(self.answergridWidget)
-        self.answergrid.addWidget(self.edittrad, 2, 1, 1, 1)
+        self.answergrid.addWidget(self.edittrad, 2, 1, 1, 2)
         # ligne 3 : entrer le theme
         self.mythema = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.mythema, 3, 0, 1, 1)
         self.mythema.setText(" Entrez le thème : ")
         self.editthema = QLineEdit(self.answergridWidget)
-        self.answergrid.addWidget(self.editthema, 3, 1, 1, 1)
+        self.answergrid.addWidget(self.editthema, 3, 1, 1, 2)
         # ligne 5 : entrer un exemple
         self.myexample = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.myexample, 5, 0, 1, 1)
         self.myexample.setText(" Entrez une phrase d\'exemple : ")
         self.editexample = QLineEdit(self.answergridWidget)
-        self.answergrid.addWidget(self.editexample, 5, 1, 1, 1)
+        self.answergrid.addWidget(self.editexample, 5, 1, 1, 2)
         # ligne 6 : entrer la difficulte
         self.dificult = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.dificult, 6, 0, 1, 1)
         self.dificult.setText(" Entrez la difficulté : ")
-        # self.editdifficult = QLineEdit(self.answergridWidget)
         self.editdifficult = QSlider(self.answergridWidget)
         self.editdifficult.setOrientation(QtCore.Qt.Horizontal)
-        self.answergrid.addWidget(self.editdifficult, 6, 1, 1, 1)
+        self.answergrid.addWidget(self.editdifficult, 6, 1, 1, 2)
         # ligne 7 : entrer votre maitrise du mot
         self.myproficiency = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.myproficiency, 7, 0, 1, 1)
         self.myproficiency.setText(" Entrez votre niveau de maitrise :")
-        # self.editproficiency = QLineEdit(self.answergridWidget)
         self.editproficiency = QSlider(self.answergridWidget)
         self.editproficiency.setOrientation(QtCore.Qt.Horizontal)
-        self.answergrid.addWidget(self.editproficiency, 7, 1, 1, 1)
+        self.answergrid.addWidget(self.editproficiency, 7, 1, 1, 2)
         # ligne 8 : indiquer la nature grammaticale du mot
         self.mynature = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.mynature, 8, 0, 1, 1)
         self.mynature.setText(" Sélectionnez la nature du mot :")
         self.editnature = QComboBox(self.answergridWidget)
-        self.answergrid.addWidget(self.editnature, 8, 1, 1, 1)
+        self.answergrid.addWidget(self.editnature, 8, 1, 1, 2)
         for naturespossibles in natureGram:
             self.editnature.addItem(naturespossibles)
         # ligne 9 : indiquer la langue
@@ -128,7 +127,7 @@ class CardCreation(QWidget):
         self.answergrid.addWidget(self.mylanguage, 9, 0, 1, 1)
         self.mylanguage.setText(" Sélectionnez la langue :")
         self.editlanguage = QComboBox(self.answergridWidget)
-        self.answergrid.addWidget(self.editlanguage, 9, 1, 1, 1)
+        self.answergrid.addWidget(self.editlanguage, 9, 1, 1, 2)
         for languespossibles in langues:
             self.editlanguage.addItem(languespossibles)
         self.editlanguage.addItem("Other")
@@ -138,21 +137,39 @@ class CardCreation(QWidget):
         self.myLanguage.setVisible(False)
         self.answergrid.addWidget(self.myLanguage, 10, 0, 1, 1)
         self.setLanguage = QLineEdit(self.answergridWidget)
-        self.answergrid.addWidget(self.setLanguage, 10, 1, 1, 1)
+        self.answergrid.addWidget(self.setLanguage, 10, 1, 1, 2)
         self.setLanguage.setEnabled(False)
         # ligne 11 : charge une image
         self.myillustration = QLabel(self.answergridWidget)
         self.answergrid.addWidget(self.myillustration, 11, 0, 1, 1)
         self.myillustration.setText(" Sélectionnez une image :")
-        self.chooseButton1 = QPushButton(u"Choisir", self.answergridWidget)
-        self.answergrid.addWidget(self.chooseButton1, 11, 1, 1, 1)
+        self.chooseLocalImage = QPushButton(u"From computer", self.answergridWidget)
+        self.answergrid.addWidget(self.chooseLocalImage, 11, 1, 1, 1)
+        self.chooseRemoteImage = QPushButton(u"", self.answergridWidget) # From Pixabay
+        #self.chooseRemoteImage.setStyleSheet("background-image: url(:/icons/pixabay.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        #self.chooseRemoteImage = QLabel(self.answergridWidget)
+        #self.chooseRemoteImage.setFixedSize(100, 20)
+        #self.chooseRemoteImage.setScaledContents(True)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("view/icons/pixabay.png"))
+        self.chooseRemoteImage.setIcon(icon)
+        self.chooseRemoteImage.setIconSize(QtCore.QSize(100, 30))
+        #pixmap = QtGui.QPixmap("view/icons/pixabay.png")
+        #pixmap = pixmap.scaled(self.chooseRemoteImage.frameSize().width(),
+        #                       self.chooseRemoteImage.frameSize().height(),
+        #                       QtCore.Qt.KeepAspectRatio)
+        #self.chooseRemoteImage.setPixmap(pixmap)
+        self.answergrid.addWidget(self.chooseRemoteImage, 11, 2, 1, 1)
         self.image = ""
         # ligne 12 : charger un fichier son de prononciation
+        self.recordLabel = QLabel(self.answergridWidget)
+        self.answergrid.addWidget(self.recordLabel, 12, 0, 1, 1)
+        self.recordLabel.setText("Pronounciation record")
         self.recordButton = QPushButton("Record", self.answergridWidget)
-        self.answergrid.addWidget(self.recordButton, 12, 0, 1, 1)
+        self.answergrid.addWidget(self.recordButton, 12, 1, 1, 1)
         self.listenButton = QPushButton("Listen", self.answergridWidget)
         self.listenButton.setEnabled(False)
-        self.answergrid.addWidget(self.listenButton, 12, 1, 1, 1)
+        self.answergrid.addWidget(self.listenButton, 12, 2, 1, 1)
         self.frames=[]
 
         ## le layout du haut
@@ -187,7 +204,8 @@ class CardCreation(QWidget):
 
         ## gestion des slots et signaux
         # fenetre de dialogue pour la selection d'un fichier
-        self.chooseButton1.clicked.connect(self.browse1)
+        self.chooseLocalImage.clicked.connect(self.browse1)
+        self.chooseRemoteImage.clicked.connect(self.chooseImageFromPixabay)
         self.recordButton.clicked.connect(self.record)
         self.listenButton.clicked.connect(self.listen)
         self.createButton.clicked.connect(self.commit)
@@ -230,10 +248,19 @@ class CardCreation(QWidget):
     def listen(self):
         soundAPI.playSoundFromFrames(self.frames)
         
-    def toTheShadows(self):
-        self.close()
+    def chooseImageFromPixabay(self):
+        mot = str(self.editword.text())
+        if mot == "":
+            self.myword.setText(" Entrez votre mot ")
+            return
+        imageAPI.deleteImage(self.image)
+        self.imageSelection = viewImage.ViewImageWindow(self.parent, mot, self)
+        self.imageSelection.stealTheLimelight()
+        self.imageSelection.done.connect(self.getImage)
+    def getImage(self):
+        self.image = self.imageSelection.chosenImagePath
+        self.imageSelection.toTheShadows()
 
-#renamed it because it's used both for creating and modifying
     def commit(self):
         name = str(self.setname.text())
         mot = str(self.editword.text())
@@ -249,7 +276,7 @@ class CardCreation(QWidget):
             self.myword.setText(" Entrez votre mot : (Non facultatif !)")
             return
         if traduction=="":
-            self.mytrad.setText(" Entrez sa traduction : (Non facultatif !)")
+            self.mytrad.setText(" Entrez la traduction : (Non facultatif !)")
             return
         if langue == "Other":
             langue = str(self.setLanguage.text())
@@ -277,6 +304,9 @@ class CardCreation(QWidget):
             self.close()
         self.redirect.emit()
         ## inserer un appel a la fonction permettant de sauvegarder les cartes crees ici
+        
+    def toTheShadows(self):
+        self.close()
 
 class CardModification(CardCreation):
     def __init__(self, parent, mycard, followUpDisplay):        
@@ -292,12 +322,12 @@ class CardModification(CardCreation):
         self.editthema.setText(self.myCard.thema)
         self.editdifficult.setValue(self.myCard.howhard * 10)
         self.editproficiency.setValue(self.myCard.level * 10)
-        #self.editlanguage.setCurrentText(self.myCard.tablename)
+        self.image = self.myCard.image
         self.editlanguage.setEnabled(False)
         self.editnature.setCurrentText(self.myCard.nature)
         self.setname.setText(str(self.myCard.name))
         self.createButton.setText("Modify")
-        self.deleteWidget=QPushButton("delete", self.bottomWidget)
+        self.deleteWidget = QPushButton("delete", self.bottomWidget)
         self.tocreate.addWidget(self.deleteWidget)
         self.bottomWidget.resize(self.bottomWidget.sizeHint())
         self.deleteWidget.clicked.connect(self.confirmDeletion)

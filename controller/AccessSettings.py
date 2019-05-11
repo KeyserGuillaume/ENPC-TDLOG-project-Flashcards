@@ -50,6 +50,15 @@ def getAllSettings():
     timerChrono = [readSettings("/user/game[name='"+gamename+"']/chrono") for gamename in allGameNames]
     return [defaultLangage,username,nbCards,timerChrono]
 
+### access aux parametres d'un jeux donné
+def getGameSettings(gamename,require):
+    if require==0:
+        nbCards = readSettings("/user/game[name='" + gamename + "']/nbCards")
+        return int(nbCards)
+    elif require==1:
+        timer = readSettings("/user/game[name='" + gamename + "']/chrono")
+    return int(timer)
+
 ### modifications specifiques
 def changeUser(newdata):
     changeSettings("/user/default/username", newdata)

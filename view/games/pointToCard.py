@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 import sys
 from model import database
 from view.games import gameWindow
+from controller import AccessSettings
 import random
 from random import randint
 
@@ -175,8 +176,10 @@ class pointToCardGame(QWidget):
         self.init()
     leave=QtCore.pyqtSignal()
     def init(self):
-        self.window=gameWindow.GameWindow(self, len(self.cartesJouees))
-        self.game=pointToCardGameWindow(self.window.gameArea, self.cartesJouees)
+        self.settingtime = AccessSettings.getGameSettings("pointto", 1)
+        self.settingnb = AccessSettings.getGameSettings("pointto", 0)
+        self.window=gameWindow.GameWindow(self, self.settingnb, self.settingtime)
+        self.game=pointToCardGameWindow(self.window.gameArea, self.cartesJouees[0:self.settingnb])
         self.window.show()
         
         self.window.resetSignal.connect(self.reset)

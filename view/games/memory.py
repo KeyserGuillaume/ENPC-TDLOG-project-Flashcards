@@ -7,6 +7,7 @@ from math import ceil
 from random import shuffle
 
 from view.games import gameWindow
+from controller import AccessSettings
 
 from view.icons import icons
 
@@ -68,6 +69,7 @@ class PlayingCard(QPushButton):
 ### le widget de jeu (carte sur un plateau qui se retournent)
 class MemoryGame(QScrollArea):
     def __init__(self,bigWindow, CardsPlayed, width, height):
+        self.setting = AccessSettings.getGameSettings("memory",0)
         ## les flashcards en jeu
         self.cardslist = CardsPlayed
         ## la fenetre ( widget avec scroll bar)
@@ -84,8 +86,10 @@ class MemoryGame(QScrollArea):
         self.gridLayout = QGridLayout(self.plateau)
         self.gridLayout.setContentsMargins(20, 20, 20, 20)
         # creation des cartes de jeu a raison de 2 par flashcard en jeu
-        self.mycards = list(range(2 * len(self.cardslist) ))
-        for i, carte in enumerate(self.cardslist):
+        self.mycards = list(range(2 * self.setting))
+        playingcard = self.cardslist[0:self.setting]
+        shuffle(playingcard)
+        for i, carte in enumerate(playingcard):
             self.mycards[2*i] = PlayingCard(carte, 0, self.plateau)
             self.mycards[2*i+1] = PlayingCard(carte, 1, self.plateau)
 
@@ -104,32 +108,17 @@ class MemoryGame(QScrollArea):
         yellowcards = []
 
         # le message de victoire
-        self.victoryWidget = QWidget(self)
-        self.victoryWidget.resize(300, 200)
-        qr = self.victoryWidget.frameGeometry()
-        qr.moveCenter(self.rect().center())
-        self.victoryWidget.move(qr.topLeft())
-        self.label = QLabel(self.victoryWidget)
-        path = "icons/victory.png"
-        self.pixmap = QtGui.QPixmap()
-        self.pixmap.load(path)
-        self.label.setPixmap(self.pixmap)
-        self.label.setScaledContents(True)
-        self.victoryWidget.setVisible(False)
+        self.victoryButton = QPushButton(self)
+        self.victoryButton.setGeometry(QtCore.QRect(230, 130, 251, 221))
+        self.victoryButton.setStyleSheet("background-image: url(:/icons/win.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        self.victoryButton.setVisible(False)
 
         # le message de defaite
-        self.defeatWidget = QWidget(self)
-        self.defeatWidget.resize(300, 200)
-        qr = self.defeatWidget.frameGeometry()
-        qr.moveCenter(self.rect().center())
-        self.defeatWidget.move(qr.topLeft())
-        self.label = QLabel(self.defeatWidget)
-        path = "icons/gameOver.png"
-        self.pixmap = QtGui.QPixmap()
-        self.pixmap.load(path)
-        self.label.setPixmap(self.pixmap)
-        self.label.setScaledContents(True)
-        self.defeatWidget.setVisible(False)
+        self.defeatButton = QPushButton(self)
+        self.defeatButton.setGeometry(QtCore.QRect(230, 130, 221, 221))
+        self.defeatButton.setStyleSheet("background-image: url(:/icons/gameover2.png);\n" "background-color: rgba(255, 255, 255, 0);")
+        self.defeatButton.setVisible(False)
+
 
         # connection slots et signaux
         for i in range(len(self.mycards)):
@@ -147,18 +136,19 @@ class MemoryGame(QScrollArea):
         else:
             self.running.emit()
     def onVictory(self):
-        self.victoryWidget.show()
+        self.victoryButton.show()
     def onDefeat(self):
-        self.defeatWidget.show()
+        self.defeatButton.show()
 
 
 class MemoryGameWindow(QWidget):
     def __init__(self, givenWindow, cardsPlayed):
         super(MemoryGameWindow, self).__init__(givenWindow)
+        self.setting = AccessSettings.getGameSettings("memory",1)
         self.resize(givenWindow.frameSize())
         self.cardslist = cardsPlayed
         self.nbCharsDisplayed = 0
-        self.window = gameWindow.GameWindow(self, len(self.cardslist))
+        self.window = gameWindow.GameWindow(self, len(self.cardslist),self.setting)
         self.game = MemoryGame(self.window.gameArea, self.cardslist, self.window.gameArea.width(), self.window.gameArea.height())
         self.window.show()
 

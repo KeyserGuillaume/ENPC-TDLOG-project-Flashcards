@@ -8,7 +8,7 @@ langues.insert(0, 'TOUTES')
 
 from PyQt5 import QtCore, QtWidgets, QtGui 
 from PyQt5.QtWidgets import QTextBrowser, QApplication, QWidget, QGridLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QProgressBar, QSlider, QComboBox, QFileDialog, QToolBox
-from PyQt5.QtGui import QPalette, QColor
+from PyQt5.QtGui import QPalette, QColor, QFont
 import sys
 
 
@@ -16,8 +16,12 @@ class welcomeScreen(QWidget):
     def __init__(self, givenLayout):
         super(welcomeScreen, self).__init__(givenLayout)
         self.setFixedSize(givenLayout.frameSize())
+        self.background = QWidget(self)
+        self.background.resize(self.frameSize())
+        self.background.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
         self.lb_welcome = QtWidgets.QLabel(u"Bienvenue!", self)
-        self.lb_welcome.setGeometry(QtCore.QRect(10, 10, 100, 19))
+        self.lb_welcome.setGeometry(QtCore.QRect(20, 20, 100, 19))
+        self.lb_welcome.setFont(QFont("Roman times", 8, QFont.Bold))
     def close(self):
         self.setVisible(False)
 
@@ -25,7 +29,15 @@ class tipScreen(QWidget):
     def __init__(self, givenLayout):
         super(tipScreen, self).__init__(givenLayout)
         self.setFixedSize(givenLayout.frameSize())
-        self.lb_tip = QtWidgets.QLabel(u"Aucun document ne correspond aux termes de recherche spécifiés. Vous pouvez essayer d'autres mots.", self)
+        self.background = QWidget(self)
+        self.background.resize(self.frameSize())
+        self.background.setStyleSheet("background-image: url(:/fond/blackboard.jpg);")
+        self.lb_tip = QtWidgets.QLabel(u"Aucun document ne correspond aux termes de recherche spécifiés.", self)
+        self.lb_tip.setGeometry(QtCore.QRect(20, 20, 855, 19))
+        self.lb_tip.setFont(QFont("Roman times", 8, QFont.Bold))
+        self.lb_tip1 = QtWidgets.QLabel(u"Vous pouvez essayer d'autres mots.", self)
+        self.lb_tip1.setGeometry(QtCore.QRect(20, 50, 855, 19))
+        self.lb_tip1.setFont(QFont("Roman times", 8, QFont.Bold))
     def close(self):
         self.setVisible(False)
 
@@ -96,7 +108,7 @@ class Recherche(object):
         ##self.textBrowser_resultat = QtWidgets.QTextBrowser(self.rechercheDialog)
         ##self.textBrowser_resultat.setGeometry(QtCore.QRect(20, 200, 851, 371))
         self.resultLayout = QWidget(self.rechercheDialog)
-        self.resultLayout.setGeometry(QtCore.QRect(20, 200, 851, 430))
+        self.resultLayout.setGeometry(QtCore.QRect(22, 200, 851, 420))
         self.welcome = welcomeScreen(self.resultLayout)
         self.welcome.show()
         self.currentScreen = self.welcome
@@ -129,15 +141,15 @@ class Recherche(object):
             self.currentScreen = self.tip
         else:
             self.cards = parcours.parcoursGivenCards(self.resultLayout, result)
-            self.cards.openCardSignal.connect(self.openCard)
+            self.cards.openCardSignal.connect(self.openViewCards)
             self.cards.show()
             self.currentScreen = self.cards
             
             #for item in result:
                 #self.textBrowser_resultat.append('ID: {}   MOT: {}   THEME: {} \nTRADUCTION: {} \nEXEMPLE: {} \n\n'.format(item.name, item.word, item.thema, item.trad, item.exemple))
-    def openCard(self,language, rank):
-        self.openViewCards(rank, database.getAllCards(language))
-    def openViewCards(self, rank, cardlist):
+    #def openCard(self,language, rank):
+        #self.openViewCards(rank, database.getAllCards(language))
+    def openViewCards(self, cardlist, rank):
         self.currentScreen.close()
         self.linkedInterf = viewCard.viewDialog(self.resultLayout, rank, cardlist)
         self.linkedInterf.show()
